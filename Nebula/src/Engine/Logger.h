@@ -7,6 +7,8 @@
 #define NEBULA_LOGGER_H
 
 #include <memory>
+
+#include "spdlog/fwd.h"
 #include "spdlog/spdlog.h"
 
 #include "Engine/NebulaAPI.h"

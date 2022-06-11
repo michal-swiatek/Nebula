@@ -8,10 +8,10 @@
 
 #if defined(_WIN32) || defined(WIN32)
 
-#include "Application.h"
-
 int main(int argc, char** argv)
 {
+    nebula::Logger::Init();
+
     auto* app = nebula::CreateApplication();
     app->Run();
 

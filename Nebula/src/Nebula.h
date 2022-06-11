@@ -6,9 +6,10 @@
 #ifndef NEBULA_NEBULA_H
 #define NEBULA_NEBULA_H
 
+#include "Engine/Application.h"
+#include "Engine/Logger.h"
+
 //  Entry point
 #include "Engine/EntryPoint.h"
-
-#include "Engine/Application.h"
 
 #endif //NEBULA_NEBULA_H

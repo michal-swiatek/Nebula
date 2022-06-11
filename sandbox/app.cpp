@@ -5,19 +5,20 @@
 
 #include "Nebula.h"
 
-#include <iostream>
 
 class App : public nebula::Application
 {
 public:
     App() : nebula::Application()
     {
-        std::cout << "Creating custom application.\n";
+#ifndef SPDLOG_HEADER_ONLY
+        APP_LOGGER_INFO("Creating {} application", "sandbox");
+#endif
     }
 
     ~App() override
     {
-        std::cout << "Destroying custom application.\n";
+        APP_LOGGER_TRACE("Exiting {} application", "sandbox");
     }
 };
 

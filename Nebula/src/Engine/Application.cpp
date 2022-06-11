@@ -5,7 +5,7 @@
 
 #include "Application.h"
 
-#include <iostream>
+#include "Engine/Logger.h"
 
 namespace nebula {
 
@@ -15,7 +15,7 @@ namespace nebula {
 
     void Application::Run()
     {
-        std::cout << "Welcome to Nebula!\n";
+        CORE_LOGGER_INFO("Welcome to Nebula engine!");
     }
 
 }

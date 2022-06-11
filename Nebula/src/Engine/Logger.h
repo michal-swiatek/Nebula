@@ -30,7 +30,8 @@ namespace nebula {
 
 }
 
-#ifndef NDEBUG
+//  TODO: Remove in final build
+#if !defined(NDEBUG) || defined(RELEASE_LOGS)
     //  Core logs
     #define CORE_LOGGER_TRACE(...)     ::nebula::Logger::GetCoreLogger()->trace(__VA_ARGS__)
     #define CORE_LOGGER_DEBUG(...)     ::nebula::Logger::GetCoreLogger()->debug(__VA_ARGS__)

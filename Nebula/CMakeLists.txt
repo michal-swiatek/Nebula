@@ -42,9 +42,42 @@ set(NEBULA_HEADER_FILES src/Engine/EntryPoint.h
 
 add_library(nebula SHARED ${NEBULA_SOURCE_FILES} ${NEBULA_HEADER_FILES})
 
-target_link_libraries(nebula PUBLIC spdlog::spdlog)
-target_compile_definitions(nebula PUBLIC SPDLOG_COMPILED_LIB)
-target_compile_definitions(nebula PUBLIC RELEASE_LOGS)  # TODO: Remove in final build
+target_link_libraries(nebula PRIVATE spdlog::spdlog)
+target_compile_definitions(nebula PRIVATE SPDLOG_COMPILED_LIB)
+target_compile_definitions(nebula PRIVATE RELEASE_LOGS)  # TODO: Remove in final build
+
+#-----------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------PRECOMPILED HEADERS--------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+
+if (WIN32 AND NOT ${TOOLCHAIN} MATCHES mingw)
+    set(PCH_PLATFORM_HEADERS <windows.h>)
+else()
+    set(PCH_PLATFORM_HEADERS)
+endif()
+
+target_precompile_headers(
+        nebula PRIVATE
+
+        # STD Library
+        <iostream>
+        <memory>
+        <utility>
+        <algorithm>
+        <functional>
+        # Data structures
+        <string>
+        <sstream>
+        <vector>
+        <map>
+        <set>
+        <unordered_map>
+        <unordered_set>
+        # Logging
+        src/Engine/Logger.h
+
+        ${PCH_PLATFORM_HEADERS}
+)
 
 # Copy dll after build
 if (${TOOLCHAIN} MATCHES mingw)

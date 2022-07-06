@@ -5,8 +5,6 @@
 
 #include "Application.h"
 
-#include "Engine/Logger.h"
-
 namespace nebula {
 
     Application::Application() = default;

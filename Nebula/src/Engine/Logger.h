@@ -6,8 +6,6 @@
 #ifndef NEBULA_LOGGER_H
 #define NEBULA_LOGGER_H
 
-#include <memory>
-
 #include "spdlog/fwd.h"
 #include "spdlog/spdlog.h"
 

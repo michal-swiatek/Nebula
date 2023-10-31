@@ -1,4 +1,7 @@
-#   Clion project files
+#   CLion project files
 /.idea/
 /cmake-*/
 
+#   Project files
+/bin/
+/lib/

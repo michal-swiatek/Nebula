@@ -3,11 +3,17 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include <iostream>
+#include <memory>
 
-int main()
+#include "Nebula.h"
+
+class Sandbox : public nebula::Application
 {
-    std::cout << "Hello world!\n";
+public:
+    Sandbox() : nebula::Application("Sandbox") {}
+};
 
-    return 0;
+nebula::Application* nebula::createApplication()
+{
+    return new Sandbox();
 }

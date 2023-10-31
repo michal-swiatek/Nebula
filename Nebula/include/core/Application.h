@@ -24,7 +24,7 @@ namespace nebula {
         std::string m_name;
     };
 
-    Application* createApplication();
+    Application* createApplication(int argc, char** argv);
 
 }
 

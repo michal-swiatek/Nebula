@@ -8,4 +8,3 @@ include_directories(${CMAKE_SOURCE_DIR}/Nebula/include)
 
 add_executable(sandbox main.cpp)
 target_link_libraries(sandbox nebula)
-target_include_directories(sandbox PUBLIC ${CMAKE_BINARY_DIR}/Nebula/include)

@@ -6,7 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 include(cmake/setup-libraries.cmake)
 
-include_directories(src)
+include_directories(include)
 include_directories(${CMAKE_BINARY_DIR}/Nebula/include)
 add_compile_definitions(NB_BUILD_DLL)
 

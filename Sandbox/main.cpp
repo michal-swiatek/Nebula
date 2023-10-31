@@ -3,8 +3,6 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include <memory>
-
 #include "Nebula.h"
 
 class Sandbox : public nebula::Application

@@ -6,10 +6,9 @@
 #ifndef NEBULAENGINE_NEBULA_H
 #define NEBULAENGINE_NEBULA_H
 
-#include "../src/core/Core.h"
-#include "../src/core/Application.h"
+#include "core/Application.h"
 
 //  Entry point
-#include "../src/core/EntryPoint.h"
+#include "core/EntryPoint.h"
 
 #endif //NEBULAENGINE_NEBULA_H

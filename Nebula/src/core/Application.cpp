@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "Application.h"
+#include "core/Application.h"
 
 #include <iostream>
 #include "OpenGLConfiguration.h"

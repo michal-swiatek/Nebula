@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv)
 {
-    auto app = std::unique_ptr<nebula::Application>(nebula::createApplication());
+    auto app = std::unique_ptr<nebula::Application>(nebula::createApplication(argc, argv));
     app->run();
 
     return 0;

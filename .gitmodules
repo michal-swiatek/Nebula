@@ -1,0 +1,3 @@
+[submodule "Nebula/3rd-party/spdlog"]
+	path = Nebula/3rd-party/spdlog
+	url = https://github.com/gabime/spdlog.git

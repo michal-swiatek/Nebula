@@ -15,7 +15,7 @@ namespace nebula {
     class NEBULA_API Application
     {
     public:
-        explicit Application(std::string name);
+        explicit Application(std::string name, const std::string& logger_name = "APP");
         virtual ~Application() = default;
 
         void run();

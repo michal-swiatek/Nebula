@@ -6,6 +6,8 @@
 #ifndef NEBULAENGINE_NEBULA_H
 #define NEBULAENGINE_NEBULA_H
 
+#include "core/Types.h"
+#include "core/Logging.h"
 #include "core/Application.h"
 
 //  Entry point

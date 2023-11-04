@@ -5,19 +5,20 @@
 
 #include "core/Application.h"
 
-#include <iostream>
+#include "core/Logging.h"
 #include "OpenGLConfiguration.h"
 
 namespace nebula {
 
-    Application::Application(std::string name) : m_name(std::move(name))
+    Application::Application(std::string name, const std::string& logger_name) : m_name(std::move(name))
     {
-
+        NB_CORE_INFO("OpenGL version: {}.{}", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
+        logging::initClient(logger_name);
     }
 
     void Application::run()
     {
-        std::cout << "Using OpenGL version: " << OPENGL_MAJOR_VERSION << '.' << OPENGL_MINOR_VERSION << '\n';
+
     }
 
 }

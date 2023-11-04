@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include "core/Core.h"
+
 namespace nebula {
 
     enum class EventType
@@ -40,7 +42,7 @@ namespace nebula {
         EventCategoryMouseButton = 16
     };
 
-    struct Event
+    struct NEBULA_API Event
     {
         virtual ~Event() = default;
 
@@ -54,7 +56,7 @@ namespace nebula {
         [[nodiscard]] bool isInCategory(EventCategory category) const { return getCategoryFlags() & category; }
     };
 
-    class EventDelegate
+    class NEBULA_API EventDelegate
     {
     public:
         explicit EventDelegate(Event& event) : m_event(event) {}

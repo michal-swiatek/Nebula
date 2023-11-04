@@ -16,20 +16,26 @@ namespace nebula {
 
     Application::Application(std::string name, const std::string& logger_name)
         : m_name(std::move(name)),
-          m_event_manager([this](Event& event) { onEvent(event); })
+          m_event_manager(m_layer_stack, [this](Event& event) { onEvent(event); })
     {
         NB_CORE_INFO("OpenGL version: {}.{}", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
         logging::initClient(logger_name);
+
+        m_event_manager.queueEvent<MouseMovedEvent>(3.14, -42);
+        m_event_manager.queueEvent<WindowResizeEvent>(100, 100);
     }
 
     void Application::onEvent(Event& event)
     {
+        EventDelegate delegate(event);
 
+        delegate.delegate<MouseMovedEvent>([this](MouseMovedEvent& event){ NB_CORE_INFO(event.toString()); return false; });
+        delegate.delegate<WindowResizeEvent>([this](WindowResizeEvent& event){ NB_CORE_INFO(event.toString()); return true; });
     }
 
     void Application::run()
     {
-
+        m_event_manager.dispatchEvents();
     }
 
 }

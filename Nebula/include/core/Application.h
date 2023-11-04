@@ -9,6 +9,7 @@
 #include <string>
 
 #include "Core.h"
+#include "LayerStack.h"
 
 #include "events/Event.h"
 #include "events/EventManager.h"
@@ -25,9 +26,29 @@ namespace nebula {
 
         void run();
 
+        template <typename T, typename... Args>
+        LayerStack::LayerID pushLayer(Args&&... args)
+        {
+            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            layer->onAttach();
+            return m_layer_stack.pushLayer(layer);
+        }
+
+        template <typename T, typename... Args>
+        LayerStack::LayerID pushOverlay(Args&&... args)
+        {
+            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            layer->onAttach();
+            return m_layer_stack.pushOverlay(layer);
+        }
+
+        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
+
     private:
         std::string m_name;
 
+        LayerStack m_layer_stack;
         EventManager m_event_manager;
     };
 

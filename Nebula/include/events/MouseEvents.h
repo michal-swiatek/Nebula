@@ -11,7 +11,7 @@
 
 namespace nebula {
 
-    class MouseMovedEvent : public Event
+    class NEBULA_API MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(const float x, const float y) : m_mouse_x(x), m_mouse_y(y) {}
@@ -34,7 +34,7 @@ namespace nebula {
         float m_mouse_y;
     };
 
-    class MouseScrolledEvent : public Event
+    class NEBULA_API MouseScrolledEvent : public Event
     {
     public:
         MouseScrolledEvent(const float x_offset, const float y_offset) : m_offset_x(x_offset), m_offset_y(y_offset) {}
@@ -57,7 +57,7 @@ namespace nebula {
         float m_offset_y;
     };
 
-    class MouseButtonEvent : public Event
+    class NEBULA_API MouseButtonEvent : public Event
     {
     public:
         [[nodiscard]] MouseCode getMouseButton() const { return m_button; }
@@ -70,7 +70,7 @@ namespace nebula {
         MouseCode m_button;
     };
 
-    class MouseButtonPressedEvent : public MouseButtonEvent
+    class NEBULA_API MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
         explicit MouseButtonPressedEvent(const MouseCode button) : MouseButtonEvent(button) {}
@@ -85,7 +85,7 @@ namespace nebula {
         EVENT_CLASS_TYPE(MouseButtonPressed)
     };
 
-    class MouseButtonReleasedEvent : public MouseButtonEvent
+    class NEBULA_API MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
         explicit MouseButtonReleasedEvent(const MouseCode button) : MouseButtonEvent(button) {}

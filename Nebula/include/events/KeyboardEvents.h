@@ -11,7 +11,7 @@
 
 namespace nebula {
 
-    class KeyEvent : public Event
+    class NEBULA_API KeyEvent : public Event
     {
     public:
         [[nodiscard]] Keycode getKeycode() const { return m_keycode; }
@@ -24,7 +24,7 @@ namespace nebula {
         Keycode m_keycode;
     };
 
-    class KeyPressedEvent : public KeyEvent
+    class NEBULA_API KeyPressedEvent : public KeyEvent
     {
     public:
         explicit KeyPressedEvent(const Keycode keycode, bool repeated = false) : KeyEvent(keycode), m_repeated(repeated) {}
@@ -44,7 +44,7 @@ namespace nebula {
         bool m_repeated;
     };
 
-    class KeyReleasedEvent : public KeyEvent
+    class NEBULA_API KeyReleasedEvent : public KeyEvent
     {
     public:
         explicit KeyReleasedEvent(const Keycode keycode) : KeyEvent(keycode) {}
@@ -59,7 +59,7 @@ namespace nebula {
         EVENT_CLASS_TYPE(KeyReleased)
     };
 
-    class KeyTypedEvent : public KeyEvent
+    class NEBULA_API KeyTypedEvent : public KeyEvent
     {
     public:
         explicit KeyTypedEvent(const Keycode keycode) : KeyEvent(keycode) {}

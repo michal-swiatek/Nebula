@@ -11,28 +11,29 @@
 
 #include "Event.h"
 #include "core/Types.h"
+#include "core/LayerStack.h"
 
 namespace nebula {
 
-    class EventManager
+    class NEBULA_API EventManager
     {
     public:
         using EventCallback = std::function<void(Event&)>;
 
-        EventManager(EventCallback application_callback);
+        EventManager(LayerStack& layer_stack, EventCallback application_callback);
 
         void dispatchEvents();
         void broadcastEvent(Event& event);
 
         template <typename T, typename... Args>
-        T& queueEvent(Args&&... args)
+        void queueEvent(Args&&... args)
         {
             auto event = std::make_unique<T>(std::forward<Args>(args)...);    //  TODO: Use linear allocator
             m_events.emplace_back(std::move(event));
-            return *m_events.back();
         }
 
     private:
+        LayerStack& m_layer_stack;
         EventCallback m_application_callback;
         std::vector<Scope<Event>> m_events{};
     };

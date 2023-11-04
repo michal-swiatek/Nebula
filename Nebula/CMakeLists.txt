@@ -14,6 +14,7 @@ add_compile_definitions(NB_BUILD_DLL)
 set(NEBULA_SOURCE_FILES
         src/core/Application.cpp
         src/core/Logging.cpp
+        src/core/LayerStack.cpp
         src/events/EventManager.cpp
 )
 

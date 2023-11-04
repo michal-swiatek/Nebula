@@ -8,7 +8,13 @@
 
 #include "core/Types.h"
 #include "core/Logging.h"
+#include "core/Layer.h"
 #include "core/Application.h"
+
+#include "events/Event.h"
+#include "events/MouseEvents.h"
+#include "events/KeyboardEvents.h"
+#include "events/ApplicationEvents.h"
 
 //  Entry point
 #include "core/EntryPoint.h"

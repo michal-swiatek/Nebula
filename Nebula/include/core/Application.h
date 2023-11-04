@@ -10,18 +10,25 @@
 
 #include "Core.h"
 
+#include "events/Event.h"
+#include "events/EventManager.h"
+
 namespace nebula {
 
     class NEBULA_API Application
     {
     public:
-        explicit Application(std::string name, const std::string& logger_name = "APP");
+        explicit Application(std::string ph_1, const std::string& logger_name = "APP");
         virtual ~Application() = default;
+
+        void onEvent(Event& event);
 
         void run();
 
     private:
         std::string m_name;
+
+        EventManager m_event_manager;
     };
 
     Application* createApplication(int argc, char** argv);

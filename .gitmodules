@@ -1,3 +1,6 @@
 [submodule "Nebula/3rd-party/spdlog"]
 	path = Nebula/3rd-party/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Nebula/3rd-party/glfw"]
+	path = Nebula/3rd-party/glfw
+	url = https://github.com/glfw/glfw.git

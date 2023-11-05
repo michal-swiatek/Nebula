@@ -28,8 +28,13 @@
 //  3rd-party headers
 #include <spdlog/spdlog.h>
 
+//  Project headers
+#include "platform/DetectPlatform.h"
+
+#include "core/Assert.h"
+
 //  Platform specific headers
-#if defined(_WIN32) || defined(WIN32)
+#ifdef NB_PLATFORM_WINDOWS
     #include <Windows.h>
 #endif
 

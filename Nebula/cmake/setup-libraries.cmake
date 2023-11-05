@@ -18,5 +18,12 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/spdlog)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/spdlog/include)
 set(SPD_LOG ${spdlog})
 
+# glfw
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only")
+set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only")
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw/include)
+
 # Restore project build type
 set(CMAKE_BUILD_TYPE ${BUILD_TYPE})

@@ -7,6 +7,8 @@
 
 using namespace nebula;
 
+auto application_specification = ApplicationSpecification("Sandbox", "APP");
+
 class ExampleLayer : public Layer
 {
 public:
@@ -22,19 +24,13 @@ public:
         NB_INFO("{} destroyed.", getName());
     }
 
-    void onEvent(nebula::Event &event) override
-    {
-        EventDelegate delegate(event);
-
-        delegate.delegate<MouseMovedEvent>([this](MouseMovedEvent& event){ NB_INFO(event.toString()); return true; });
-        delegate.delegate<WindowResizeEvent>([this](WindowResizeEvent& event){ NB_INFO(event.toString()); return true; });
-    }
+    void onEvent(nebula::Event &event) override {}
 };
 
 class Sandbox : public Application
 {
 public:
-    Sandbox() : Application("Sandbox", "SANDBOX")
+    Sandbox() : Application(application_specification)
     {
         NB_TRACE("Hello sandbox!");
         m_example_layer_id = pushLayer<ExampleLayer>();

@@ -15,7 +15,7 @@
 void initSubsystems();
 void shutdownSubsystems();
 
-#if defined(_WIN32) || defined(WIN32)
+#ifdef NB_PLATFORM_WINDOWS
 
 int main(int argc, char** argv)
 {

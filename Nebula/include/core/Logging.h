@@ -25,7 +25,7 @@ namespace nebula::logging {
 
 }
 
-#ifndef NDEBUG
+#ifdef NB_DEBUG_BUILD
     #define NB_CORE_TRACE(...)  ::nebula::logging::getCoreLogger()->trace(__VA_ARGS__)
     #define NB_CORE_INFO(...)   ::nebula::logging::getCoreLogger()->info(__VA_ARGS__)
     #define NB_CORE_WARN(...)   ::nebula::logging::getCoreLogger()->warn(__VA_ARGS__)

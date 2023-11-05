@@ -9,22 +9,29 @@
 #include <string>
 
 #include "Core.h"
+#include "Window.h"
 #include "LayerStack.h"
 
 #include "events/Event.h"
 #include "events/EventManager.h"
+#include "events/ApplicationEvents.h"
+
+int main(int argc, char** argv);
 
 namespace nebula {
+
+    struct ApplicationSpecification
+    {
+        std::string name = "Nebula Application";
+        std::string logger_name = "APP";
+        std::string working_directory;
+    };
 
     class NEBULA_API Application
     {
     public:
-        explicit Application(std::string ph_1, const std::string& logger_name = "APP");
+        explicit Application(ApplicationSpecification specification);
         virtual ~Application() = default;
-
-        void onEvent(Event& event);
-
-        void run();
 
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
@@ -46,10 +53,22 @@ namespace nebula {
         Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
 
     private:
-        std::string m_name;
+        void run();
+
+        void onEvent(Event& event);
+        bool onWindowClose(WindowCloseEvent& e);
+        bool onWindowResize(WindowResizeEvent& e);
+
+        bool m_running = true;
+        bool m_minimized = false;
 
         LayerStack m_layer_stack;
         EventManager m_event_manager;
+
+        Scope<Window> m_window;
+        ApplicationSpecification m_specification;
+
+        friend int ::main(int argc, char** argv);
     };
 
     Application* createApplication(int argc, char** argv);

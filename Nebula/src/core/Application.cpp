@@ -3,39 +3,68 @@
 // Github: https://github.com/michal-swiatek
 //
 
+#include <filesystem>
+
 #include "core/Application.h"
 
 #include "core/Logging.h"
-#include "events/MouseEvents.h"
-#include "events/KeyboardEvents.h"
-#include "events/ApplicationEvents.h"
-
-#include "OpenGLConfiguration.h"
 
 namespace nebula {
 
-    Application::Application(std::string name, const std::string& logger_name)
-        : m_name(std::move(name)),
+    Application::Application(ApplicationSpecification specification)
+        : m_specification(std::move(specification)),
           m_event_manager(m_layer_stack, [this](Event& event) { onEvent(event); })
     {
-        NB_CORE_INFO("OpenGL version: {}.{}", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
-        logging::initClient(logger_name);
+        if (!m_specification.working_directory.empty())
+            std::filesystem::current_path(m_specification.working_directory);
 
-        m_event_manager.queueEvent<MouseMovedEvent>(3.14, -42);
-        m_event_manager.queueEvent<WindowResizeEvent>(100, 100);
+        logging::initClient(m_specification.logger_name);
+
+        m_window = Window::create(WindowProperties(m_specification.name));
+        m_window->setEventManager(m_event_manager);
+    }
+
+    void Application::run()
+    {
+        while (m_running)
+        {
+            if (!m_minimized)
+            {
+                for (auto& layer : m_layer_stack)
+                    layer->onUpdate();
+
+                for (auto& layer : m_layer_stack)
+                    layer->onImGuiRender();
+            }
+
+            m_window->onUpdate();
+            m_event_manager.dispatchEvents();
+        }
     }
 
     void Application::onEvent(Event& event)
     {
         EventDelegate delegate(event);
-
-        delegate.delegate<MouseMovedEvent>([this](MouseMovedEvent& event){ NB_CORE_INFO(event.toString()); return false; });
-        delegate.delegate<WindowResizeEvent>([this](WindowResizeEvent& event){ NB_CORE_INFO(event.toString()); return true; });
+        delegate.delegate<WindowCloseEvent>(NB_BIND_EVENT_FUNCTION(Application::onWindowClose));
+        delegate.delegate<WindowResizeEvent>(NB_BIND_EVENT_FUNCTION(Application::onWindowResize));
     }
 
-    void Application::run()
+    bool Application::onWindowClose(WindowCloseEvent& event)
     {
-        m_event_manager.dispatchEvents();
+        m_running = false;
+        return true;
+    }
+
+    bool Application::onWindowResize(WindowResizeEvent& event)
+    {
+        if (event.getWidth() == 0 || event.getHeight() == 0)
+        {
+            m_minimized = true;
+            return false;
+        }
+
+        m_minimized = false;
+        return false;
     }
 
 }

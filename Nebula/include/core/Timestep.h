@@ -23,7 +23,7 @@ namespace nebula {
         [[nodiscard]] double getMicroSeconds() const { return m_time * 1'000'000; }
         [[nodiscard]] double getNanoSeconds() const { return m_time * 1'000'000'000; }
 
-        operator float() const { return static_cast<float>(m_time); }
+        explicit operator float() const { return static_cast<float>(m_time); }
         operator double() const { return m_time; }
 
     private:

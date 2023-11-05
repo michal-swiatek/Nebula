@@ -5,7 +5,10 @@
 
 #include "Nebula.h"
 
+#include <thread>
+
 using namespace nebula;
+using namespace std::chrono_literals;
 
 auto application_specification = ApplicationSpecification("Sandbox", "APP");
 
@@ -13,6 +16,22 @@ class ExampleLayer : public Layer
 {
 public:
     ExampleLayer() : Layer("Example Layer") {}
+
+    void onUpdate(nebula::Timestep delta_time) override
+    {
+
+    }
+
+    void onFixedUpdate(nebula::Timestep delta_time) override
+    {
+
+    }
+
+    void onRender() override
+    {
+        Timer busy_timer{};
+        while (busy_timer.elapsedMilliSeconds() < 2);
+    }
 
     void onAttach() override
     {
@@ -34,7 +53,6 @@ public:
     {
         NB_TRACE("Hello sandbox!");
         m_example_layer_id = pushLayer<ExampleLayer>();
-        pushLayer<ExampleLayer>();
     }
 
     ~Sandbox() override

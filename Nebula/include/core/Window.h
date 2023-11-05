@@ -25,7 +25,7 @@ namespace nebula {
             std::string title = "Nebula Engine",
             uint32_t width = 1600,
             uint32_t height = 900,
-            bool vsync = false
+            bool vsync = true
         ) :
                 title(std::move(title)),
                 width(width),

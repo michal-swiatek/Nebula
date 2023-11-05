@@ -28,19 +28,42 @@ namespace nebula {
     {
         while (m_running)
         {
-            auto delta_time = Timestep(m_timer.elapsedSeconds(true));
+            double update_timestep = 1.0 / m_specification.update_fps;
+            double render_timestep = m_specification.render_fps > 0 ? 1.0 / m_specification.render_fps : 0.0;
+
+            auto frame_time = m_timer.elapsedSeconds(true);
+            m_update_accumulator += frame_time;
 
             if (!m_minimized)
             {
                 for (auto& layer : m_layer_stack)
-                    layer->onUpdate(delta_time);
+                    layer->onUpdate(Timestep(frame_time));
+
+                while (m_update_accumulator > update_timestep)
+                {
+                    for (auto& layer : m_layer_stack)
+                        layer->onFixedUpdate(Timestep(update_timestep));
+
+                    m_update_accumulator -= update_timestep;
+                }
 
                 for (auto& layer : m_layer_stack)
+                {
+                    layer->onRender();
                     layer->onImGuiRender();
+                }
             }
 
+            //  Swap buffers and poll events
             m_window->onUpdate();
             m_event_manager.dispatchEvents();
+
+            if (m_timer.elapsedSeconds() < render_timestep)
+            {
+                Timer busy_timer;
+                double wait_time = render_timestep - m_timer.elapsedSeconds();
+                while (busy_timer.elapsedSeconds() < wait_time);
+            }
         }
     }
 

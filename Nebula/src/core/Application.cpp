@@ -28,10 +28,12 @@ namespace nebula {
     {
         while (m_running)
         {
+            auto delta_time = Timestep(m_timer.elapsedSeconds(true));
+
             if (!m_minimized)
             {
                 for (auto& layer : m_layer_stack)
-                    layer->onUpdate();
+                    layer->onUpdate(delta_time);
 
                 for (auto& layer : m_layer_stack)
                     layer->onImGuiRender();

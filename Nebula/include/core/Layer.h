@@ -9,6 +9,7 @@
 #include <string>
 
 #include "core/Core.h"
+#include "core/Timestep.h"
 #include "events/Event.h"
 
 namespace nebula {
@@ -21,7 +22,7 @@ namespace nebula {
 
         virtual void onAttach() {}
         virtual void onDetach() {}
-        virtual void onUpdate() {}
+        virtual void onUpdate(Timestep delta_time) {}
         virtual void onImGuiRender() {}
         virtual void onEvent(Event& event) {}
 

@@ -9,6 +9,7 @@
 #include <string>
 
 #include "Core.h"
+#include "Timer.h"
 #include "Window.h"
 #include "LayerStack.h"
 
@@ -61,6 +62,7 @@ namespace nebula {
 
         bool m_running = true;
         bool m_minimized = false;
+        Timer m_timer;
 
         LayerStack m_layer_stack;
         EventManager m_event_manager;

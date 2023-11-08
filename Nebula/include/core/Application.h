@@ -17,6 +17,8 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
+#include "debug/ImGuiLayer.h"
+
 int main(int argc, char** argv);
 
 namespace nebula {
@@ -62,8 +64,8 @@ namespace nebula {
         inline void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
         inline void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
 
-        [[nodiscard]] inline WindowProperties getWindowProperties() const { return m_window->getProperties(); }
-        inline void setWindowProperties(const WindowProperties& window_properties) { m_window->setProperties(window_properties); }
+        Window& getWindow() { return *m_window; }
+        static Application& get() { return *s_instance; }
 
     private:
         void run();
@@ -80,10 +82,12 @@ namespace nebula {
 
         LayerStack m_layer_stack;
         EventManager m_event_manager;
+        LayerStack::LayerID m_imgui_layer;
 
         Scope<Window> m_window;
         ApplicationSpecification m_specification;
 
+        static Application* s_instance;
         friend int ::main(int argc, char** argv);
     };
 

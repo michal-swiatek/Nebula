@@ -74,4 +74,30 @@ namespace nebula {
         return nullptr;
     }
 
+    View<Layer> LayerStack::getLayer(nebula::LayerStack::LayerID layer_id)
+    {
+        auto it = std::find_if(
+                m_layers.begin(),
+                m_layers.begin() + m_layer_insert_index,
+                [layer_id](const auto& layer) { return layer->getID() == layer_id; }
+        );
+
+        if (it != m_layers.begin() + m_layer_insert_index)
+            return it->get();
+        return nullptr;
+    }
+
+    View<Layer> LayerStack::getOverlay(nebula::LayerStack::LayerID layer_id)
+    {
+        auto it = std::find_if(
+                m_layers.begin() + m_layer_insert_index,
+                m_layers.end(),
+                [layer_id](const auto& layer) { return layer->getID() == layer_id; }
+        );
+
+        if (it != m_layers.end())
+            return it->get();
+        return nullptr;
+    }
+
 }

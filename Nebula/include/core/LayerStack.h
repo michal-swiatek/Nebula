@@ -26,6 +26,8 @@ namespace nebula {
         LayerID pushOverlay(Layer* layer);
         Scope<Layer> popLayer(LayerID layer_id);
         Scope<Layer> popOverlay(LayerID layer_id);
+        View<Layer> getLayer(LayerID layer_id);
+        View<Layer> getOverlay(LayerID layer_id);
 
         inline Container::iterator begin()                      { return m_layers.begin(); }
         inline Container::iterator end()                        { return m_layers.end(); }

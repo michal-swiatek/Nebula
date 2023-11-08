@@ -39,18 +39,21 @@ namespace nebula {
     public:
         virtual ~Window() = default;
 
-        virtual void onUpdate() = 0;
-
         [[nodiscard]] virtual bool checkVSync() const = 0;
         [[nodiscard]] virtual uint32_t getWidth() const = 0;
         [[nodiscard]] virtual uint32_t getHeight() const = 0;
         [[nodiscard]] virtual WindowProperties getProperties() const = 0;
 
         virtual void setVSync(bool enabled) = 0;
-        virtual void setEventManager(EventManager& event_manager) = 0;
         virtual void setProperties(const WindowProperties& window_properties) = 0;
 
         [[nodiscard]] virtual void* getNativeWindow() const = 0;
+
+    private:
+        friend class Application;
+
+        virtual void onUpdate() = 0;
+        virtual void setEventManager(EventManager& event_manager) = 0;
 
         static Scope<Window> create(const WindowProperties& properties = WindowProperties());
     };

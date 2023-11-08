@@ -9,12 +9,19 @@
 
 #include "core/Logging.h"
 
+#include <glad/glad.h>
+
 namespace nebula {
+
+    Application* Application::s_instance = nullptr;
 
     Application::Application(ApplicationSpecification specification)
         : m_specification(std::move(specification)),
           m_event_manager(m_layer_stack, [this](Event& event) { onEvent(event); })
     {
+        NB_CORE_ASSERT(!s_instance, "Can't create another instance of Application!");
+        s_instance = this;
+
         if (!m_specification.working_directory.empty())
             std::filesystem::current_path(m_specification.working_directory);
 
@@ -22,6 +29,8 @@ namespace nebula {
 
         m_window = Window::create(WindowProperties(m_specification.name));
         m_window->setEventManager(m_event_manager);
+
+        m_imgui_layer = pushOverlay<ImGuiLayer>();
     }
 
     void Application::run()
@@ -34,10 +43,12 @@ namespace nebula {
             auto frame_time = m_timer.elapsedSeconds(true);
             m_update_accumulator += frame_time;
 
-            NB_CORE_INFO("Frame time: {:.3f}, fps: {}", frame_time, int(1.0 / frame_time));
+//            NB_CORE_INFO("Frame time: {:.3f}, fps: {}", frame_time, int(1.0 / frame_time));
 
             if (!m_minimized)
             {
+                ImGuiLayer::begin();
+
                 for (auto& layer : m_layer_stack)
                     layer->onUpdate(Timestep(frame_time));
 
@@ -49,11 +60,16 @@ namespace nebula {
                     m_update_accumulator -= update_timestep;
                 }
 
+                glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+
                 for (auto& layer : m_layer_stack)
                 {
                     layer->onRender();
                     layer->onImGuiRender();
                 }
+
+                ImGuiLayer::end();
             }
 
             //  Swap buffers and poll events
@@ -91,6 +107,8 @@ namespace nebula {
         }
 
         m_minimized = false;
+
+        glViewport(0, 0, int(event.getWidth()), int(event.getHeight()));
         return false;
     }
 

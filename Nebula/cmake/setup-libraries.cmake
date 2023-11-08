@@ -29,5 +29,28 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/include)
 set(OPENGL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/src/glad.cpp)
 
+# imgui
+include_directories(3rd-party/imgui)
+set(IMGUI_SOURCE_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_demo.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_draw.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_tables.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_widgets.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_glfw.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_opengl3.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/misc/cpp/imgui_stdlib.cpp")
+
+set(IMGUI_HEADER_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imconfig.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_internal.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imstb_rectpack.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imstb_textedit.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imstb_truetype.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_glfw.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_opengl3.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/misc/cpp/imgui_stdlib.h")
+
 # Restore project build type
 set(CMAKE_BUILD_TYPE ${BUILD_TYPE})

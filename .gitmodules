@@ -4,3 +4,6 @@
 [submodule "Nebula/3rd-party/glfw"]
 	path = Nebula/3rd-party/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "Nebula/3rd-party/imgui"]
+	path = Nebula/3rd-party/imgui
+	url = https://github.com/ocornut/imgui.git

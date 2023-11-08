@@ -25,5 +25,9 @@ set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw/include)
 
+# glad
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/include)
+set(OPENGL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/src/glad.cpp)
+
 # Restore project build type
 set(CMAKE_BUILD_TYPE ${BUILD_TYPE})

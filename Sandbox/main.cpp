@@ -10,7 +10,7 @@
 using namespace nebula;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP");
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "");
 
 class ExampleLayer : public Layer
 {

@@ -20,7 +20,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/Windows/WindowsWindow.cpp
 )
 
-add_library(nebula SHARED ${NEBULA_SOURCE_FILES})
+add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES})
 target_link_libraries(nebula ${SPD_LOG} glfw)
 target_precompile_headers(nebula PRIVATE include/nebula_pch.h)
 add_custom_command(TARGET nebula POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE}/libnebula.dll ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE})

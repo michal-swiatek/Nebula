@@ -62,6 +62,9 @@ namespace nebula {
         inline void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
         inline void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
 
+        [[nodiscard]] inline WindowProperties getWindowProperties() const { return m_window->getProperties(); }
+        inline void setWindowProperties(const WindowProperties& window_properties) { m_window->setProperties(window_properties); }
+
     private:
         void run();
 
@@ -73,7 +76,6 @@ namespace nebula {
         bool m_minimized = false;
 
         Timer m_timer;
-        Timer m_fps_timer;
         double m_update_accumulator = 0.0;
 
         LayerStack m_layer_stack;

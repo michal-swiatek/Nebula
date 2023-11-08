@@ -10,6 +10,8 @@
 #include "events/KeyboardEvents.h"
 #include "events/ApplicationEvents.h"
 
+#include "OpenGLConfiguration.h"
+
 namespace nebula {
 
     static uint8_t window_count = 0;
@@ -35,7 +37,15 @@ namespace nebula {
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
         m_window = glfwCreateWindow(properties.width, properties.height, properties.title.c_str(), nullptr, nullptr);
+
+        glfwMakeContextCurrent(m_window);
+        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        NB_CORE_ASSERT(status, "Failed to initialize Glad!");
 
         if (m_window_data.vsync)
             glfwSwapInterval(1);
@@ -135,6 +145,16 @@ namespace nebula {
             glfwSwapInterval(0);
 
         m_window_data.vsync = enabled;
+    }
+
+    void WindowsWindow::setProperties(const WindowProperties& window_properties)
+    {
+        m_window_data.title = window_properties.title;
+        m_window_data.width = window_properties.width;
+        m_window_data.height = window_properties.height;
+        m_window_data.vsync = window_properties.vsync;
+
+        setVSync(m_window_data.vsync);
     }
 
 }

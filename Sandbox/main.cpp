@@ -17,12 +17,13 @@ class ExampleLayer : public Layer
 public:
     ExampleLayer() : Layer("Example Layer") {}
 
-    void onUpdate(nebula::Timestep delta_time) override
+    void onUpdate(Timestep delta_time) override
     {
-
+        if (Input::isKeyPressed(Keycode::Space))
+            NB_INFO("Space is being pressed!");
     }
 
-    void onFixedUpdate(nebula::Timestep delta_time) override
+    void onFixedUpdate(Timestep delta_time) override
     {
 
     }
@@ -43,7 +44,20 @@ public:
         NB_INFO("{} destroyed.", getName());
     }
 
-    void onEvent(nebula::Event &event) override {}
+    void onEvent(Event &event) override
+    {
+        EventDelegate delegate(event);
+
+        delegate.delegate<KeyPressedEvent>(NB_BIND_EVENT_FUNCTION(ExampleLayer::onKeyPressed));
+    }
+
+    bool onKeyPressed(KeyPressedEvent& event)
+    {
+        if (event.getKeycode() == Keycode::Escape)
+            Application::get().close();
+
+        return true;
+    }
 };
 
 class Sandbox : public Application

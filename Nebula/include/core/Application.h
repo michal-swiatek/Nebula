@@ -10,14 +10,13 @@
 
 #include "Core.h"
 #include "Timer.h"
+#include "Input.h"
 #include "Window.h"
 #include "LayerStack.h"
 
 #include "events/Event.h"
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
-
-#include "debug/ImGuiLayer.h"
 
 int main(int argc, char** argv);
 
@@ -38,6 +37,8 @@ namespace nebula {
     public:
         explicit Application(ApplicationSpecification specification);
         virtual ~Application() = default;
+
+        void close() { m_running = false; }
 
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
@@ -84,6 +85,7 @@ namespace nebula {
         EventManager m_event_manager;
         LayerStack::LayerID m_imgui_layer;
 
+        Scope<Input> m_input;
         Scope<Window> m_window;
         ApplicationSpecification m_specification;
 

@@ -78,7 +78,7 @@ namespace nebula {
         [[nodiscard]] std::string toString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonPressedEvent(button=" << m_button << ')';
+            ss << "MouseButtonPressedEvent(button=" << static_cast<uint16_t>(m_button) << ')';
             return ss.str();
         }
 
@@ -93,7 +93,7 @@ namespace nebula {
         [[nodiscard]] std::string toString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonReleasedEvent(button=" << m_button << ')';
+            ss << "MouseButtonReleasedEvent(button=" << static_cast<uint16_t>(m_button) << ')';
             return ss.str();
         }
 

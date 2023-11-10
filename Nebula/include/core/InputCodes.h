@@ -10,7 +10,7 @@
 
 namespace nebula {
 
-    enum MouseCode : uint16_t
+    enum class MouseCode : uint16_t
     {
         // From glfw3.h
         Button0                = 0,
@@ -28,7 +28,7 @@ namespace nebula {
         ButtonMiddle           = Button2
     };
 
-    enum Keycode : uint16_t
+    enum class Keycode : uint16_t
     {
         // From glfw3.h
         Space               = 32,

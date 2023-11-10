@@ -34,7 +34,7 @@ namespace nebula {
         [[nodiscard]] std::string toString() const override
         {
             std::stringstream ss;
-            ss << "KeyPressedEvent(keycode=" << m_keycode << ", repeated=" << m_repeated << ")";
+            ss << "KeyPressedEvent(keycode=" << static_cast<uint16_t>(m_keycode) << ", repeated=" << m_repeated << ")";
             return ss.str();
         }
 
@@ -52,7 +52,7 @@ namespace nebula {
         [[nodiscard]] std::string toString() const override
         {
             std::stringstream ss;
-            ss << "KeyReleasedEvent(keycode=" << m_keycode << ')';
+            ss << "KeyReleasedEvent(keycode=" << static_cast<uint16_t>(m_keycode) << ')';
             return ss.str();
         }
 
@@ -67,7 +67,7 @@ namespace nebula {
         [[nodiscard]] std::string toString() const override
         {
             std::stringstream ss;
-            ss << "KeyTypedEvent(keycode=" << m_keycode << ')';
+            ss << "KeyTypedEvent(keycode=" << static_cast<uint16_t>(m_keycode) << ')';
             return ss.str();
         }
 

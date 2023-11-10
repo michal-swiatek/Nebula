@@ -3,13 +3,13 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include <filesystem>
-
 #include "core/Application.h"
 
-#include "core/Logging.h"
-
+#include <filesystem>
 #include <glad/glad.h>
+
+#include "core/Logging.h"
+#include "debug/ImGuiLayer.h"
 
 namespace nebula {
 
@@ -29,6 +29,8 @@ namespace nebula {
 
         m_window = Window::create(WindowProperties(m_specification.name));
         m_window->setEventManager(m_event_manager);
+
+        m_input = Input::create(m_window.get());
 
         m_imgui_layer = pushOverlay<ImGuiLayer>();
     }

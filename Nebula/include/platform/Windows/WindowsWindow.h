@@ -30,7 +30,7 @@ namespace nebula {
         void setEventManager(EventManager& event_manager) override { m_window_data.event_manager = &event_manager; }
         void setProperties(const WindowProperties& window_properties) override;
 
-        [[nodiscard]] void* getNativeWindow() const override { return m_window; }
+        [[nodiscard]] void* getWindowHandle() const override { return m_window; }
 
     private:
         GLFWwindow* m_window = nullptr;

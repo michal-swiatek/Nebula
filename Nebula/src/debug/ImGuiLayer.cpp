@@ -40,7 +40,7 @@ namespace nebula {
         }
 
         auto& application = Application::get();
-        auto* window = static_cast<GLFWwindow*>(application.getWindow().getNativeWindow());
+        auto* window = static_cast<GLFWwindow*>(application.getWindow().getWindowHandle());
 
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(OPENGL_VERSION_STRING.c_str());

@@ -29,6 +29,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/include)
 set(OPENGL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/src/glad.cpp)
 
+# glm
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glm)
+
 # imgui
 include_directories(3rd-party/imgui)
 set(IMGUI_SOURCE_FILES

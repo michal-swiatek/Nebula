@@ -7,3 +7,6 @@
 [submodule "Nebula/3rd-party/imgui"]
 	path = Nebula/3rd-party/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Nebula/3rd-party/glm"]
+	path = Nebula/3rd-party/glm
+	url = https://github.com/g-truc/glm.git

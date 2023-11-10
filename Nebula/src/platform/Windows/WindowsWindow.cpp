@@ -68,11 +68,11 @@ namespace nebula {
         }
     }
 
-    void WindowsWindow::setGLFWCallbacks()
+    void WindowsWindow::setGLFWCallbacks() const
     {
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.width = width;
             data.height = height;
 
@@ -81,13 +81,13 @@ namespace nebula {
 
         glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.event_manager->queueEvent<WindowCloseEvent>();
         });
 
         glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             auto keycode = static_cast<Keycode>(key);
 
             switch (action)
@@ -101,13 +101,13 @@ namespace nebula {
 
         glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int keycode)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.event_manager->queueEvent<KeyTypedEvent>(static_cast<Keycode>(keycode));
         });
 
         glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             auto mouse_button = static_cast<MouseCode>(button);
 
             switch (action)
@@ -120,13 +120,13 @@ namespace nebula {
 
         glfwSetScrollCallback(m_window, [](GLFWwindow* window, double x_offset, double y_offset)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.event_manager->queueEvent<MouseScrolledEvent>(static_cast<float>(x_offset), static_cast<float>(y_offset));
         });
 
         glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double x_pos, double y_pos)
         {
-            WindowData& data = *reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.event_manager->queueEvent<MouseMovedEvent>(static_cast<float>(x_pos), static_cast<float>(y_pos));
         });
     }

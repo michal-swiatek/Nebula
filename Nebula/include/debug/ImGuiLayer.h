@@ -19,7 +19,7 @@ namespace nebula {
 
         void onAttach() override;
         void onDetach() override;
-        void onEvent(nebula::Event &event) override;
+        void onEvent(Event &event) override;
 
         void onImGuiRender() override;
 

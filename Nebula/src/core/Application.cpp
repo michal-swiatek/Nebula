@@ -43,7 +43,7 @@ namespace nebula {
             auto frame_time = m_timer.elapsedSeconds(true);
             m_update_accumulator += frame_time;
 
-//            NB_CORE_INFO("Frame time: {:.3f}, fps: {}", frame_time, int(1.0 / frame_time));
+            // NB_CORE_INFO("Frame time: {:.3f}, fps: {}", frame_time, int(1.0 / frame_time));
 
             if (!m_minimized)
             {

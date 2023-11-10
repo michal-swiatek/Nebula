@@ -23,8 +23,8 @@ namespace nebula {
 
         explicit WindowProperties(
             std::string title = "Nebula Engine",
-            uint32_t width = 1600,
-            uint32_t height = 900,
+            int32_t width = 1600,
+            int32_t height = 900,
             bool vsync = true
         ) :
                 title(std::move(title)),

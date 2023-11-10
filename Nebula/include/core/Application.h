@@ -42,7 +42,7 @@ namespace nebula {
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
         {
-            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
             return m_layer_stack.pushLayer(layer);
         }
@@ -50,7 +50,7 @@ namespace nebula {
         template <typename T, typename... Args>
         LayerStack::LayerID pushOverlay(Args&&... args)
         {
-            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
             return m_layer_stack.pushOverlay(layer);
         }
@@ -58,13 +58,13 @@ namespace nebula {
         Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
         Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
 
-        [[nodiscard]] inline int getRenderFps() const { return m_specification.render_fps; }
-        [[nodiscard]] inline int getUpdateFps() const { return m_specification.update_fps; }
+        [[nodiscard]] int getRenderFps() const { return m_specification.render_fps; }
+        [[nodiscard]] int getUpdateFps() const { return m_specification.update_fps; }
 
-        inline void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
-        inline void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
+        void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
+        void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
 
-        Window& getWindow() { return *m_window; }
+        [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }
 
     private:

@@ -42,8 +42,9 @@ namespace nebula {
         EventCategoryMouseButton = 16
     };
 
-    struct NEBULA_API Event
+    class NEBULA_API Event
     {
+    public:
         virtual ~Event() = default;
 
         bool handled = false;

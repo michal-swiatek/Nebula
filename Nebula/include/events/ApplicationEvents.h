@@ -12,13 +12,13 @@
 
 namespace nebula {
 
-    class NEBULA_API WindowResizeEvent : public Event
+    class NEBULA_API WindowResizeEvent final : public Event
     {
     public:
         WindowResizeEvent(unsigned int width, unsigned int height) : m_width(width), m_height(height) {}
 
-        [[nodiscard]] inline unsigned int getWidth() const { return m_width; }
-        [[nodiscard]] inline unsigned int getHeight() const { return m_height; }
+        [[nodiscard]] unsigned int getWidth() const { return m_width; }
+        [[nodiscard]] unsigned int getHeight() const { return m_height; }
 
         [[nodiscard]] std::string toString() const override
         {
@@ -35,7 +35,7 @@ namespace nebula {
         unsigned int m_height;
     };
 
-    class NEBULA_API WindowCloseEvent : public Event
+    class NEBULA_API WindowCloseEvent final : public Event
     {
     public:
         WindowCloseEvent() = default;
@@ -44,7 +44,7 @@ namespace nebula {
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class NEBULA_API AppTickEvent : public Event
+    class NEBULA_API AppTickEvent final : public Event
     {
     public:
         AppTickEvent() = default;
@@ -53,7 +53,7 @@ namespace nebula {
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class NEBULA_API AppUpdateEvent : public Event
+    class NEBULA_API AppUpdateEvent final : public Event
     {
     public:
         AppUpdateEvent() = default;
@@ -62,7 +62,7 @@ namespace nebula {
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
-    class NEBULA_API AppRenderEvent : public Event
+    class NEBULA_API AppRenderEvent final : public Event
     {
     public:
         AppRenderEvent() = default;

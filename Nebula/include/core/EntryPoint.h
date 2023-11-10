@@ -31,12 +31,12 @@ int main(int argc, char** argv)
 
 #endif
 
-void initSubsystems()
+inline void initSubsystems()
 {
     nebula::logging::initCore();
 }
 
-void shutdownSubsystems()
+inline void shutdownSubsystems()
 {
     nebula::logging::shutdown();
 }

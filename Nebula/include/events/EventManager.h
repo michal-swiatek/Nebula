@@ -23,7 +23,7 @@ namespace nebula {
         EventManager(LayerStack& layer_stack, EventCallback application_callback);
 
         void dispatchEvents();
-        void broadcastEvent(Event& event);
+        void broadcastEvent(Event& event) const;
 
         template <typename T, typename... Args>
         void queueEvent(Args&&... args)

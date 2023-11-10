@@ -12,7 +12,7 @@ namespace nebula {
     EventManager::EventManager(LayerStack& layer_stack, EventManager::EventCallback application_callback)
             : m_layer_stack(layer_stack), m_application_callback(std::move(application_callback)) {}
 
-    void EventManager::broadcastEvent(Event& event)
+    void EventManager::broadcastEvent(Event& event) const
     {
         m_application_callback(event);
 
@@ -31,4 +31,5 @@ namespace nebula {
 
         m_events.clear();
     }
+
 }

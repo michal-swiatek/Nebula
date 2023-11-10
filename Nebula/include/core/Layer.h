@@ -40,7 +40,7 @@ namespace nebula {
 
     private:
         friend class LayerStack;
-        uint32_t m_id;
+        uint32_t m_id{};
     };
 
 }

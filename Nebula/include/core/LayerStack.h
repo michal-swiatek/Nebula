@@ -29,15 +29,15 @@ namespace nebula {
         View<Layer> getLayer(LayerID layer_id);
         View<Layer> getOverlay(LayerID layer_id);
 
-        inline Container::iterator begin()                      { return m_layers.begin(); }
-        inline Container::iterator end()                        { return m_layers.end(); }
-        inline Container::reverse_iterator rbegin()             { return m_layers.rbegin(); }
-        inline Container::reverse_iterator rend()               { return m_layers.rend(); }
+        [[nodiscard]] Container::iterator begin()                      { return m_layers.begin(); }
+        [[nodiscard]] Container::iterator end()                        { return m_layers.end(); }
+        [[nodiscard]] Container::reverse_iterator rbegin()             { return m_layers.rbegin(); }
+        [[nodiscard]] Container::reverse_iterator rend()               { return m_layers.rend(); }
 
-        inline Container::const_iterator begin() const          { return m_layers.begin(); }
-        inline Container::const_iterator end()	const           { return m_layers.end(); }
-        inline Container::const_reverse_iterator rbegin() const { return m_layers.rbegin(); }
-        inline Container::const_reverse_iterator rend() const   { return m_layers.rend(); }
+        [[nodiscard]] Container::const_iterator begin() const          { return m_layers.begin(); }
+        [[nodiscard]] Container::const_iterator end()	const           { return m_layers.end(); }
+        [[nodiscard]] Container::const_reverse_iterator rbegin() const { return m_layers.rbegin(); }
+        [[nodiscard]] Container::const_reverse_iterator rend() const   { return m_layers.rend(); }
 
     private:
         Container m_layers;

@@ -42,7 +42,7 @@ namespace nebula {
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
         {
-            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
             return m_layer_stack.pushLayer(layer);
         }
@@ -50,7 +50,7 @@ namespace nebula {
         template <typename T, typename... Args>
         LayerStack::LayerID pushOverlay(Args&&... args)
         {
-            auto layer = new T(std::forward<Args>(args)...);    //  TODO: Replace with memory allocator
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
             return m_layer_stack.pushOverlay(layer);
         }

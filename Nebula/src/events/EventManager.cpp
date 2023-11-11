@@ -3,14 +3,28 @@
 // Github: https://github.com/michal-swiatek
 //
 
+#include "events/EventManager.h"
+
 #include <ranges>
 
-#include "events/EventManager.h"
+#include "memory/MemoryManager.h"
 
 namespace nebula {
 
-    EventManager::EventManager(LayerStack& layer_stack, EventManager::EventCallback application_callback)
-            : m_layer_stack(layer_stack), m_application_callback(std::move(application_callback)) {}
+    EventManager::EventManager(
+        LayerStack& layer_stack,
+        EventCallback application_callback,
+        std::size_t event_memory_size
+    ) :
+            m_layer_stack(layer_stack),
+            m_application_callback(std::move(application_callback)),
+            m_allocator(memory::MemoryManager::requestMemory(event_memory_size), event_memory_size)
+    {}
+
+    EventManager::~EventManager()
+    {
+        m_allocator.clear();
+    }
 
     void EventManager::broadcastEvent(Event& event) const
     {
@@ -30,6 +44,7 @@ namespace nebula {
             broadcastEvent(*event);
 
         m_events.clear();
+        m_allocator.clear();
     }
 
 }

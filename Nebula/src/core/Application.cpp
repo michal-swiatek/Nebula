@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <glad/glad.h>
 
+#include "core/Config.h"
 #include "core/Logging.h"
 #include "debug/ImGuiLayer.h"
 
@@ -15,9 +16,16 @@ namespace nebula {
 
     Application* Application::s_instance = nullptr;
 
-    Application::Application(ApplicationSpecification specification, const std::optional<WindowProperties>& window_properties)
-        : m_specification(std::move(specification)),
-          m_event_manager(m_layer_stack, [this](Event& event) { onEvent(event); })
+    Application::Application(
+        ApplicationSpecification specification,
+        const std::optional<WindowProperties>& window_properties
+    ) :
+            m_specification(std::move(specification)),
+            m_event_manager(
+              m_layer_stack,
+              [this](Event& event) { onEvent(event); },
+              Config::getEngineConfig()["memory"]["event_queue_size"].as<int>()
+            )
     {
         NB_CORE_ASSERT(!s_instance, "Can't create another instance of Application!");
         s_instance = this;

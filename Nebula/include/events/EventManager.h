@@ -12,6 +12,7 @@
 #include "Event.h"
 #include "core/Types.h"
 #include "core/LayerStack.h"
+#include "memory/Allocators.h"
 
 namespace nebula {
 
@@ -20,7 +21,8 @@ namespace nebula {
     public:
         using EventCallback = std::function<void(Event&)>;
 
-        EventManager(LayerStack& layer_stack, EventCallback application_callback);
+        EventManager(LayerStack& layer_stack, EventCallback application_callback, std::size_t event_memory_size);
+        ~EventManager();
 
         void dispatchEvents();
         void broadcastEvent(Event& event) const;
@@ -28,14 +30,15 @@ namespace nebula {
         template <typename T, typename... Args>
         void queueEvent(Args&&... args)
         {
-            auto event = std::make_unique<T>(std::forward<Args>(args)...);    //  TODO: Use linear allocator
+            auto event = new (m_allocator.allocate(sizeof(T), alignof(T))) T(std::forward<Args>(args)...);
             m_events.emplace_back(std::move(event));
         }
 
     private:
         LayerStack& m_layer_stack;
         EventCallback m_application_callback;
-        std::vector<Scope<Event>> m_events{};
+        std::vector<View<Event>> m_events{};
+        memory::LinearAllocator m_allocator;
     };
 
 }

@@ -9,10 +9,9 @@
 #include <vector>
 
 #include "core/Core.h"
-#include "core/Config.h"
 #include "MemoryChunk.h"
 
-void initSubsystems(nebula::Config& config);
+void initSubsystems();
 void shutdownSubsystems();
 
 namespace nebula::memory {
@@ -26,10 +25,10 @@ namespace nebula::memory {
     private:
         static std::vector<impl::MemoryChunk> s_memory_chunks;
 
-        static void init(std::size_t block_size);
+        static void init();
         static void shutdown();
 
-        friend void ::initSubsystems(Config& config);
+        friend void ::initSubsystems();
         friend void ::shutdownSubsystems();
     };
 

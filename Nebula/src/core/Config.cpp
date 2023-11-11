@@ -9,10 +9,21 @@
 #include <fstream>
 
 #include "memory/Types.h"
+#include "core/Assert.h"
 
 using namespace nebula::literals;
 
 namespace nebula {
+
+    Config* Config::s_instance = nullptr;
+
+    void Config::setEngineConfig(Config& config)
+    {
+        NB_CORE_ASSERT(!s_instance, "Can't create two instances of engine config!");
+        if (config.isEmpty())
+            config.getConfig() = defaultEngineConfig();
+        s_instance = &config;
+    }
 
     Config::Config(const std::string& path)
     {
@@ -24,21 +35,21 @@ namespace nebula {
             m_config = YAML::Load(sstr.str());
         }
         else
-            m_config = defaultConfig();
+            m_config = YAML::Node();
     }
 
-    void Config::save(const std::string& path)
+    void Config::save(const std::string& path) const
     {
         std::ofstream file(path);
         file << m_config;
     }
 
-    YAML::Node Config::defaultConfig()
+    YAML::Node Config::defaultEngineConfig()
     {
         YAML::Node node;
 
         auto memory_section = YAML::Node();
-        memory_section["block_size"] = 100_Mb;
+        memory_section["event_queue_size"] = 10_Mb;
 
         node["memory"] = memory_section;
 

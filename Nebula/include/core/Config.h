@@ -10,20 +10,29 @@
 
 #include "Core.h"
 
+int main(int argc, char** argv);
+
 namespace nebula {
 
     class NEBULA_API Config
     {
     public:
-        explicit Config(const std::string& path = "engine_config.yaml");
+        explicit Config(const std::string& path);
 
-        void save(const std::string& path = "engine_config.yaml");
+        void save(const std::string& path) const;
+        bool isEmpty() const { return m_config.Type() == YAML::NodeType::Null; }
+
         YAML::Node& getConfig() { return m_config; }
-
-        static YAML::Node defaultConfig();
+        static const YAML::Node& getEngineConfig() { return s_instance->getConfig(); }
 
     private:
         YAML::Node m_config;
+
+        static void setEngineConfig(Config& config);
+        static YAML::Node defaultEngineConfig();
+
+        static Config* s_instance;
+        friend int ::main(int argc, char** argv);
     };
 
 }

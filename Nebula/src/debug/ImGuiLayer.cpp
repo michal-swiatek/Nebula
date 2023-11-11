@@ -13,7 +13,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include "core/Application.h"
-#include "OpenGLConfiguration.h"
+#include "platform/OpenGL/OpenGLConfiguration.h"
 
 namespace nebula {
 

@@ -6,7 +6,6 @@
 #ifndef NEBULAENGINE_IMGUILAYER_H
 #define NEBULAENGINE_IMGUILAYER_H
 
-#include "core/Core.h"
 #include "core/Layer.h"
 
 namespace nebula {

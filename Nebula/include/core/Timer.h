@@ -6,13 +6,9 @@
 #ifndef NEBULAENGINE_TIMER_H
 #define NEBULAENGINE_TIMER_H
 
-#include <chrono>
-
-#include "Core.h"
-
 namespace nebula {
 
-    class NEBULA_API Timer
+    class Timer
     {
     public:
         Timer()

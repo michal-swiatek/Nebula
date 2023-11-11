@@ -6,8 +6,6 @@
 #ifndef NEBULAENGINE_ENTRYPOINT_H
 #define NEBULAENGINE_ENTRYPOINT_H
 
-#include <memory>
-
 #include "Types.h"
 #include "Logging.h"
 #include "Application.h"

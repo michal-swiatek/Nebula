@@ -23,6 +23,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLContext.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
+        src/memory/Allocators.cpp
 )
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES})

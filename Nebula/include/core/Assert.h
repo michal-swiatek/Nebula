@@ -9,6 +9,7 @@
 #define NEBULAENGINE_ASSERT_H
 
 #include "Core.h"
+#include "Logging.h"
 
 #ifdef NB_ENABLE_ASSERTS
     #define NB_INTERNAL_ASSERT_IMPL(type, check, msg, ...) { if(!(check)) { NB##type##ERROR(msg, __VA_ARGS__); NB_DEBUGBREAK(); } }

@@ -10,7 +10,7 @@
 #include "events/KeyboardEvents.h"
 #include "events/ApplicationEvents.h"
 
-#include "OpenGLConfiguration.h"
+#include "platform/OpenGL/OpenGLConfiguration.h"
 
 namespace nebula {
 
@@ -21,7 +21,7 @@ namespace nebula {
         NB_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
     }
 
-    WindowsWindow::WindowsWindow(const nebula::WindowProperties& properties)
+    WindowsWindow::WindowsWindow(const WindowProperties& properties)
     {
         m_window_data.title = properties.title;
         m_window_data.width = properties.width;
@@ -29,7 +29,7 @@ namespace nebula {
         m_window_data.vsync = properties.vsync;
 
         NB_CORE_INFO("Creating window: {} ({}, {})", properties.title, properties.width, properties.height);
-        if (window_count == 0)
+        if (window_count++ == 0)
         {
             NB_CORE_INFO("Initializing GLFW");
             auto success = glfwInit();
@@ -37,15 +37,13 @@ namespace nebula {
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
+        //  TODO: Check context type
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         m_window = glfwCreateWindow(properties.width, properties.height, properties.title.c_str(), nullptr, nullptr);
-
-        glfwMakeContextCurrent(m_window);
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        NB_CORE_ASSERT(status, "Failed to initialize Glad!");
+        m_context = RenderContext::create(m_window);
 
         if (m_window_data.vsync)
             glfwSwapInterval(1);
@@ -59,9 +57,8 @@ namespace nebula {
     WindowsWindow::~WindowsWindow()
     {
         glfwDestroyWindow(m_window);
-        --window_count;
 
-        if (window_count == 0)
+        if (--window_count == 0)
         {
             NB_CORE_INFO("Terminating GLFW");
             glfwTerminate();
@@ -133,7 +130,7 @@ namespace nebula {
 
     void WindowsWindow::onUpdate()
     {
-        glfwSwapBuffers(m_window);
+        m_context->swapBuffers();
         glfwPollEvents();
     }
 
@@ -155,6 +152,11 @@ namespace nebula {
         m_window_data.vsync = window_properties.vsync;
 
         setVSync(m_window_data.vsync);
+    }
+
+    void WindowsWindow::setRenderContext()
+    {
+        m_context = RenderContext::create(m_window);
     }
 
 }

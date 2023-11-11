@@ -21,8 +21,10 @@ int main(int argc, char** argv)
 {
     initSubsystems();
 
-    auto app = nebula::Scope<nebula::Application>(nebula::createApplication(argc, argv));
-    app->run();
+    {
+        auto app = nebula::Scope<nebula::Application>(nebula::createApplication(argc, argv));
+        app->run();
+    }
 
     shutdownSubsystems();
 

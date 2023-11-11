@@ -8,6 +8,8 @@
 #include "core/Window.h"
 #include "core/Input.h"
 
+#include "platform/OpenGL/OpenGLContext.h"
+
 #ifdef NB_PLATFORM_WINDOWS
     #include "platform/Windows/WindowsWindow.h"
     #include "platform/Windows/WindowsInput.h"
@@ -35,6 +37,12 @@ namespace nebula {
         NB_CORE_ASSERT(false, "Unknown platform!");
         return nullptr;
         #endif
+    }
+
+    Scope<RenderContext> RenderContext::create(void* window_handle)
+    {
+        //  TODO: Implement context switching
+        return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
     }
 
 }

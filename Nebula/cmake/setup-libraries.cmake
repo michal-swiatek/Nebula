@@ -1,6 +1,6 @@
 set(OPENGL_MAJOR_VERSION 4)
 set(OPENGL_MINOR_VERSION 6)
-configure_file(include/OpenGLConfiguration.h.in include/OpenGLConfiguration.h @ONLY)
+configure_file(include/platform/OpenGL/OpenGLConfiguration.h.in include/platform/OpenGL/OpenGLConfiguration.h @ONLY)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party)
 

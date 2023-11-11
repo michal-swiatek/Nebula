@@ -47,6 +47,7 @@ namespace nebula {
         virtual void setVSync(bool enabled) = 0;
         virtual void setProperties(const WindowProperties& window_properties) = 0;
 
+        virtual void setRenderContext() = 0;
         [[nodiscard]] virtual void* getWindowHandle() const = 0;
 
     private:

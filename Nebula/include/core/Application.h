@@ -81,13 +81,13 @@ namespace nebula {
         Timer m_timer;
         double m_update_accumulator = 0.0;
 
-        LayerStack m_layer_stack;
-        EventManager m_event_manager;
-        LayerStack::LayerID m_imgui_layer;
-
         Scope<Input> m_input;
         Scope<Window> m_window;
         ApplicationSpecification m_specification;
+
+        LayerStack m_layer_stack;
+        EventManager m_event_manager;
+        LayerStack::LayerID m_imgui_layer;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

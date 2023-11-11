@@ -86,7 +86,7 @@ namespace nebula {
         }
     }
 
-    void Application::setRenderingAPI(renderer::API api)
+    void Application::setRenderingAPI(rendering::API api)
     {
         m_window->setRenderContext(api);
     }

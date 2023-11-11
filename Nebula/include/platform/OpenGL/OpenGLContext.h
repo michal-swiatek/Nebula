@@ -10,7 +10,7 @@
 
 struct GLFWwindow;
 
-namespace nebula {
+namespace nebula::rendering {
 
     class OpenGLContext final : public RenderContext
     {

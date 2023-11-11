@@ -6,7 +6,7 @@
 #ifndef RENDERERAPI_H
 #define RENDERERAPI_H
 
-namespace nebula::renderer {
+namespace nebula::rendering {
 
     enum class API
     {

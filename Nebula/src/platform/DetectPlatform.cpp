@@ -40,13 +40,17 @@ namespace nebula {
         #endif
     }
 
-    Scope<RenderContext> RenderContext::create(const renderer::API api, void* window_handle)
-    {
-        switch (api)
+    namespace rendering {
+
+        Scope<RenderContext> RenderContext::create(const API api, void* window_handle)
         {
-            case renderer::API::cOpenGL:    return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
-            default:                        NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            switch (api)
+            {
+                case API::cOpenGL:    return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
+                default:                           NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
         }
+
     }
 
 }

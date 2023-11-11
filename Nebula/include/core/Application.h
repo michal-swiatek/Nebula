@@ -30,7 +30,7 @@ namespace nebula {
         std::string working_directory;
 
         int render_fps = 0;
-        int update_fps = 50;
+        int update_fps = 120;
     };
 
     class NEBULA_API Application
@@ -66,7 +66,7 @@ namespace nebula {
         void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
         void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
 
-        void setRenderingAPI(renderer::API api);
+        void setRenderingAPI(rendering::API api);
 
         [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }

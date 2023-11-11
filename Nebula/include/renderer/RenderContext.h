@@ -11,17 +11,23 @@
 
 namespace nebula {
 
-    class RenderContext
-    {
-    public:
-        virtual ~RenderContext() = default;
+    class WindowsWindow;
 
-        virtual void swapBuffers() = 0;
+    namespace rendering {
 
-    private:
-        friend class WindowsWindow;
-        static Scope<RenderContext> create(renderer::API api, void* window_handle);
-    };
+        class RenderContext
+        {
+        public:
+            virtual ~RenderContext() = default;
+
+            virtual void swapBuffers() = 0;
+
+        private:
+            friend class nebula::WindowsWindow;
+            static Scope<RenderContext> create(API api, void* window_handle);
+        };
+
+    }
 
 }
 

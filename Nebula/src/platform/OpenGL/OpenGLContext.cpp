@@ -13,7 +13,7 @@
 #include "core/Assert.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
 
-namespace nebula {
+namespace nebula::rendering {
 
     OpenGLContext::OpenGLContext(GLFWwindow* window_handle) : m_window(window_handle)
     {

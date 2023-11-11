@@ -21,14 +21,14 @@ namespace nebula {
         int32_t width;
         int32_t height;
         bool vsync;
-        renderer::API api;
+        rendering::API api;
 
         explicit WindowProperties(
             std::string title = "Nebula Engine",
             int32_t width = 1600,
             int32_t height = 900,
             bool vsync = true,
-            renderer::API api = renderer::API::cOpenGL
+            rendering::API api = rendering::API::cOpenGL
         ) :
                 title(std::move(title)),
                 width(width),
@@ -58,7 +58,7 @@ namespace nebula {
 
         virtual void onUpdate() = 0;
         virtual void setEventManager(EventManager& event_manager) = 0;
-        virtual void setRenderContext(renderer::API api) = 0;
+        virtual void setRenderContext(rendering::API api) = 0;
 
         static Scope<Window> create(const WindowProperties& properties = WindowProperties());
     };

@@ -154,9 +154,9 @@ namespace nebula {
         setVSync(m_window_data.vsync);
     }
 
-    void WindowsWindow::setRenderContext(renderer::API api)
+    void WindowsWindow::setRenderContext(rendering::API api)
     {
-        m_context = RenderContext::create(api, m_window);
+        m_context = rendering::RenderContext::create(api, m_window);
     }
 
 }

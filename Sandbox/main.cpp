@@ -11,7 +11,7 @@ using namespace nebula;
 using namespace std::chrono_literals;
 
 auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 144, 120);
-auto window_properties = WindowProperties("Sandbox", 1600, 900, false, renderer::API::cOpenGL);
+auto window_properties = WindowProperties("Sandbox", 1600, 900, false, rendering::API::cOpenGL);
 
 class ExampleLayer : public Layer
 {
@@ -58,7 +58,7 @@ public:
         else if (event.getKeycode() == Keycode::R)
         {
             NB_TRACE("Reloading render context");
-            Application::get().setRenderingAPI(renderer::API::cOpenGL);
+            Application::get().setRenderingAPI(rendering::API::cOpenGL);
         }
 
         return true;

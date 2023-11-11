@@ -24,7 +24,10 @@ namespace nebula::memory {
             s_memory_chunks.erase(it);
     }
 
-    void MemoryManager::init() {}
+    void MemoryManager::init(std::size_t block_size)
+    {
+        NB_CORE_INFO("Initializing Engine with memory block of size: {} bytes", block_size);
+    }
 
     void MemoryManager::shutdown()
     {

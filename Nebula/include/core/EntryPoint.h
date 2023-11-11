@@ -10,15 +10,18 @@
 #include "Logging.h"
 #include "Application.h"
 #include "memory/MemoryManager.h"
+#include "Config.h"
 
-void initSubsystems();
+void initSubsystems(nebula::Config& config);
 void shutdownSubsystems();
 
 #ifdef NB_PLATFORM_WINDOWS
 
 int main(int argc, char** argv)
 {
-    initSubsystems();
+    nebula::Config engine_config;
+
+    initSubsystems(engine_config);
 
     {
         auto app = nebula::Scope<nebula::Application>(nebula::createApplication(argc, argv));
@@ -27,15 +30,21 @@ int main(int argc, char** argv)
 
     shutdownSubsystems();
 
+    engine_config.save();
+
     return 0;
 }
 
 #endif
 
-inline void initSubsystems()
+inline void initSubsystems(nebula::Config& config)
 {
-    nebula::memory::MemoryManager::init();
+    auto engine_config = config.getConfig();
+
+    auto memory_block_size = engine_config["memory"]["block_size"].as<int>();
+
     nebula::logging::initCore();
+    nebula::memory::MemoryManager::init(memory_block_size);
 }
 
 inline void shutdownSubsystems()

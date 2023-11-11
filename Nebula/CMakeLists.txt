@@ -15,6 +15,7 @@ set(NEBULA_SOURCE_FILES
         src/core/Application.cpp
         src/core/Logging.cpp
         src/core/LayerStack.cpp
+        src/core/Config.cpp
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp
         src/platform/DetectPlatform.cpp
@@ -27,6 +28,6 @@ set(NEBULA_SOURCE_FILES
 )
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES})
-target_link_libraries(nebula ${SPD_LOG} glfw ${YAML_CPP})
+target_link_libraries(nebula ${SPD_LOG} yaml-cpp glfw)
 target_precompile_headers(nebula PRIVATE include/nebula_pch.h)
 add_custom_command(TARGET nebula POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE}/libnebula.dll ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE})

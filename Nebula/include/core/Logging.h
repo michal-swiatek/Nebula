@@ -6,8 +6,6 @@
 #ifndef NEBULAENGINE_LOGGING_H
 #define NEBULAENGINE_LOGGING_H
 
-#include <string>
-
 #include <spdlog/spdlog.h>
 
 #include "Core.h"

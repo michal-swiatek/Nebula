@@ -55,15 +55,14 @@ set(IMGUI_HEADER_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_opengl3.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/misc/cpp/imgui_stdlib.h")
 
+# Restore project build type
+set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
+
 # yaml-cpp
 set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "Build lib only")
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "Build lib only")
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "Build static library")
 set(YAML_CPP_DISABLE_UNINSTALL ON CACHE BOOL "Build lib only")
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/yaml-cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/yaml-cpp/include)
-set(YAML_CPP ${yaml-cpp})
-
-# Restore project build type
-set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/yaml-cpp)

@@ -8,7 +8,7 @@
 #include <vector>
 
 using namespace nebula;
-using namespace nebula::memory;
+using namespace nebula::literals;
 using namespace std::chrono_literals;
 
 auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 144, 120);
@@ -39,30 +39,30 @@ public:
 
     void onUpdate(Timestep delta_time) override
     {
-        if (Input::isKeyPressed(Keycode::Space))
-            NB_INFO("Space is being pressed!");
+        // if (Input::isKeyPressed(Keycode::Space))
+        //     NB_INFO("Space is being pressed!");
     }
 
     void onFixedUpdate(Timestep delta_time) override
     {
-        memory::ScopedAllocator<memory::StackAllocator, 10_Kb> allocator{};
-
-        auto* temp = allocator.create<Temp>(5);
-        NB_INFO("Succesfully created Temp object: {}, {}", temp->number, temp->string);
-
-        for (int i = 0; i < 10; ++i)
-            m_vector.push_back(Temp(i));
-
-        for (const auto& t : m_vector)
-            NB_INFO("Temp object: {}, {}", t.number, t.string);
-
-        NB_INFO("Used memory: {}", m_allocator.getUsedMemory());
-
-        m_vector.clear();
-        m_vector.shrink_to_fit();
-        m_allocator.clear();
-
-        auto temp2 = createReference<Temp2>(5);
+        // memory::ScopedAllocator<memory::StackAllocator, 10_Kb> allocator{};
+        //
+        // auto* temp = allocator.create<Temp>(5);
+        // NB_INFO("Succesfully created Temp object: {}, {}", temp->number, temp->string);
+        //
+        // for (int i = 0; i < 10; ++i)
+        //     m_vector.push_back(Temp(i));
+        //
+        // for (const auto& t : m_vector)
+        //     NB_INFO("Temp object: {}, {}", t.number, t.string);
+        //
+        // NB_INFO("Used memory: {}", m_allocator.getUsedMemory());
+        //
+        // m_vector.clear();
+        // m_vector.shrink_to_fit();
+        // m_allocator.clear();
+        //
+        // auto temp2 = createReference<Temp2>(5);
     }
 
     void onRender() override

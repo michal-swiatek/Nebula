@@ -26,6 +26,16 @@ namespace nebula {
 
     }
 
+    constexpr std::size_t operator ""_Kb (std::size_t size) { return size * 1024; }
+    constexpr std::size_t operator ""_Mb (std::size_t size) { return size * 1024_Kb; }
+    constexpr std::size_t operator ""_Gb (std::size_t size) { return size * 1024_Mb; }
+    constexpr std::size_t operator ""_Tb (std::size_t size) { return size * 1024_Gb; }
+
+    constexpr std::size_t operator ""_KB (std::size_t size) { return size * 1024 * 8; }
+    constexpr std::size_t operator ""_MB (std::size_t size) { return size * 1024_KB; }
+    constexpr std::size_t operator ""_GB (std::size_t size) { return size * 1024_MB; }
+    constexpr std::size_t operator ""_TB (std::size_t size) { return size * 1024_GB; }
+
     template <typename T>
     using Scope = std::unique_ptr<T>;
 

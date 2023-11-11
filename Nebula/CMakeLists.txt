@@ -21,6 +21,8 @@ set(NEBULA_SOURCE_FILES
         src/platform/Windows/WindowsInput.cpp
         src/platform/Windows/WindowsWindow.cpp
         src/platform/OpenGL/OpenGLContext.cpp
+        src/memory/MemoryChunk.cpp
+        src/memory/MemoryManager.cpp
 )
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES})

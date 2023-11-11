@@ -7,7 +7,6 @@
 #define NEBULAENGINE_LOGGING_H
 
 #include <string>
-#include <memory>
 
 #include <spdlog/spdlog.h>
 

@@ -9,6 +9,7 @@
 #include "Types.h"
 #include "Logging.h"
 #include "Application.h"
+#include "memory/MemoryManager.h"
 
 void initSubsystems();
 void shutdownSubsystems();
@@ -33,12 +34,14 @@ int main(int argc, char** argv)
 
 inline void initSubsystems()
 {
+    nebula::memory::MemoryManager::init();
     nebula::logging::initCore();
 }
 
 inline void shutdownSubsystems()
 {
     nebula::logging::shutdown();
+    nebula::memory::MemoryManager::shutdown();
 }
 
 #endif //NEBULAENGINE_ENTRYPOINT_H

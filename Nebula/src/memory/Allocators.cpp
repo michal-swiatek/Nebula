@@ -56,10 +56,10 @@ namespace nebula::memory {
 
         Allocator::Allocator(Allocator&& rhs) noexcept : m_chunk(rhs.m_chunk), m_size(rhs.m_size)
         {
+            #ifdef NB_DEBUG_BUILD
             m_used = rhs.m_used;
             m_num_allocations = rhs.m_num_allocations;
 
-            #ifdef NB_DEBUG_BUILD
             rhs.m_chunk = nullptr;
             rhs.m_size = 0;
             rhs.m_used = 0;
@@ -71,10 +71,11 @@ namespace nebula::memory {
         {
             m_chunk = rhs.m_chunk;
             m_size = rhs.m_size;
+
+            #ifdef NB_DEBUG_BUILD
             m_used = rhs.m_used;
             m_num_allocations = rhs.m_num_allocations;
 
-            #ifdef NB_DEBUG_BUILD
             rhs.m_chunk = nullptr;
             rhs.m_size = 0;
             rhs.m_used = 0;

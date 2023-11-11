@@ -122,21 +122,21 @@ namespace nebula {
         static int update_fps = Application::get().getUpdateFps();
         static int render_fps = Application::get().getRenderFps();
 
-        //  Update current frame time info
-        auto frame_time = Timestep(m_frame_timer.elapsedSeconds(true));
-        auto frame_milliseconds = frame_time.getMilliSeconds();
-
-        int current_fps = 1.0 / frame_time;
-        int target_update_fps = Application::get().getUpdateFps();
-        int target_render_fps = Application::get().getRenderFps();
-        float target_milliseconds = target_render_fps == 0 ? 0.0f : 1000.0f / target_render_fps;
-
         //  Update current application settings
         auto& application = Application::get();
 
         vsync = application.getWindow().getProperties().vsync;
         update_fps = application.getUpdateFps();
         render_fps = application.getRenderFps();
+
+        //  Update current frame time info
+        auto frame_time = Timestep(m_frame_timer.elapsedSeconds(true));
+        auto frame_milliseconds = frame_time.getMilliSeconds();
+
+        int current_fps = 1.0 / frame_time;
+        int target_update_fps = update_fps;
+        int target_render_fps = render_fps;
+        float target_milliseconds = target_render_fps == 0 ? 0.0f : 1000.0f / target_render_fps;
 
         //  Update graph info
         frame_times[frame_offset] = static_cast<float>(frame_milliseconds);

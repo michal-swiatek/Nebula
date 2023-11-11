@@ -7,6 +7,7 @@
 
 #include "core/Window.h"
 #include "core/Input.h"
+#include "core/Types.h"
 
 #include "renderer/RendererAPI.h"
 #include "platform/OpenGL/OpenGLContext.h"
@@ -23,7 +24,7 @@ namespace nebula {
     Scope<Window> Window::create(const WindowProperties& properties)
     {
         #ifdef NB_PLATFORM_WINDOWS
-        return std::make_unique<WindowsWindow>(properties);
+        return createScope<WindowsWindow>(properties);
         #else
         NB_CORE_ASSERT(false, "Unknown platform!");
         return nullptr;
@@ -33,7 +34,7 @@ namespace nebula {
     Scope<Input> Input::create(View<Window> window)
     {
         #ifdef NB_PLATFORM_WINDOWS
-        return std::make_unique<WindowsInput>(*window);
+        return createScope<WindowsInput>(*window);
         #else
         NB_CORE_ASSERT(false, "Unknown platform!");
         return nullptr;
@@ -46,8 +47,8 @@ namespace nebula {
         {
             switch (api)
             {
-                case API::cOpenGL:    return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
-                default:                           NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+                case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
+                default:                      NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
         }
 

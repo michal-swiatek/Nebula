@@ -6,21 +6,7 @@
 #ifndef NEBULAENGINE_TYPES_H
 #define NEBULAENGINE_TYPES_H
 
-#include <memory>
-
 #include "Timestep.h"
-
-namespace nebula {
-    
-    template <typename T>
-    using Scope = std::unique_ptr<T>;
-
-    template <typename T>
-    using Reference = std::shared_ptr<T>;
-
-    template <typename T>
-    using View = T*;
-    
-}
+#include "memory/Types.h"
 
 #endif //NEBULAENGINE_TYPES_H

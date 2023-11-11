@@ -5,14 +5,17 @@
 
 #include "debug/ImGuiLayer.h"
 
+#include <array>
 #include <format>
 
 #include <imgui.h>
+#include <numeric>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
 #include "core/Application.h"
+#include "core/Timestep.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
 
 namespace nebula {
@@ -90,6 +93,86 @@ namespace nebula {
 
     void ImGuiLayer::onImGuiRender()
     {
+        if (!m_enabled)
+            return;
+
         ImGui::ShowDemoWindow();
+
+        performanceOverlay();
     }
+
+    void ImGuiLayer::performanceOverlay()
+    {
+        ImGui::Begin("Performance");
+
+        fpsSection();
+
+        ImGui::End();
+    }
+
+    void ImGuiLayer::fpsSection()
+    {
+        //  Frame time graph
+        static constexpr int n_frames = 100;
+        static std::array<float, n_frames> frame_times{};
+        static int frame_offset = 0;
+
+        //  FPS control variables
+        static bool vsync = Application::get().getWindow().getProperties().vsync;
+        static int update_fps = Application::get().getUpdateFps();
+        static int render_fps = Application::get().getRenderFps();
+
+        //  Update current frame time info
+        auto frame_time = Timestep(m_frame_timer.elapsedSeconds(true));
+        auto frame_milliseconds = frame_time.getMilliSeconds();
+
+        int current_fps = 1.0 / frame_time;
+        int target_update_fps = Application::get().getUpdateFps();
+        int target_render_fps = Application::get().getRenderFps();
+        float target_milliseconds = target_render_fps == 0 ? 0.0f : 1000.0f / target_render_fps;
+
+        //  Update current application settings
+        auto& application = Application::get();
+
+        vsync = application.getWindow().getProperties().vsync;
+        update_fps = application.getUpdateFps();
+        render_fps = application.getRenderFps();
+
+        //  Update graph info
+        frame_times[frame_offset] = static_cast<float>(frame_milliseconds);
+        frame_offset = (frame_offset + 1) % n_frames;
+
+        int average_fps = 1000.0f * n_frames / std::accumulate(frame_times.begin(), frame_times.end(), 0.0f);
+        int one_percent_low = 1000.0f / *std::ranges::max_element(frame_times);
+
+        //  Prepare text
+        auto fps_text = target_render_fps == 0 ? "unlimited" : std::to_string(target_render_fps);
+        auto average_fps_text = std::format("avg fps: {}, 1% low: {}", average_fps, one_percent_low);
+        auto text_color = (float)current_fps / target_render_fps > 0.95f ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+        if (ImGui::CollapsingHeader("Frames per second", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::Checkbox("VSync", &vsync);
+            ImGui::SliderInt("Update fps", &update_fps, 1, 200);
+            ImGui::SliderInt("Render fps", &render_fps, 0, 500);
+
+            ImGui::Separator();
+
+            ImGui::Text("Target update fps: %i (%.3fms)", target_update_fps, 1000.0f / target_update_fps);
+            ImGui::Text("Target render fps: %s (%.3fms)", fps_text.c_str(), target_milliseconds);
+
+            ImGui::TextColored(text_color, "Current fps: %i", current_fps);
+            ImGui::TextColored(text_color, "Current frame time: %ims", static_cast<int>(frame_milliseconds));
+
+            ImGui::Separator();
+
+            ImGui::PlotLines("Frame time [ms]", frame_times.data(), n_frames, frame_offset, average_fps_text.c_str(), 0.0f, 50.0f, ImVec2(0, 80.0f));
+        }
+
+        //  Set new fps settings
+        application.setUpdateFps(update_fps);
+        application.setRenderFps(render_fps);
+        application.getWindow().setVSync(vsync);
+    }
+
 }

@@ -46,12 +46,8 @@ namespace nebula {
             auto frame_time = m_timer.elapsedSeconds(true);
             m_update_accumulator += frame_time;
 
-            // NB_CORE_INFO("Frame time: {:.3f}, fps: {}", frame_time, int(1.0 / frame_time));
-
             if (!m_minimized)
             {
-                ImGuiLayer::begin();
-
                 for (auto& layer : m_layer_stack)
                     layer->onUpdate(Timestep(frame_time));
 
@@ -65,6 +61,8 @@ namespace nebula {
 
                 glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
+
+                ImGuiLayer::begin();
 
                 for (auto& layer : m_layer_stack)
                 {

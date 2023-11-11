@@ -7,6 +7,7 @@
 #define NEBULAENGINE_IMGUILAYER_H
 
 #include "core/Layer.h"
+#include "core/Timer.h"
 
 namespace nebula {
 
@@ -31,6 +32,13 @@ namespace nebula {
         bool m_block_events = true;
 
         static int s_counter;
+
+    //  Debug ImGui windows
+    private:
+        void performanceOverlay();
+        void fpsSection();
+
+        Timer m_frame_timer{};
     };
 
 }

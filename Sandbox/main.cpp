@@ -10,7 +10,7 @@
 using namespace nebula;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP", "");
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 144, 120);
 auto window_properties = WindowProperties("Sandbox", 1600, 900, false, renderer::API::cOpenGL);
 
 class ExampleLayer : public Layer
@@ -31,8 +31,7 @@ public:
 
     void onRender() override
     {
-        Timer busy_timer{};
-        while (busy_timer.elapsedMilliSeconds() < 2);
+
     }
 
     void onAttach() override

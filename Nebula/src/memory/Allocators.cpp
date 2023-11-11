@@ -90,7 +90,7 @@ namespace nebula::memory {
     ////    LinearAllocator    //////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    LinearAllocator::LinearAllocator(void* memory_chunk, std::size_t size) noexcept : Allocator(memory_chunk, size) {}
+    LinearAllocator::LinearAllocator(const void* memory_chunk, std::size_t size) noexcept : Allocator(memory_chunk, size) {}
 
     LinearAllocator::~LinearAllocator()
     {
@@ -151,7 +151,13 @@ namespace nebula::memory {
     ////    StackAllocator    ///////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    StackAllocator::StackAllocator(void* memory_chunk, std::size_t size) noexcept : Allocator(memory_chunk, size), m_current_address(memory_chunk) {}
+    StackAllocator::StackAllocator(
+        const void* memory_chunk,
+        std::size_t size
+    ) noexcept :
+            Allocator(memory_chunk, size),
+            m_current_address(const_cast<void*>(memory_chunk))
+    {}
 
     StackAllocator::StackAllocator(StackAllocator&& rhs) noexcept : Allocator(std::move(rhs)), m_current_address(rhs.m_current_address)
     {

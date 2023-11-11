@@ -35,14 +35,16 @@ namespace nebula::memory::impl {
     class ScopedMemoryChunk
     {
     public:
+        ScopedMemoryChunk() = default;
+
         ScopedMemoryChunk(const ScopedMemoryChunk&) = delete;
         ScopedMemoryChunk& operator = (const ScopedMemoryChunk&) = delete;
 
-        [[nodiscard]] void* getAddress() const { return reinterpret_cast<void*>(m_chunk.data()); }
+        [[nodiscard]] const void* getAddress() const { return reinterpret_cast<const void*>(m_chunk.data()); }
         [[nodiscard]] std::size_t getSize() const { return Size; }
 
     private:
-        std::array<std::byte, Size> m_chunk;
+        std::array<std::byte, Size> m_chunk{};
     };
 
 }

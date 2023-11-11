@@ -17,6 +17,10 @@
 #include "events/KeyboardEvents.h"
 #include "events/ApplicationEvents.h"
 
+#include "memory/Wrappers.h"
+#include "memory/Allocators.h"
+#include "memory/MemoryManager.h"
+
 //  Entry point
 #include "core/EntryPoint.h"
 

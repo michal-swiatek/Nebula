@@ -28,17 +28,18 @@ namespace nebula::memory {
             virtual void* allocate(std::size_t size, std::uintptr_t alignment) = 0;
             virtual void deallocate(void* address) = 0;
 
-            #ifdef NB_DEBUG_BUILD
             [[nodiscard]] std::size_t getSize() const { return m_size; }
-            [[nodiscard]] std::size_t getUsed() const { return m_used; }
+
+            #ifdef NB_DEBUG_BUILD
+            [[nodiscard]] std::size_t getUsedMemory() const { return m_used; }
             [[nodiscard]] std::size_t getNumAllocations() const { return m_num_allocations; }
             #endif
 
         protected:
             const void* m_chunk;
+            std::size_t m_size;
 
             #ifdef NB_DEBUG_BUILD
-            std::size_t m_size;
             std::size_t m_used = 0;
             std::size_t m_num_allocations = 0;
             #endif
@@ -46,10 +47,10 @@ namespace nebula::memory {
 
     }
 
-    class LinearAllocator final : public impl::Allocator
+    class NEBULA_API LinearAllocator final : public impl::Allocator
     {
     public:
-        LinearAllocator(void* memory_chunk, std::size_t size) noexcept;
+        LinearAllocator(const void* memory_chunk, std::size_t size) noexcept;
         ~LinearAllocator() override;
 
         LinearAllocator(const LinearAllocator&) = delete;
@@ -64,13 +65,15 @@ namespace nebula::memory {
 
     private:
         std::uintptr_t m_offset = 0;
+
+        template <typename Allocator, std::size_t Size>
+        friend class ScopedAllocator;
     };
 
-    class StackAllocator final : public impl::Allocator
+    class NEBULA_API StackAllocator final : public impl::Allocator
     {
     public:
-        StackAllocator(void* memory_chunk, std::size_t size) noexcept;
-        ~StackAllocator() override = default;
+        StackAllocator(const void* memory_chunk, std::size_t size) noexcept;
 
         StackAllocator(const StackAllocator&) = delete;
         StackAllocator& operator = (StackAllocator&) = delete;
@@ -93,6 +96,9 @@ namespace nebula::memory {
             void* previous_address;
             #endif
         };
+
+        template <typename Allocator, std::size_t Size>
+        friend class ScopedAllocator;
     };
 
 }

@@ -6,9 +6,11 @@
 #ifndef NEBULAENGINE_TIMESTEP_H
 #define NEBULAENGINE_TIMESTEP_H
 
+#include "core/Core.h"
+
 namespace nebula {
 
-    class Timestep
+    class NEBULA_API Timestep
     {
     public:
         explicit Timestep(double seconds = 0.0) : m_time(seconds) {}

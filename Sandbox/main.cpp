@@ -5,18 +5,37 @@
 
 #include "Nebula.h"
 
-#include <thread>
+#include <vector>
 
 using namespace nebula;
+using namespace nebula::memory;
 using namespace std::chrono_literals;
 
 auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 144, 120);
 auto window_properties = WindowProperties("Sandbox", 1600, 900, false, rendering::API::cOpenGL);
 
+struct Temp
+{
+    int number;
+    char string[100];
+
+    explicit Temp(int number) : number(number), string{"Hello world!"} {}
+};
+
+struct Temp2 : public Temp
+{
+    explicit Temp2(int number) : Temp(number) {}
+    ~Temp2() { NB_TRACE("Temp2 {} deleted!", number); }
+};
+
 class ExampleLayer : public Layer
 {
 public:
-    ExampleLayer() : Layer("Example Layer") {}
+    ExampleLayer() :
+        Layer("Example Layer"),
+        m_allocator(memory::MemoryManager::requestMemory(3224), 3224),
+        m_vector(m_allocator)
+    {}
 
     void onUpdate(Timestep delta_time) override
     {
@@ -26,7 +45,24 @@ public:
 
     void onFixedUpdate(Timestep delta_time) override
     {
+        memory::ScopedAllocator<memory::StackAllocator, 10_Kb> allocator{};
 
+        auto* temp = allocator.create<Temp>(5);
+        NB_INFO("Succesfully created Temp object: {}, {}", temp->number, temp->string);
+
+        for (int i = 0; i < 10; ++i)
+            m_vector.push_back(Temp(i));
+
+        for (const auto& t : m_vector)
+            NB_INFO("Temp object: {}, {}", t.number, t.string);
+
+        NB_INFO("Used memory: {}", m_allocator.getUsedMemory());
+
+        m_vector.clear();
+        m_vector.shrink_to_fit();
+        m_allocator.clear();
+
+        auto temp2 = createReference<Temp2>(5);
     }
 
     void onRender() override
@@ -63,6 +99,10 @@ public:
 
         return true;
     }
+
+private:
+    memory::LinearAllocator m_allocator;
+    std::vector<Temp, memory::STLAdapter<Temp, memory::LinearAllocator>> m_vector;
 };
 
 class Sandbox : public Application

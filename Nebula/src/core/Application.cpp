@@ -15,7 +15,7 @@ namespace nebula {
 
     Application* Application::s_instance = nullptr;
 
-    Application::Application(ApplicationSpecification specification)
+    Application::Application(ApplicationSpecification specification, const std::optional<WindowProperties>& window_properties)
         : m_specification(std::move(specification)),
           m_event_manager(m_layer_stack, [this](Event& event) { onEvent(event); })
     {
@@ -27,7 +27,8 @@ namespace nebula {
 
         logging::initClient(m_specification.logger_name);
 
-        m_window = Window::create(WindowProperties(m_specification.name));
+        auto window_settings = window_properties ? *window_properties : WindowProperties(m_specification.name);
+        m_window = Window::create(window_settings);
         m_window->setEventManager(m_event_manager);
 
         m_input = Input::create(m_window.get());
@@ -85,6 +86,11 @@ namespace nebula {
                 while (busy_timer.elapsedSeconds() < wait_time);
             }
         }
+    }
+
+    void Application::setRenderingAPI(renderer::API api)
+    {
+        m_window->setRenderContext(api);
     }
 
     void Application::onEvent(Event& event)

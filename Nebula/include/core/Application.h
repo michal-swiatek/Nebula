@@ -7,6 +7,7 @@
 #define NEBULAENGINE_APPLICATION_H
 
 #include <string>
+#include <optional>
 
 #include "Core.h"
 #include "Timer.h"
@@ -35,7 +36,7 @@ namespace nebula {
     class NEBULA_API Application
     {
     public:
-        explicit Application(ApplicationSpecification specification);
+        explicit Application(ApplicationSpecification specification, const std::optional<WindowProperties>& window_properties = {});
         virtual ~Application() = default;
 
         void close() { m_running = false; }
@@ -64,6 +65,8 @@ namespace nebula {
 
         void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
         void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
+
+        void setRenderingAPI(renderer::API api);
 
         [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }

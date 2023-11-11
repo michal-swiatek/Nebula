@@ -31,7 +31,6 @@ namespace nebula {
         void setEventManager(EventManager& event_manager) override { m_window_data.event_manager = &event_manager; }
         void setProperties(const WindowProperties& window_properties) override;
 
-        void setRenderContext() override;
         [[nodiscard]] void* getWindowHandle() const override { return m_window; }
 
     private:
@@ -39,6 +38,7 @@ namespace nebula {
         Scope<RenderContext> m_context = nullptr;
 
         void setGLFWCallbacks() const;
+        void setRenderContext(renderer::API api) override;
 
         struct WindowData
         {

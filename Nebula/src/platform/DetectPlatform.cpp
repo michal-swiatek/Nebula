@@ -8,6 +8,7 @@
 #include "core/Window.h"
 #include "core/Input.h"
 
+#include "renderer/RendererAPI.h"
 #include "platform/OpenGL/OpenGLContext.h"
 
 #ifdef NB_PLATFORM_WINDOWS
@@ -39,10 +40,13 @@ namespace nebula {
         #endif
     }
 
-    Scope<RenderContext> RenderContext::create(void* window_handle)
+    Scope<RenderContext> RenderContext::create(const renderer::API api, void* window_handle)
     {
-        //  TODO: Implement context switching
-        return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
+        switch (api)
+        {
+            case renderer::API::cOpenGL:    return std::make_unique<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
+            default:                        NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+        }
     }
 
 }

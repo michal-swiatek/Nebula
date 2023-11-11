@@ -11,6 +11,7 @@
 #include "Core.h"
 #include "Types.h"
 #include "events/EventManager.h"
+#include "renderer/RendererAPI.h"
 
 namespace nebula {
 
@@ -20,17 +21,20 @@ namespace nebula {
         int32_t width;
         int32_t height;
         bool vsync;
+        renderer::API api;
 
         explicit WindowProperties(
             std::string title = "Nebula Engine",
             int32_t width = 1600,
             int32_t height = 900,
-            bool vsync = true
+            bool vsync = true,
+            renderer::API api = renderer::API::cOpenGL
         ) :
                 title(std::move(title)),
                 width(width),
                 height(height),
-                vsync(vsync)
+                vsync(vsync),
+                api(api)
         {}
     };
 
@@ -47,7 +51,6 @@ namespace nebula {
         virtual void setVSync(bool enabled) = 0;
         virtual void setProperties(const WindowProperties& window_properties) = 0;
 
-        virtual void setRenderContext() = 0;
         [[nodiscard]] virtual void* getWindowHandle() const = 0;
 
     private:
@@ -55,6 +58,7 @@ namespace nebula {
 
         virtual void onUpdate() = 0;
         virtual void setEventManager(EventManager& event_manager) = 0;
+        virtual void setRenderContext(renderer::API api) = 0;
 
         static Scope<Window> create(const WindowProperties& properties = WindowProperties());
     };

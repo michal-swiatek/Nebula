@@ -43,7 +43,7 @@ namespace nebula {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         m_window = glfwCreateWindow(properties.width, properties.height, properties.title.c_str(), nullptr, nullptr);
-        m_context = RenderContext::create(m_window);
+        setRenderContext(properties.api);
 
         if (m_window_data.vsync)
             glfwSwapInterval(1);
@@ -154,9 +154,9 @@ namespace nebula {
         setVSync(m_window_data.vsync);
     }
 
-    void WindowsWindow::setRenderContext()
+    void WindowsWindow::setRenderContext(renderer::API api)
     {
-        m_context = RenderContext::create(m_window);
+        m_context = RenderContext::create(api, m_window);
     }
 
 }

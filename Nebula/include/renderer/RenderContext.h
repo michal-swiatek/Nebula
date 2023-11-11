@@ -7,6 +7,7 @@
 #define RENDERCONTEXT_H
 
 #include "core/Types.h"
+#include "renderer/RendererAPI.h"
 
 namespace nebula {
 
@@ -19,7 +20,7 @@ namespace nebula {
 
     private:
         friend class WindowsWindow;
-        static Scope<RenderContext> create(void* window_handle);
+        static Scope<RenderContext> create(renderer::API api, void* window_handle);
     };
 
 }

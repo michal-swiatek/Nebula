@@ -40,6 +40,7 @@ namespace nebula {
 
     void EventManager::dispatchEvents()
     {
+        //  Events don't get destroyed, so their destructors aren't called
         for (const auto& event : m_events)
             broadcastEvent(*event);
 

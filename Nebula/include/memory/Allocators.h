@@ -28,6 +28,19 @@ namespace nebula::memory {
             virtual void* allocate(std::size_t size, std::uintptr_t alignment) = 0;
             virtual void deallocate(void* address) = 0;
 
+            template <typename T, typename... Args>
+            T* create(Args&&... args)
+            {
+                return new (allocate(sizeof(T), alignof(T))) T(std::forward<Args>(args)...);
+            }
+
+            template <typename T>
+            void destroy(T* object)
+            {
+                object->~T();
+                deallocate(object);
+            }
+
             [[nodiscard]] std::size_t getSize() const { return m_size; }
 
             #ifdef NB_DEBUG_BUILD

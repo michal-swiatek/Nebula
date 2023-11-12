@@ -22,6 +22,8 @@ namespace nebula::memory {
             it != s_memory_chunks.end()
         )
             s_memory_chunks.erase(it);
+        else
+            NB_CORE_ASSERT(false, "Attempt to free memory that was not initialized by MemoryManager!");
     }
 
     void MemoryManager::init()

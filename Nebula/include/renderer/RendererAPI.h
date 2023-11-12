@@ -6,12 +6,23 @@
 #ifndef RENDERERAPI_H
 #define RENDERERAPI_H
 
+#include "core/Types.h"
+
 namespace nebula::rendering {
 
     enum class API
     {
         cUndefined = 0,
         cOpenGL = 1
+    };
+
+    class RendererApi
+    {
+    public:
+        virtual ~RendererApi() = default;
+
+        static View<RendererApi> create(API api);
+        static void destroy(RendererApi* api);
     };
 
 }

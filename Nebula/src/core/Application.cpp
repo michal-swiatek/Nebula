@@ -12,6 +12,8 @@
 #include "core/Logging.h"
 #include "debug/ImGuiLayer.h"
 
+#include "renderer/Renderer.h"
+
 namespace nebula {
 
     Application* Application::s_instance = nullptr;
@@ -37,11 +39,18 @@ namespace nebula {
 
         auto window_settings = window_properties ? *window_properties : WindowProperties(m_specification.name);
         m_window = Window::create(window_settings);
-        m_window->setEventManager(m_event_manager);
 
+        m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
 
+        rendering::Renderer::init(window_settings.api);
+
         m_imgui_layer = pushOverlay<ImGuiLayer>();
+    }
+
+    Application::~Application()
+    {
+        rendering::Renderer::shutdown();
     }
 
     void Application::run()
@@ -97,6 +106,7 @@ namespace nebula {
     void Application::setRenderingAPI(rendering::API api)
     {
         m_window->setRenderContext(api);
+        rendering::Renderer::setRenderingApi(api);
     }
 
     void Application::onEvent(Event& event)

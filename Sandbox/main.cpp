@@ -87,13 +87,13 @@ public:
         delegate.delegate<KeyPressedEvent>(NB_BIND_EVENT_FUNCTION(ExampleLayer::onKeyPressed));
     }
 
-    bool onKeyPressed(KeyPressedEvent& event)
+    bool onKeyPressed(const KeyPressedEvent& event)
     {
         if (event.getKeycode() == Keycode::Escape)
             Application::get().close();
         else if (event.getKeycode() == Keycode::R)
         {
-            NB_TRACE("Reloading render context");
+            NB_TRACE("Reloading render API");
             Application::get().setRenderingAPI(rendering::API::cOpenGL);
         }
 

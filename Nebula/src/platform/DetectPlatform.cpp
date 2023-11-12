@@ -5,12 +5,15 @@
 
 #include "platform/DetectPlatform.h"
 
+#include "memory/MemoryManager.h"
+
 #include "core/Window.h"
 #include "core/Input.h"
 #include "core/Types.h"
 
 #include "renderer/RendererAPI.h"
 #include "platform/OpenGL/OpenGLContext.h"
+#include "platform/OpenGL/OpenGLRendererAPI.h"
 
 #ifdef NB_PLATFORM_WINDOWS
     #include "platform/Windows/WindowsWindow.h"
@@ -50,6 +53,20 @@ namespace nebula {
                 case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
                 default:                      NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
+        }
+
+        View<RendererApi> RendererApi::create(const API api)
+        {
+            switch (api)
+            {
+                case API::cOpenGL:    return memory::MemoryManager::create<OpenGlRendererApi>();
+                default:     NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+        }
+
+        void RendererApi::destroy(RendererApi* api)
+        {
+            memory::MemoryManager::destroy(api);
         }
 
     }

@@ -8,7 +8,7 @@
 
 namespace nebula::rendering {
 
-    class OpenGlRendererApi : public RendererApi
+    class OpenGlRendererApi : public impl::RendererApi
     {
 
     };

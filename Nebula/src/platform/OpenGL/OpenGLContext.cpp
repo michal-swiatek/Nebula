@@ -34,10 +34,19 @@ namespace nebula::rendering {
         );
     }
 
+    void OpenGLContext::bind()
+    {
+        glfwMakeContextCurrent(m_window);
+    }
+
+    void OpenGLContext::unbind()
+    {
+        glfwMakeContextCurrent(nullptr);
+    }
+
     void OpenGLContext::swapBuffers()
     {
         glfwSwapBuffers(m_window);
     }
-
 
 }

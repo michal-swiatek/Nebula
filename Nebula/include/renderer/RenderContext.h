@@ -13,12 +13,15 @@ namespace nebula {
 
     class WindowsWindow;
 
-    namespace rendering {
+    namespace rendering::impl {
 
         class RenderContext
         {
         public:
             virtual ~RenderContext() = default;
+
+            virtual void bind() = 0;
+            virtual void unbind() = 0;
 
             virtual void swapBuffers() = 0;
 

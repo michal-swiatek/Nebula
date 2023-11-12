@@ -44,7 +44,7 @@ namespace nebula {
         #endif
     }
 
-    namespace rendering {
+    namespace rendering::impl {
 
         Scope<RenderContext> RenderContext::create(const API api, void* window_handle)
         {

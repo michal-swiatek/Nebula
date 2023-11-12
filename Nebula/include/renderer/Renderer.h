@@ -21,7 +21,7 @@ namespace nebula {
             virtual ~Renderer() = default;
 
         protected:
-            static View<RendererApi> s_renderer_api;
+            static View<impl::RendererApi> s_renderer_api;
 
         private:
             static void init(API api);

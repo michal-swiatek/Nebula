@@ -156,7 +156,7 @@ namespace nebula {
 
     void WindowsWindow::setRenderContext(rendering::API api)
     {
-        m_context = rendering::RenderContext::create(api, m_window);
+        m_context = rendering::impl::RenderContext::create(api, m_window);
     }
 
 }

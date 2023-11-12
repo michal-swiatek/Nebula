@@ -12,10 +12,13 @@ struct GLFWwindow;
 
 namespace nebula::rendering {
 
-    class OpenGLContext final : public RenderContext
+    class OpenGLContext final : public impl::RenderContext
     {
     public:
         explicit OpenGLContext(GLFWwindow* window_handle);
+
+        void bind() override;
+        void unbind() override;
 
         void swapBuffers() override;
 

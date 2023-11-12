@@ -4,10 +4,14 @@
 //
 
 #include "renderer/Renderer.h"
+#include "renderer/RenderCommand.h"
 
 namespace nebula::rendering {
 
+    using namespace impl;
+
     View<RendererApi> Renderer::s_renderer_api = nullptr;
+    View<RendererApi> RenderCommand::s_renderer_api = nullptr;
 
     void Renderer::init(API api)
     {
@@ -28,6 +32,7 @@ namespace nebula::rendering {
             RendererApi::destroy(s_renderer_api);
 
         s_renderer_api = RendererApi::create(api);
+        RenderCommand::s_renderer_api = s_renderer_api;
     }
 
 }

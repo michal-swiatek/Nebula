@@ -16,14 +16,18 @@ namespace nebula::rendering {
         cOpenGL = 1
     };
 
-    class RendererApi
-    {
-    public:
-        virtual ~RendererApi() = default;
+    namespace impl {
 
-        static View<RendererApi> create(API api);
-        static void destroy(RendererApi* api);
-    };
+        class RendererApi
+        {
+        public:
+            virtual ~RendererApi() = default;
+
+            static View<RendererApi> create(API api);
+            static void destroy(RendererApi* api);
+        };
+
+    }
 
 }
 

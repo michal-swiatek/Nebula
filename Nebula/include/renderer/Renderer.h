@@ -9,6 +9,8 @@
 #include "RendererAPI.h"
 #include "core/Types.h"
 
+#include "RenderCommand.h"
+
 namespace nebula {
 
     class Application;
@@ -19,6 +21,8 @@ namespace nebula {
         {
         public:
             virtual ~Renderer() = default;
+
+            void submit(RenderCommand&& command);
 
         protected:
             static View<impl::RendererApi> s_renderer_api;

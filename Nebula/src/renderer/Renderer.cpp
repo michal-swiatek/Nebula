@@ -13,6 +13,11 @@ namespace nebula::rendering {
     View<RendererApi> Renderer::s_renderer_api = nullptr;
     View<RendererApi> RenderCommand::s_renderer_api = nullptr;
 
+    void Renderer::submit(RenderCommand&& command)
+    {
+        command.execute();
+    }
+
     void Renderer::init(API api)
     {
         NB_CORE_ASSERT(!s_renderer_api, "Renderer should only be initialized once!");
@@ -26,13 +31,15 @@ namespace nebula::rendering {
         s_renderer_api = nullptr;
     }
 
-    void Renderer::setRenderingApi(API api)
+    void Renderer::setRenderingApi(const API api)
     {
         if (s_renderer_api)
             RendererApi::destroy(s_renderer_api);
 
         s_renderer_api = RendererApi::create(api);
         RenderCommand::s_renderer_api = s_renderer_api;
+
+        s_renderer_api->init();
     }
 
 }

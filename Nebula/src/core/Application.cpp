@@ -13,6 +13,7 @@
 #include "debug/ImGuiLayer.h"
 
 #include "renderer/Renderer.h"
+#include "renderer/RendererCommands.h"
 
 namespace nebula {
 
@@ -76,8 +77,9 @@ namespace nebula {
                     m_update_accumulator -= update_timestep;
                 }
 
-                glClearColor(0.0f, 0.0f, 0.2f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT);
+                auto renderer = rendering::Renderer();
+                auto command = rendering::ClearColorCommand(0.0f, 0.0f, 0.2f, 1.0f);
+                renderer.submit(std::move(command));
 
                 ImGuiLayer::begin();
 

@@ -34,6 +34,12 @@ namespace nebula::memory {
             return new (allocate(sizeof(T), alignof(T))) T(std::forward<Args>(args)...);
         }
 
+        template <typename T>
+        void destroy(T* object)
+        {
+            object->~T();
+        }
+
     private:
         impl::ScopedMemoryChunk<MemoryChunkSize> m_memory_chunk{};
         Allocator m_allocator;

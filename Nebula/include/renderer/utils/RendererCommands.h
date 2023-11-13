@@ -8,8 +8,8 @@
 
 #include <glm/glm.hpp>
 
-#include "RendererAPI.h"
-#include "RenderCommand.h"
+#include "renderer/RendererAPI.h"
+#include "renderer/RenderCommand.h"
 
 namespace nebula::rendering {
 

@@ -14,6 +14,11 @@ namespace nebula::rendering {
     View<RendererApi> RenderCommand::s_renderer_api = nullptr;
     View<RenderManager> Renderer::s_render_manager = nullptr;
 
+    void Renderer::renderScene()
+    {
+        s_render_manager->dispatchPasses();
+    }
+
     void Renderer::beginPass(View<RenderPass> pass)
     {
         NB_CORE_ASSERT(!m_current_pass, "Starting render pass without finishing previous one!");

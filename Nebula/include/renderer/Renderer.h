@@ -45,6 +45,7 @@ namespace nebula {
             static void init(API api, View<impl::RenderManager> render_manager);
             static void shutdown();
 
+            static void renderScene();
             static void setRenderingApi(API api);
 
             friend class nebula::Application;

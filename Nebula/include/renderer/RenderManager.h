@@ -12,34 +12,42 @@
 #include "RenderPass.h"
 #include "RenderContext.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
-    class NEBULA_API RenderManager
-    {
-    public:
-        RenderManager();
+    class Renderer;
 
-        void render(impl::RenderContext& context);
+    namespace impl {
 
-        View<RenderPass> addPass()
+        class NEBULA_API RenderManager
         {
-            m_render_passes.emplace_back(createScope<RenderPass>());
-            return m_render_passes.back().get();
-        }
+        public:
+            RenderManager();
 
-        template <typename PassType, typename... Args>
-        View<RenderPass> addPass(Args&&... args)
-        {
-            m_render_passes.emplace_back(createScope<PassType>(std::forward<Args>(args)...));
-            return m_render_passes.back().get();
-        }
+            View<RenderPass> addPass()
+            {
+                m_render_passes.emplace_back(createScope<RenderPass>());
+                return m_render_passes.back().get();
+            }
 
-        [[nodiscard]] View<RenderPass> getPassByID(RenderPass::PassID id) const;
-        [[nodiscard]] const std::vector<Scope<RenderPass>>& getPasses() const { return m_render_passes; }
+            template <typename PassType, typename... Args>
+            View<RenderPass> addPass(Args&&... args)
+            {
+                m_render_passes.emplace_back(createScope<PassType>(std::forward<Args>(args)...));
+                return m_render_passes.back().get();
+            }
 
-    private:
-        std::vector<Scope<RenderPass>> m_render_passes{};
-    };
+            [[nodiscard]] View<RenderPass> getPassByID(RenderPass::PassID id) const;
+            [[nodiscard]] const std::vector<Scope<RenderPass>>& getPasses() const { return m_render_passes; }
+
+        private:
+            std::vector<Scope<RenderPass>> m_render_passes{};
+
+            void dispatchPasses();
+
+            friend class nebula::rendering::Renderer;
+        };
+
+    }
 
 }
 

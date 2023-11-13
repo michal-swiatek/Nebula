@@ -81,9 +81,7 @@ namespace nebula {
                 for (const auto& layer : m_layer_stack)
                     layer->onRender();
 
-                auto render_context = m_window->getRenderContext();
-                render_context->unbind();
-                m_render_manager->render(*render_context);
+                rendering::Renderer::renderScene();
 
                 ImGuiLayer::begin();
 

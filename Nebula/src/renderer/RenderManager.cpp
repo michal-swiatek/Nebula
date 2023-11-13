@@ -14,10 +14,8 @@ namespace nebula::rendering::impl {
         addPass();
     }
 
-    void RenderManager::render(impl::RenderContext& context)
+    void RenderManager::dispatchPasses()
     {
-        context.bind();
-
         for (const auto& pass : m_render_passes)
             pass->dispatch();
     }

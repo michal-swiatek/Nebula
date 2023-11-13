@@ -5,6 +5,8 @@
 
 #include "renderer/RenderManager.h"
 
+#include "core/Assert.h"
+
 namespace nebula::rendering::impl {
 
     RenderManager::RenderManager()
@@ -26,6 +28,7 @@ namespace nebula::rendering::impl {
         if (it != m_render_passes.end())
             return it->get();
 
+        NB_CORE_ASSERT(false, "Invalid render pass ID!");
         return nullptr;
     }
 

@@ -27,6 +27,8 @@ set(NEBULA_SOURCE_FILES
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp
         src/renderer/Renderer.cpp
+        src/renderer/RenderPass.cpp
+        src/renderer/RenderManager.cpp
 )
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES})

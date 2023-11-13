@@ -12,23 +12,42 @@ namespace nebula::rendering {
 
     View<RendererApi> Renderer::s_renderer_api = nullptr;
     View<RendererApi> RenderCommand::s_renderer_api = nullptr;
+    View<RenderManager> Renderer::s_render_manager = nullptr;
 
-    void Renderer::submit(RenderCommand&& command)
+    void Renderer::beginPass(View<RenderPass> pass)
     {
-        command.execute();
+        NB_CORE_ASSERT(!m_current_pass, "Starting render pass without finishing previous one!");
+        m_current_pass = pass;
     }
 
-    void Renderer::init(API api)
+    void Renderer::beginPass(RenderPass::PassID id)
+    {
+        NB_CORE_ASSERT(!m_current_pass, "Starting render pass without finishing previous one!");
+        m_current_pass = s_render_manager->getPassByID(id);
+    }
+
+    void Renderer::endPass()
+    {
+        NB_CORE_ASSERT(m_current_pass, "Start render pass first!");
+        m_current_pass = nullptr;
+    }
+
+    void Renderer::init(API api, View<RenderManager> render_manager)
     {
         NB_CORE_ASSERT(!s_renderer_api, "Renderer should only be initialized once!");
+        NB_CORE_ASSERT(!s_render_manager, "RenderManager should only be initialized once!");
+
+        s_render_manager = render_manager;
         setRenderingApi(api);
     }
 
     void Renderer::shutdown()
     {
         NB_CORE_ASSERT(s_renderer_api, "Uninitialized Rendering API!");
+        NB_CORE_ASSERT(s_render_manager, "Uninitialized RenderManager!");
         RendererApi::destroy(s_renderer_api);
         s_renderer_api = nullptr;
+        s_render_manager = nullptr;
     }
 
     void Renderer::setRenderingApi(const API api)

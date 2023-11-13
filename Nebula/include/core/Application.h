@@ -19,6 +19,8 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
+#include "renderer/RenderManager.h"
+
 int main(int argc, char** argv);
 
 namespace nebula {
@@ -91,6 +93,8 @@ namespace nebula {
         LayerStack m_layer_stack;
         EventManager m_event_manager;
         LayerStack::LayerID m_imgui_layer;
+
+        Scope<rendering::impl::RenderManager> m_render_manager;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

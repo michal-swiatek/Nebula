@@ -17,6 +17,7 @@ namespace nebula::memory {
         class NEBULA_API Allocator
         {
         public:
+            Allocator() = default;
             Allocator(const void* memory_chunk, std::size_t size) noexcept;
             virtual ~Allocator() noexcept;
 
@@ -63,6 +64,7 @@ namespace nebula::memory {
     class NEBULA_API LinearAllocator final : public impl::Allocator
     {
     public:
+        LinearAllocator() = default;
         LinearAllocator(const void* memory_chunk, std::size_t size) noexcept;
         ~LinearAllocator() override;
 
@@ -86,6 +88,7 @@ namespace nebula::memory {
     class NEBULA_API StackAllocator final : public impl::Allocator
     {
     public:
+        StackAllocator() = default;
         StackAllocator(const void* memory_chunk, std::size_t size) noexcept;
 
         StackAllocator(const StackAllocator&) = delete;

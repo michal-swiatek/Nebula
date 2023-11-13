@@ -44,7 +44,8 @@ namespace nebula {
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
 
-        rendering::Renderer::init(window_settings.api);
+        m_render_manager = createScope<rendering::impl::RenderManager>();
+        rendering::Renderer::init(window_settings.api, m_render_manager.get());
 
         m_imgui_layer = pushOverlay<ImGuiLayer>();
     }
@@ -77,17 +78,17 @@ namespace nebula {
                     m_update_accumulator -= update_timestep;
                 }
 
-                auto renderer = rendering::Renderer();
-                auto command = rendering::ClearColorCommand(0.0f, 0.0f, 0.2f, 1.0f);
-                renderer.submit(std::move(command));
+                for (const auto& layer : m_layer_stack)
+                    layer->onRender();
+
+                auto render_context = m_window->getRenderContext();
+                render_context->unbind();
+                m_render_manager->render(*render_context);
 
                 ImGuiLayer::begin();
 
-                for (auto& layer : m_layer_stack)
-                {
-                    layer->onRender();
+                for (const auto& layer : m_layer_stack)
                     layer->onImGuiRender();
-                }
 
                 ImGuiLayer::end();
             }

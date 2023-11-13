@@ -39,6 +39,7 @@ namespace nebula {
 
         void setGLFWCallbacks() const;
         void setRenderContext(rendering::API api) override;
+        [[nodiscard]] View<rendering::impl::RenderContext> getRenderContext() const override;
 
         struct WindowData
         {

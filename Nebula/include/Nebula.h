@@ -21,6 +21,10 @@
 #include "memory/Allocators.h"
 #include "memory/MemoryManager.h"
 
+#include "renderer/Renderer.h"
+#include "renderer/RenderCommand.h"
+#include "renderer/RendererCommands.h"
+
 //  Entry point
 #include "core/EntryPoint.h"
 

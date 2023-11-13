@@ -49,7 +49,8 @@ namespace nebula {
         YAML::Node node;
 
         auto memory_section = YAML::Node();
-        memory_section["event_queue_size"] = 10_Mb;
+        memory_section["event_queue_size"] = 1_Mb;
+        memory_section["render_queue_memory_size"] = 500_Kb;
 
         node["memory"] = memory_section;
 

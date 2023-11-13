@@ -159,4 +159,9 @@ namespace nebula {
         m_context = rendering::impl::RenderContext::create(api, m_window);
     }
 
+    View<rendering::impl::RenderContext> WindowsWindow::getRenderContext() const
+    {
+        return m_context.get();
+    }
+
 }

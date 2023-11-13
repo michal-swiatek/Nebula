@@ -13,29 +13,31 @@
 
 namespace nebula::rendering {
 
-    class SetClearColorCommand : public RenderCommand
+    class NEBULA_API SetClearColorCommand : public RenderCommand
     {
     public:
         explicit SetClearColorCommand(glm::vec4 color) : m_color(color) {}
 
         void execute() override { s_renderer_api->setClearColor(m_color); }
+        RENDER_COMMAND_CLASS_CATEGORY(cConfigure);
 
     private:
         glm::vec4 m_color;
     };
 
-    class ClearCommand : public RenderCommand
+    class NEBULA_API ClearCommand : public RenderCommand
     {
     public:
         explicit ClearCommand(ClearBufferType flags = static_cast<ClearBufferType>(cColorBuffer | cDepthBuffer)) : m_flags(flags) {}
 
         void execute() override { s_renderer_api->clear(m_flags); }
+        RENDER_COMMAND_CLASS_CATEGORY(cClear);
 
     protected:
         ClearBufferType m_flags;
     };
 
-    class ClearColorCommand final : public ClearCommand
+    class NEBULA_API ClearColorCommand final : public ClearCommand
     {
     public:
         explicit ClearColorCommand(
@@ -62,6 +64,8 @@ namespace nebula::rendering {
             s_renderer_api->setClearColor(m_color);
             ClearCommand::execute();
         }
+
+        RENDER_COMMAND_CLASS_CATEGORY(static_cast<RenderCommandCategory>(cClear | cConfigure));
 
     private:
         glm::vec4 m_color;

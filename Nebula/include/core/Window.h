@@ -12,6 +12,7 @@
 #include "Types.h"
 #include "events/EventManager.h"
 #include "renderer/RendererAPI.h"
+#include "renderer/RenderContext.h"
 
 namespace nebula {
 
@@ -59,6 +60,7 @@ namespace nebula {
         virtual void onUpdate() = 0;
         virtual void setEventManager(EventManager& event_manager) = 0;
         virtual void setRenderContext(rendering::API api) = 0;
+        virtual View<rendering::impl::RenderContext> getRenderContext() const = 0;
 
         static Scope<Window> create(const WindowProperties& properties = WindowProperties());
     };

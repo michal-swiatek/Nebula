@@ -42,7 +42,7 @@ namespace nebula::threads {
         std::atomic_flag m_running = true;
         std::atomic_flag m_minimized = false;
 
-        BlockingQueue<Scope<rendering::impl::Frame>, 2> m_frame_queue;
+        BlockingQueue<Scope<rendering::impl::Frame>, 1> m_frame_queue;
 
         void init(rendering::API api);
         void shutdown();

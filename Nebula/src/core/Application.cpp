@@ -7,14 +7,11 @@
 
 #include <thread>
 #include <filesystem>
-#include <glad/glad.h>
 
 #include "core/Config.h"
 #include "core/Logging.h"
-#include "debug/ImGuiLayer.h"
 
 #include "renderer/Renderer.h"
-#include "renderer/utils/RendererCommands.h"
 
 namespace nebula {
 
@@ -60,8 +57,8 @@ namespace nebula {
             m_window->onUpdate();
         }
 
-        render_thread.join();
         update_thread.join();
+        render_thread.join();
     }
 
     void Application::close()

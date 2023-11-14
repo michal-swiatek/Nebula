@@ -5,6 +5,7 @@
 
 #include "debug/ImGuiLayer.h"
 
+#include <mutex>
 #include <array>
 #include <format>
 
@@ -20,6 +21,7 @@
 
 namespace nebula {
 
+    std::mutex mutex;
     int ImGuiLayer::s_counter = 0;
 
     ImGuiLayer::ImGuiLayer() : Layer(std::format("ImGuiLayer{}", s_counter++)) {}
@@ -70,6 +72,7 @@ namespace nebula {
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
+        std::lock_guard<std::mutex> lock{mutex};
         ImGui::NewFrame();
     }
 
@@ -79,6 +82,7 @@ namespace nebula {
         Application& app = Application::get();
         io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
 
+        // std::lock_guard<std::mutex> lock{mutex};
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -148,12 +152,12 @@ namespace nebula {
         //  Prepare text
         auto fps_text = target_render_fps == 0 ? "unlimited" : std::to_string(target_render_fps);
         auto average_fps_text = std::format("avg fps: {}, 1% low: {}", average_fps, one_percent_low);
-        auto text_color = (float)current_fps / target_render_fps > 0.95f ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+        auto text_color = (float)current_fps / target_render_fps > 0.9f ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
         if (ImGui::CollapsingHeader("Frames per second", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::Checkbox("VSync", &vsync);
-            ImGui::SliderInt("Update fps", &update_fps, 1, 200);
+            ImGui::SliderInt("Update fps", &update_fps, 0, 200);
             ImGui::SliderInt("Render fps", &render_fps, 0, 500);
 
             ImGui::Separator();

@@ -6,6 +6,8 @@
 #ifndef NEBULAENGINE_IMGUILAYER_H
 #define NEBULAENGINE_IMGUILAYER_H
 
+#include <mutex>
+
 #include "core/Layer.h"
 #include "core/Timer.h"
 
@@ -32,6 +34,7 @@ namespace nebula {
         bool m_block_events = true;
 
         static int s_counter;
+        static std::mutex s_mutex;
 
     //  Debug ImGui windows
     private:

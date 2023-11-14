@@ -11,7 +11,11 @@
 
 namespace nebula {
 
-    class WindowsWindow;
+    namespace threads {
+
+        class RenderThread;
+
+    }
 
     namespace rendering::impl {
 
@@ -26,7 +30,7 @@ namespace nebula {
             virtual void swapBuffers() = 0;
 
         private:
-            friend class nebula::WindowsWindow;
+            friend class nebula::threads::RenderThread;
             static Scope<RenderContext> create(API api, void* window_handle);
         };
 

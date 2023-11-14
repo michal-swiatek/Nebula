@@ -43,12 +43,6 @@ namespace nebula {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         m_window = glfwCreateWindow(properties.width, properties.height, properties.title.c_str(), nullptr, nullptr);
-        setRenderContext(properties.api);
-
-        if (m_window_data.vsync)
-            glfwSwapInterval(1);
-        else
-            glfwSwapInterval(0);
 
         glfwSetWindowUserPointer(m_window, &m_window_data);
         setGLFWCallbacks();
@@ -130,7 +124,6 @@ namespace nebula {
 
     void WindowsWindow::onUpdate()
     {
-        m_context->swapBuffers();
         glfwPollEvents();
     }
 
@@ -152,16 +145,6 @@ namespace nebula {
         m_window_data.vsync = window_properties.vsync;
 
         setVSync(m_window_data.vsync);
-    }
-
-    void WindowsWindow::setRenderContext(rendering::API api)
-    {
-        m_context = rendering::impl::RenderContext::create(api, m_window);
-    }
-
-    View<rendering::impl::RenderContext> WindowsWindow::getRenderContext() const
-    {
-        return m_context.get();
     }
 
 }

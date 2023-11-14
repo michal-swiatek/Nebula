@@ -6,6 +6,7 @@
 #ifndef NEBULAENGINE_APPLICATION_H
 #define NEBULAENGINE_APPLICATION_H
 
+#include <mutex>
 #include <string>
 #include <optional>
 
@@ -19,7 +20,8 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
-#include "renderer/RenderManager.h"
+#include "threads/UpdateThread.h"
+#include "threads/RenderThread.h"
 
 int main(int argc, char** argv);
 
@@ -39,15 +41,17 @@ namespace nebula {
     {
     public:
         explicit Application(ApplicationSpecification specification, const std::optional<WindowProperties>& window_properties = {});
-        virtual ~Application();
+        virtual ~Application() = default;
 
-        void close() { m_running = false; }
+        void close();
+        void minimize(bool minimized);
 
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
+            std::lock_guard<std::mutex> lock{m_mutex};
             return m_layer_stack.pushLayer(layer);
         }
 
@@ -56,17 +60,18 @@ namespace nebula {
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
+            std::lock_guard<std::mutex> lock{m_mutex};
             return m_layer_stack.pushOverlay(layer);
         }
 
-        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
-        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
+        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { std::lock_guard<std::mutex> lock{m_mutex}; return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { std::lock_guard<std::mutex> lock{m_mutex}; return m_layer_stack.popOverlay(layer_id); }
 
-        [[nodiscard]] int getRenderFps() const { return m_specification.render_fps; }
-        [[nodiscard]] int getUpdateFps() const { return m_specification.update_fps; }
+        [[nodiscard]] int getRenderFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.render_fps; }
+        [[nodiscard]] int getUpdateFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.update_fps; }
 
-        void setRenderFps(int render_fps) { m_specification.render_fps = render_fps; }
-        void setUpdateFps(int update_fps) { m_specification.update_fps = update_fps; }
+        void setRenderFps(int render_fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = render_fps; }
+        void setUpdateFps(int update_fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_fps = update_fps; }
 
         void setRenderingAPI(rendering::API api);
 
@@ -83,21 +88,23 @@ namespace nebula {
         bool m_running = true;
         bool m_minimized = false;
 
-        Timer m_timer;
-        double m_update_accumulator = 0.0;
-
         Scope<Input> m_input;
         Scope<Window> m_window;
         ApplicationSpecification m_specification;
 
         LayerStack m_layer_stack;
         EventManager m_event_manager;
-        LayerStack::LayerID m_imgui_layer;
 
-        Scope<rendering::impl::RenderManager> m_render_manager;
+        //  Multithreading
+        std::mutex m_mutex;
+        threads::UpdateThread m_update_thread;
+        threads::RenderThread m_render_thread;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);
+
+        friend class threads::UpdateThread;
+        friend class threads::RenderThread;
     };
 
     Application* createApplication(int argc, char** argv);

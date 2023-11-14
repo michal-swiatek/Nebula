@@ -35,11 +35,8 @@ namespace nebula {
 
     private:
         GLFWwindow* m_window = nullptr;
-        Scope<rendering::impl::RenderContext> m_context = nullptr;
 
         void setGLFWCallbacks() const;
-        void setRenderContext(rendering::API api) override;
-        [[nodiscard]] View<rendering::impl::RenderContext> getRenderContext() const override;
 
         struct WindowData
         {

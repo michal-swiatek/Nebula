@@ -18,7 +18,7 @@ namespace nebula::memory {
         {
         public:
             Allocator() = default;
-            Allocator(const void* memory_chunk, std::size_t size) noexcept;
+            Allocator(void* memory_chunk, std::size_t size) noexcept;
             virtual ~Allocator() noexcept;
 
             Allocator(const Allocator&) = delete;
@@ -43,6 +43,7 @@ namespace nebula::memory {
             }
 
             [[nodiscard]] std::size_t getSize() const { return m_size; }
+            [[nodiscard]] void* getMemoryPointer() const { return m_chunk; }
 
             #ifdef NB_DEBUG_BUILD
             [[nodiscard]] std::size_t getUsedMemory() const { return m_used; }
@@ -50,7 +51,7 @@ namespace nebula::memory {
             #endif
 
         protected:
-            const void* m_chunk;
+            void* m_chunk;
             std::size_t m_size;
 
             #ifdef NB_DEBUG_BUILD
@@ -65,7 +66,7 @@ namespace nebula::memory {
     {
     public:
         LinearAllocator() = default;
-        LinearAllocator(const void* memory_chunk, std::size_t size) noexcept;
+        LinearAllocator(void* memory_chunk, std::size_t size) noexcept;
         ~LinearAllocator() override;
 
         LinearAllocator(const LinearAllocator&) = delete;
@@ -89,7 +90,7 @@ namespace nebula::memory {
     {
     public:
         StackAllocator() = default;
-        StackAllocator(const void* memory_chunk, std::size_t size) noexcept;
+        StackAllocator(void* memory_chunk, std::size_t size) noexcept;
 
         StackAllocator(const StackAllocator&) = delete;
         StackAllocator& operator = (StackAllocator&) = delete;

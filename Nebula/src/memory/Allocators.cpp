@@ -44,7 +44,7 @@ namespace nebula::memory {
 
     namespace impl {
 
-        Allocator::Allocator(const void* memory_chunk, std::size_t size) noexcept : m_chunk(memory_chunk), m_size(size)
+        Allocator::Allocator(void* memory_chunk, std::size_t size) noexcept : m_chunk(memory_chunk), m_size(size)
         {
             NB_CORE_ASSERT(memory_chunk && size > 0, "Invalid memory allocator initialization!");
         }
@@ -91,7 +91,7 @@ namespace nebula::memory {
     ////    LinearAllocator    //////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    LinearAllocator::LinearAllocator(const void* memory_chunk, std::size_t size) noexcept : Allocator(memory_chunk, size) {}
+    LinearAllocator::LinearAllocator(void* memory_chunk, std::size_t size) noexcept : Allocator(memory_chunk, size) {}
 
     LinearAllocator::~LinearAllocator()
     {
@@ -153,7 +153,7 @@ namespace nebula::memory {
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
     StackAllocator::StackAllocator(
-        const void* memory_chunk,
+        void* memory_chunk,
         std::size_t size
     ) noexcept :
             Allocator(memory_chunk, size),

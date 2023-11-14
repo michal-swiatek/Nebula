@@ -4,7 +4,10 @@
 //
 
 #include "renderer/Renderer.h"
+
+#include "threads/RenderThread.h"
 #include "renderer/RenderCommand.h"
+#include "renderer/utils/RenderPassTemplates.h"
 
 namespace nebula::rendering {
 
@@ -12,47 +15,57 @@ namespace nebula::rendering {
 
     View<RendererApi> Renderer::s_renderer_api = nullptr;
     View<RendererApi> RenderCommand::s_renderer_api = nullptr;
-    View<RenderManager> Renderer::s_render_manager = nullptr;
+    View<threads::RenderThread> Renderer::s_render_thread = nullptr;
 
-    void Renderer::renderScene()
+    void Renderer::beginFrame(Scope<RenderPassTemplate>&& render_passes)
     {
-        s_render_manager->dispatchPasses();
+        NB_CORE_ASSERT(!m_current_frame, "End previous frame before starting new one!");
+        NB_CORE_ASSERT(s_render_thread, "Renderer must be initialized before calling beginFrame()!");
+        if (!render_passes)
+            render_passes = createScope<DefaultRenderPass>();
+
+        m_current_frame = createScope<Frame>(std::move(render_passes));
     }
 
-    void Renderer::beginPass(View<RenderPass> pass)
+    void Renderer::endFrame()
     {
-        NB_CORE_ASSERT(!m_current_pass, "Starting render pass without finishing previous one!");
-        m_current_pass = pass;
+        NB_CORE_ASSERT(!m_current_pass, "End render pass before ending frame!");
+        NB_CORE_ASSERT(s_render_thread, "Renderer must be initialized before calling endFrame()!");
+        if (m_current_frame)
+            s_render_thread->submitFrame(std::move(m_current_frame));
+        m_current_frame = nullptr;
     }
 
-    void Renderer::beginPass(RenderPass::PassID id)
+    void Renderer::beginPass()
     {
-        NB_CORE_ASSERT(!m_current_pass, "Starting render pass without finishing previous one!");
-        m_current_pass = s_render_manager->getPassByID(id);
+        NB_CORE_ASSERT(!m_current_pass, "End render pass before staring new one!");
+        NB_CORE_ASSERT(s_render_thread, "Renderer must be initialized before calling beginPass()!");
+        m_current_pass = m_current_frame->getRenderPasses().getNextPass();
     }
 
     void Renderer::endPass()
     {
         NB_CORE_ASSERT(m_current_pass, "Start render pass first!");
+        NB_CORE_ASSERT(s_render_thread, "Renderer must be initialized before calling endPass()!");
         m_current_pass = nullptr;
     }
 
-    void Renderer::init(API api, View<RenderManager> render_manager)
+    void Renderer::init(API api, View<threads::RenderThread> render_thread)
     {
         NB_CORE_ASSERT(!s_renderer_api, "Renderer should only be initialized once!");
-        NB_CORE_ASSERT(!s_render_manager, "RenderManager should only be initialized once!");
+        NB_CORE_ASSERT(!s_render_thread, "Renderer should only be initialized once!");
 
-        s_render_manager = render_manager;
         setRenderingApi(api);
+        s_render_thread = render_thread;
     }
 
     void Renderer::shutdown()
     {
         NB_CORE_ASSERT(s_renderer_api, "Uninitialized Rendering API!");
-        NB_CORE_ASSERT(s_render_manager, "Uninitialized RenderManager!");
         RendererApi::destroy(s_renderer_api);
         s_renderer_api = nullptr;
-        s_render_manager = nullptr;
+        s_render_thread = nullptr;
+        RenderCommand::s_renderer_api = nullptr;
     }
 
     void Renderer::setRenderingApi(const API api)

@@ -5,6 +5,7 @@
 
 #include "core/Application.h"
 
+#include <thread>
 #include <filesystem>
 #include <glad/glad.h>
 
@@ -43,71 +44,44 @@ namespace nebula {
 
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
-
-        m_render_manager = createScope<rendering::impl::RenderManager>();
-        rendering::Renderer::init(window_settings.api, m_render_manager.get());
-
-        m_imgui_layer = pushOverlay<ImGuiLayer>();
-    }
-
-    Application::~Application()
-    {
-        rendering::Renderer::shutdown();
     }
 
     void Application::run()
     {
+        auto window_properties = m_window->getProperties();
+
+        std::thread render_thread(&threads::RenderThread::run, &m_render_thread, window_properties.api);
+        m_render_thread.blockUntilInitialized();
+        std::thread update_thread(&threads::UpdateThread::run, &m_update_thread);
+
         while (m_running)
         {
-            double update_timestep = 1.0 / m_specification.update_fps;
-            double render_timestep = m_specification.render_fps > 0 ? 1.0 / m_specification.render_fps : 0.0;
-
-            auto frame_time = m_timer.elapsedSeconds(true);
-            m_update_accumulator += frame_time;
-
-            if (!m_minimized)
-            {
-                for (auto& layer : m_layer_stack)
-                    layer->onUpdate(Timestep(frame_time));
-
-                while (m_update_accumulator > update_timestep)
-                {
-                    for (auto& layer : m_layer_stack)
-                        layer->onFixedUpdate(Timestep(update_timestep));
-
-                    m_update_accumulator -= update_timestep;
-                }
-
-                for (const auto& layer : m_layer_stack)
-                    layer->onRender();
-
-                rendering::Renderer::renderScene();
-
-                ImGuiLayer::begin();
-
-                for (const auto& layer : m_layer_stack)
-                    layer->onImGuiRender();
-
-                ImGuiLayer::end();
-            }
-
-            //  Swap buffers and poll events
+            //  Poll and dispatch events
             m_window->onUpdate();
             m_event_manager.dispatchEvents();
-
-            if (m_timer.elapsedSeconds() < render_timestep)
-            {
-                Timer busy_timer;
-                double wait_time = render_timestep - m_timer.elapsedSeconds();
-                while (busy_timer.elapsedSeconds() < wait_time);
-            }
         }
+
+        render_thread.join();
+        update_thread.join();
+    }
+
+    void Application::close()
+    {
+        m_running = false;
+        m_update_thread.close();
+        m_render_thread.close();
+    }
+
+    void Application::minimize(bool minimized)
+    {
+        m_minimized = minimized;
+        m_update_thread.minimize(minimized);
+        m_render_thread.minimize(minimized);
     }
 
     void Application::setRenderingAPI(rendering::API api)
     {
-        m_window->setRenderContext(api);
-        rendering::Renderer::setRenderingApi(api);
+        m_render_thread.changeAPI(api);
     }
 
     void Application::onEvent(Event& event)
@@ -119,7 +93,7 @@ namespace nebula {
 
     bool Application::onWindowClose(WindowCloseEvent& event)
     {
-        m_running = false;
+        close();
         return true;
     }
 
@@ -127,13 +101,13 @@ namespace nebula {
     {
         if (event.getWidth() == 0 || event.getHeight() == 0)
         {
-            m_minimized = true;
+            minimize(true);
             return false;
         }
 
-        m_minimized = false;
+        minimize(false);
 
-        glViewport(0, 0, int(event.getWidth()), int(event.getHeight()));
+        m_render_thread.onWindowResize(event);
         return false;
     }
 

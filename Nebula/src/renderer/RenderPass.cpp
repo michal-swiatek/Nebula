@@ -8,16 +8,23 @@
 #include "core/Config.h"
 #include "memory/MemoryManager.h"
 
+#include "core/Logging.h"
+
 namespace nebula::rendering {
 
-    RenderPass::PassID RenderPass::s_id_counter = 0;
-
-    RenderPass::RenderPass() : m_id(s_id_counter++), m_allocator()
+    RenderPass::RenderPass() : m_allocator()
     {
         const auto& engine_config = Config::getEngineConfig();
         int render_queue_memory_size = engine_config["memory"]["render_queue_memory_size"].as<int>();
         void* memory_chunk = memory::MemoryManager::requestMemory(render_queue_memory_size);
         m_allocator = std::move(memory::LinearAllocator(memory_chunk, render_queue_memory_size));
+        NB_CORE_INFO("Render pass initialized!");
+    }
+
+    RenderPass::~RenderPass()
+    {
+        memory::MemoryManager::freeMemory(m_allocator.getMemoryPointer());
+        NB_CORE_INFO("Render pass destroyed!");
     }
 
     void RenderPass::dispatch()
@@ -34,6 +41,28 @@ namespace nebula::rendering {
         m_configuration_queue.clear();
         m_render_queue.clear();
         m_allocator.clear();
+    }
+
+    RenderPassTemplate::~RenderPassTemplate() = default;
+
+    View<RenderPass> RenderPassTemplate::getNextPass()
+    {
+        if (m_current_pass >= m_render_passes.size())
+            throw std::out_of_range(
+                std::format(
+                    "Render pass out of range: index {} with {} available passes",
+                    m_current_pass,
+                    m_render_passes.size()
+                )
+            );
+
+        return m_render_passes[m_current_pass++].get();
+    }
+
+    void RenderPassTemplate::dispatchRenderPasses() const
+    {
+        for (const auto& render_pass : m_render_passes)
+            render_pass->dispatch();
     }
 
 }

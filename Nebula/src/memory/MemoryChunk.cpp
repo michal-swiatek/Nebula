@@ -20,11 +20,11 @@ namespace nebula::memory::impl {
     MemoryChunk::~MemoryChunk()
     {
         std::free(m_chunk);
+        NB_CORE_INFO("Freeing memory chunk");
     }
 
-    MemoryChunk::MemoryChunk(MemoryChunk&& rhs) noexcept : m_size(rhs.m_size)
+    MemoryChunk::MemoryChunk(MemoryChunk&& rhs) noexcept : m_chunk(rhs.m_chunk), m_size(rhs.m_size)
     {
-        m_chunk = rhs.m_chunk;
         rhs.m_chunk = nullptr;
         rhs.m_size = 0;
     }

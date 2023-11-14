@@ -10,12 +10,17 @@
 #include "core/Types.h"
 #include "core/Assert.h"
 
+#include "Frame.h"
+#include "RenderPass.h"
 #include "RendererAPI.h"
-#include "RenderManager.h"
 
 namespace nebula {
 
-    class Application;
+    namespace threads {
+
+        class RenderThread;
+
+    }
 
     namespace rendering {
 
@@ -24,6 +29,12 @@ namespace nebula {
         public:
             virtual ~Renderer() = default;
 
+            void beginFrame(Scope<RenderPassTemplate>&& render_passes = nullptr);
+            void endFrame();
+
+            void beginPass();
+            void endPass();
+
             template <typename RenderCommand, typename... Args>
             void submit(Args&&... args)
             {
@@ -31,24 +42,27 @@ namespace nebula {
                 m_current_pass->submit<RenderCommand>(std::forward<Args>(args)...);
             }
 
-            void beginPass(View<RenderPass> pass);
-            void beginPass(RenderPass::PassID id = 0);
-            void endPass();
+            template <typename RenderPassesTemplate>
+            void beginFrame()
+            {
+                auto render_passes = createScope<RenderPassesTemplate>();
+                beginFrame(std::move(render_passes));
+            }
 
         protected:
             View<RenderPass> m_current_pass = nullptr;
+            Scope<impl::Frame> m_current_frame = nullptr;
 
             static View<impl::RendererApi> s_renderer_api;
-            static View<impl::RenderManager> s_render_manager;
+            static View<threads::RenderThread> s_render_thread;
 
         private:
-            static void init(API api, View<impl::RenderManager> render_manager);
+            static void init(API api, View<threads::RenderThread> render_thread);
             static void shutdown();
 
-            static void renderScene();
             static void setRenderingApi(API api);
 
-            friend class nebula::Application;
+            friend class nebula::threads::RenderThread;
         };
 
     }

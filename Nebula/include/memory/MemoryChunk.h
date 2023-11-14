@@ -14,6 +14,7 @@ namespace nebula::memory::impl {
     class MemoryChunk
     {
     public:
+        MemoryChunk() = delete;
         explicit MemoryChunk(std::size_t size);
         ~MemoryChunk();
 

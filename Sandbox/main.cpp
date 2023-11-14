@@ -11,7 +11,7 @@ using namespace nebula;
 using namespace nebula::literals;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 144, 120);
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 120);
 auto window_properties = WindowProperties("Sandbox", 1600, 900, false, rendering::API::cOpenGL);
 
 struct Temp
@@ -41,6 +41,14 @@ public:
     {
         if (Input::isKeyPressed(Keycode::Space))
             NB_INFO("Space is being pressed!");
+
+        auto renderer = rendering::Renderer();
+        renderer.beginFrame();
+        renderer.beginPass();
+        // for (int i = 0; i < 16000; ++i)
+            renderer.submit<rendering::ClearColorCommand>(0.0f, 0.0f, 0.2f, 1.0f);
+        renderer.endPass();
+        renderer.endFrame();
     }
 
     void onFixedUpdate(Timestep delta_time) override
@@ -50,11 +58,7 @@ public:
 
     void onRender() override
     {
-        auto renderer = rendering::Renderer();
-        renderer.beginPass();
-        for (int i = 0; i < 16000; ++i)
-            renderer.submit<rendering::ClearColorCommand>(0.0f, 0.0f, 0.2f, 1.0f);
-        renderer.endPass();
+
     }
 
     void onAttach() override

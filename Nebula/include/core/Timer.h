@@ -10,31 +10,47 @@
 
 namespace nebula {
 
+    void system_sleep(double seconds); //  Implemented in platform/DetectPlatform.cpp
+
     class NEBULA_API Timer
     {
     public:
-        Timer()
+        explicit Timer(double start_time = 0.0)
         {
-            reset();
+            set(start_time);
         }
 
-        void reset() { m_start = std::chrono::high_resolution_clock::now(); }
+        void reset() { set(); }
+        void set(double time_seconds = 0.0)
+        {
+            m_start = std::chrono::high_resolution_clock::now();
+            m_start -= std::chrono::nanoseconds(static_cast<std::size_t>(time_seconds * 1'000'000'000));
+        }
 
-        double elapsedSeconds(bool reset_timer = false)      { return elapsed(0.000'000'001, reset_timer); }
-        double elapsedMilliSeconds(bool reset_timer = false) { return elapsed(0.000'001, reset_timer); }
-        double elapsedMicroSeconds(bool reset_timer = false) { return elapsed(0.001, reset_timer); }
-        double elapsedNanoSeconds(bool reset_timer = false)  { return elapsed(1, reset_timer); }
+        template <typename Duration>
+        [[nodiscard]] std::size_t elapsed() const
+        {
+            return std::chrono::duration_cast<Duration>(std::chrono::high_resolution_clock::now() - m_start).count();
+        }
 
-        static bool sleep(double seconds);
+        double elapsedSeconds(bool reset_timer = false)      { return deltaTime(0.000'000'001, reset_timer); }
+        double elapsedMilliSeconds(bool reset_timer = false) { return deltaTime(0.000'001, reset_timer); }
+        double elapsedMicroSeconds(bool reset_timer = false) { return deltaTime(0.001, reset_timer); }
+        double elapsedNanoSeconds(bool reset_timer = false)  { return deltaTime(1, reset_timer); }
+
+        //  Implemented in core/Timer.cpp
+        static void sleep(double seconds);
+        static void sleepUntil(double application_time);
+
+        static void sleepPrecise(double seconds, double busy_offset = 0.001);
+        static void sleepUntilPrecise(double application_time, double busy_offset = 0.001);
 
     private:
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_start{};
 
-        double elapsed(double multiplier, bool reset_timer)
+        double deltaTime(double multiplier, bool reset_timer)
         {
-            auto delta_time = static_cast<double>(
-                std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_start).count()
-            ) * multiplier;
+            auto delta_time = static_cast<double>(elapsed<std::chrono::nanoseconds>()) * multiplier;
 
             if (reset_timer)
                 reset();

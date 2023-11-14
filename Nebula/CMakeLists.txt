@@ -16,6 +16,7 @@ set(NEBULA_SOURCE_FILES
         src/core/Logging.cpp
         src/core/LayerStack.cpp
         src/core/Config.cpp
+        src/core/Timer.cpp
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp
         src/platform/DetectPlatform.cpp

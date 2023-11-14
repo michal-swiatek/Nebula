@@ -26,7 +26,6 @@ namespace nebula {
 
     Input* Input::s_instance = nullptr;
 
-
     Scope<Window> Window::create(const WindowProperties& properties)
     {
         #ifdef NB_PLATFORM_WINDOWS
@@ -74,30 +73,21 @@ namespace nebula {
 
     }
 
-    bool Timer::sleep(double seconds)
+    void system_sleep(double seconds)
     {
         const auto nanoseconds = static_cast<long long>(seconds * 1'000'000'000);
 
         #ifdef NB_PLATFORM_WINDOWS
-        // HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
         HANDLE timer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_MANUAL_RESET | CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_MODIFY_STATE | SYNCHRONIZE);
-        NB_CORE_ASSERT(timer, "Unable to create WINDOWS high resolution timer!");
-        if(!timer)
-            return false;
+        NB_CORE_ASSERT(timer, "Unable to create Windows high resolution timer!");
 
         LARGE_INTEGER li;
-        li.QuadPart = -nanoseconds / 100;
-        if(!SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE))
-        {
-            NB_CORE_ASSERT(false, "Unable to set WINDOWS high resolution timer!");
-            CloseHandle(timer);
-            return false;
-        }
+        li.QuadPart = -nanoseconds / 100;    //  Windows expects 100 nanosecond intervals
+        bool result = SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE);
+        NB_CORE_ASSERT(result, "Unable to set Windows high resolution timer delay!");
 
         WaitForSingleObject(timer, INFINITE);
         CloseHandle(timer);
-
-        return true;
         #else
         NB_CORE_ASSERT(false, "Unknown platform!");
         #endif

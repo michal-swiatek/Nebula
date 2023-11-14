@@ -11,75 +11,64 @@
 #include "RenderCommand.h"
 #include "memory/Allocators.h"
 
-namespace nebula {
+namespace nebula::rendering {
 
-    namespace threads {
+    class NEBULA_API RenderPass
+    {
+    public:
+        using PassID = uint32_t;
 
-        class RenderThread;
+        RenderPass();
+        virtual ~RenderPass();
 
-    }
+        RenderPass(RenderPass&) = delete;
+        RenderPass& operator=(RenderPass&) = delete;
 
-    namespace rendering {
-
-        class NEBULA_API RenderPass
+        template <typename RenderCommand, typename... Args>
+        void submit(Args&&... args)
         {
-        public:
-            using PassID = uint32_t;
+            if (RenderCommand::getStaticCategory() == cDraw)
+                m_render_queue.emplace_back(m_allocator.create<RenderCommand>(std::forward<Args>(args)...));
+            else
+                m_configuration_queue.emplace_back(m_allocator.create<RenderCommand>(std::forward<Args>(args)...));
+        }
 
-            RenderPass();
-            virtual ~RenderPass();
+        void dispatch();
 
-            RenderPass(RenderPass&) = delete;
-            RenderPass& operator=(RenderPass&) = delete;
+    protected:
+        using RenderCommandQueue = std::vector<View<RenderCommand>>;
 
-            template <typename RenderCommand, typename... Args>
-            void submit(Args&&... args)
-            {
-                if (RenderCommand::getStaticCategory() == cDraw)
-                    m_render_queue.emplace_back(m_allocator.create<RenderCommand>(std::forward<Args>(args)...));
-                else
-                    m_configuration_queue.emplace_back(m_allocator.create<RenderCommand>(std::forward<Args>(args)...));
-            }
+        RenderCommandQueue m_configuration_queue;
+        RenderCommandQueue m_render_queue;
 
-            void dispatch();
+        virtual void prepareQueues() {}
 
-        protected:
-            using RenderCommandQueue = std::vector<View<RenderCommand>>;
+    private:
+        memory::LinearAllocator m_allocator;
+    };
 
-            RenderCommandQueue m_configuration_queue;
-            RenderCommandQueue m_render_queue;
+    class NEBULA_API RenderPassTemplate
+    {
+    public:
+        virtual ~RenderPassTemplate() = 0;
 
-            virtual void prepareQueues() {}
-
-        private:
-            memory::LinearAllocator m_allocator;
-        };
-
-        class NEBULA_API RenderPassTemplate
+        template <typename PassType, typename... Args>
+        void addPass(Args&&... args)
         {
-        public:
-            virtual ~RenderPassTemplate() = 0;
+            m_render_passes.emplace_back(createScope<PassType>(std::forward<Args>(args)...));
+        }
 
-            template <typename PassType, typename... Args>
-            void addPass(Args&&... args)
-            {
-                m_render_passes.emplace_back(createScope<PassType>(std::forward<Args>(args)...));
-            }
+        void dispatchRenderPasses() const;
+        [[nodiscard]] bool isValid() const { return !m_render_passes.empty(); }
 
-            [[nodiscard]] bool isValid() const { return !m_render_passes.empty(); }
+    private:
+        std::vector<Scope<RenderPass>> m_render_passes{};
+        uint32_t m_current_pass = 0;
 
-        private:
-            std::vector<Scope<RenderPass>> m_render_passes{};
-            uint32_t m_current_pass = 0;
+        View<RenderPass> getNextPass();     //  Called by Renderer
 
-            View<RenderPass> getNextPass();     //  Called by Renderer
-            void dispatchRenderPasses() const;  //  Called by RenderThread
-
-            friend class nebula::rendering::Renderer;
-            friend class nebula::threads::RenderThread;
-        };
-
-    }
+        friend class nebula::rendering::Renderer;
+    };
 
 }
 

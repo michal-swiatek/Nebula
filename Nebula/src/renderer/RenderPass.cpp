@@ -8,8 +8,6 @@
 #include "core/Config.h"
 #include "memory/MemoryManager.h"
 
-#include "core/Logging.h"
-
 namespace nebula::rendering {
 
     RenderPass::RenderPass() : m_allocator()

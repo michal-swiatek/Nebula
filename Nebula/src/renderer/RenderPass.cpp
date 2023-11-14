@@ -18,13 +18,11 @@ namespace nebula::rendering {
         int render_queue_memory_size = engine_config["memory"]["render_queue_memory_size"].as<int>();
         void* memory_chunk = memory::MemoryManager::requestMemory(render_queue_memory_size);
         m_allocator = std::move(memory::LinearAllocator(memory_chunk, render_queue_memory_size));
-        NB_CORE_INFO("Render pass initialized!");
     }
 
     RenderPass::~RenderPass()
     {
         memory::MemoryManager::freeMemory(m_allocator.getMemoryPointer());
-        NB_CORE_INFO("Render pass destroyed!");
     }
 
     void RenderPass::dispatch()

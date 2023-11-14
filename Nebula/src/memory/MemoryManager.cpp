@@ -24,10 +24,7 @@ namespace nebula::memory {
         std::lock_guard<std::mutex> lock{s_mutex};
         const auto it = std::ranges::find_if(s_memory_chunks, [address](const auto& chunk){ return chunk->getAddress() == address; });
         if (it != s_memory_chunks.end())
-        {
-            NB_CORE_INFO("Freeing memory at address: {}", reinterpret_cast<std::uintptr_t>(address));
             s_memory_chunks.erase(it);
-        }
         else
             NB_CORE_ASSERT(false, "Attempt to free memory that was not initialized by MemoryManager!");
     }

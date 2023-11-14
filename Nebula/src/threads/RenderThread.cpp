@@ -37,8 +37,6 @@ namespace nebula::threads {
             auto next_frame_time = application.getTime() + render_timestep;
             auto frame = m_frame_queue.pop(0);
 
-            NB_CORE_INFO("Number of frames in queue: {}", m_frame_queue.size());
-
             if (api = m_api_change.load(std::memory_order_relaxed); api != API::cUndefined)
                 setRenderingAPI(api);
 
@@ -46,12 +44,7 @@ namespace nebula::threads {
             {
                 if (frame)
                 {
-                    NB_CORE_ASSERT(*frame, "Invalid frame!");
-                    NB_CORE_INFO("OK");
-
                     (*frame)->getRenderPasses().dispatchRenderPasses();
-
-                    NB_CORE_INFO("OK2");
 
                     for (const auto& layer : application.m_layer_stack)
                         layer->onRender();
@@ -60,7 +53,6 @@ namespace nebula::threads {
                     ClearColorCommand(0.2f, 0.2f, 0.2f, 1.0f).execute();
 
                 ImGuiLayer::begin();
-                NB_CORE_INFO("OK3");
 
                 for (const auto& layer : application.m_layer_stack)
                     layer->onImGuiRender();

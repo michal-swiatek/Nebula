@@ -6,6 +6,8 @@
 #ifndef MEMORYMANAGER_H
 #define MEMORYMANAGER_H
 
+#include <mutex>
+#include <memory>
 #include <vector>
 
 #include "core/Core.h"
@@ -36,7 +38,8 @@ namespace nebula::memory {
         }
 
     private:
-        static std::vector<impl::MemoryChunk> s_memory_chunks;
+        static std::mutex s_mutex;
+        static std::vector<std::unique_ptr<impl::MemoryChunk>> s_memory_chunks;
 
         static void init();
         static void shutdown();

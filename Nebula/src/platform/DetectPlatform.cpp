@@ -9,6 +9,7 @@
 
 #include "core/Window.h"
 #include "core/Input.h"
+#include "core/Timer.h"
 #include "core/Types.h"
 
 #include "renderer/RendererAPI.h"
@@ -16,6 +17,7 @@
 #include "platform/OpenGL/OpenGLRendererAPI.h"
 
 #ifdef NB_PLATFORM_WINDOWS
+    #include <Windows.h>
     #include "platform/Windows/WindowsWindow.h"
     #include "platform/Windows/WindowsInput.h"
 #endif
@@ -23,6 +25,7 @@
 namespace nebula {
 
     Input* Input::s_instance = nullptr;
+
 
     Scope<Window> Window::create(const WindowProperties& properties)
     {
@@ -69,6 +72,35 @@ namespace nebula {
             memory::MemoryManager::destroy(api);
         }
 
+    }
+
+    bool Timer::sleep(double seconds)
+    {
+        const auto nanoseconds = static_cast<long long>(seconds * 1'000'000'000);
+
+        #ifdef NB_PLATFORM_WINDOWS
+        // HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
+        HANDLE timer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_MANUAL_RESET | CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_MODIFY_STATE | SYNCHRONIZE);
+        NB_CORE_ASSERT(timer, "Unable to create WINDOWS high resolution timer!");
+        if(!timer)
+            return false;
+
+        LARGE_INTEGER li;
+        li.QuadPart = -nanoseconds / 100;
+        if(!SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE))
+        {
+            NB_CORE_ASSERT(false, "Unable to set WINDOWS high resolution timer!");
+            CloseHandle(timer);
+            return false;
+        }
+
+        WaitForSingleObject(timer, INFINITE);
+        CloseHandle(timer);
+
+        return true;
+        #else
+        NB_CORE_ASSERT(false, "Unknown platform!");
+        #endif
     }
 
 }

@@ -25,6 +25,8 @@ namespace nebula {
         double elapsedMicroSeconds(bool reset_timer = false) { return elapsed(0.001, reset_timer); }
         double elapsedNanoSeconds(bool reset_timer = false)  { return elapsed(1, reset_timer); }
 
+        static bool sleep(double seconds);
+
     private:
         std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
 

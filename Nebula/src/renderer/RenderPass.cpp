@@ -34,11 +34,6 @@ namespace nebula::rendering {
 
         for (const auto& command : m_render_queue)
             command->execute();
-
-        //  Destructors are not called - RenderCommands shouldn't store dynamic data
-        m_configuration_queue.clear();
-        m_render_queue.clear();
-        m_allocator.clear();
     }
 
     RenderPassTemplate::~RenderPassTemplate() = default;

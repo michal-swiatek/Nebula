@@ -36,6 +36,7 @@ namespace nebula::threads {
 
     private:
         Timer m_render_timer;
+        Scope<rendering::impl::Frame> m_current_frame = nullptr;
         Scope<rendering::impl::RenderContext> m_render_context = nullptr;
 
         std::atomic<rendering::API> m_api_change;

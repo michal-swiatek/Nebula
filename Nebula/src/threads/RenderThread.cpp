@@ -43,8 +43,11 @@ namespace nebula::threads {
             if (!m_minimized.test(std::memory_order_relaxed))
             {
                 if (frame)
+                    m_current_frame = std::move(*frame);
+
+                if (m_current_frame)
                 {
-                    (*frame)->getRenderPasses().dispatchRenderPasses();
+                    m_current_frame->getRenderPasses().dispatchRenderPasses();  //  TODO: Cache render result
 
                     for (const auto& layer : application.m_layer_stack)
                         layer->onRender();

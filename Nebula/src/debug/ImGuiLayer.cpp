@@ -164,7 +164,7 @@ namespace nebula {
             ImGui::Text("Target render fps: %s (%.3fms)", fps_text.c_str(), target_milliseconds);
 
             ImGui::TextColored(text_color, "Current fps: %i", current_fps);
-            ImGui::TextColored(text_color, "Current frame time: %ims", static_cast<int>(frame_milliseconds));
+            ImGui::TextColored(text_color, "Current frame time: %.3fms", frame_milliseconds);
 
             ImGui::Separator();
 

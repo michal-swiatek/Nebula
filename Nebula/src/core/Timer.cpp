@@ -5,6 +5,7 @@
 
 #include "core/Timer.h"
 
+#include "core/Core.h"
 #include "core/Application.h"
 
 namespace nebula {
@@ -31,7 +32,7 @@ namespace nebula {
 
     void Timer::sleepUntilPrecise(double application_time, double busy_offset)
     {
-        static constexpr double epsilon = 0.00025;
+        static constexpr double epsilon = 0.0;
         Timer busy_timer(Application::get().getTime());
 
         sleepUntil(application_time - busy_offset);                       //  Thread sleeping

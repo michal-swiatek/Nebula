@@ -6,6 +6,7 @@
 #ifndef NEBULAENGINE_EVENTMANAGER_H
 #define NEBULAENGINE_EVENTMANAGER_H
 
+#include <mutex>
 #include <vector>
 #include <functional>
 
@@ -31,10 +32,13 @@ namespace nebula {
         void queueEvent(Args&&... args)
         {
             auto event = new (m_allocator.allocate(sizeof(T), alignof(T))) T(std::forward<Args>(args)...);
+            std::lock_guard<std::mutex> lock{m_mutex};
             m_events.emplace_back(std::move(event));
         }
 
     private:
+        std::mutex m_mutex;
+
         LayerStack& m_layer_stack;
         EventCallback m_application_callback;
         std::vector<View<Event>> m_events{};

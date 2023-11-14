@@ -17,11 +17,12 @@ namespace nebula::threads {
 
         while (m_running.test(std::memory_order_relaxed))
         {
-            int update_fps = application.getUpdateFps();
-            update_fps = static_cast<int>(update_fps * 1.035);   //  TODO: Remove hack and resolve timer resolution problem
-            double timestep = update_fps > 0 ? 1.0 / update_fps : 0.0;
+            int fps = application.getRenderFps();
+            double render_timestep = fps > 0 ? 1.0 / fps : 0.0;
+            double update_timestep = application.getUpdateTimestep();
 
-            auto frame_time = m_frame_timer.elapsedSeconds(true);
+            auto next_frame_time = application.getTime() + render_timestep;
+            auto frame_time = m_update_timer.elapsedSeconds(true);
             m_update_accumulator += frame_time;
 
             if (!m_minimized.test(std::memory_order_relaxed))
@@ -29,17 +30,18 @@ namespace nebula::threads {
                 for (const auto& layer : application.m_layer_stack)
                     layer->onUpdate(Timestep(frame_time));
 
-                while (m_update_accumulator > timestep)
+                while (m_update_accumulator > update_timestep)
                 {
                     for (const auto& layer : application.m_layer_stack)
-                        layer->onFixedUpdate(Timestep(timestep));
+                        layer->onFixedUpdate(Timestep(update_timestep));
 
-                    m_update_accumulator -= timestep;
+                    m_update_accumulator -= update_timestep;
                 }
             }
 
-            double wait_time = std::max(timestep - m_frame_timer.elapsedSeconds(), 0.0);
-            Timer::sleep(wait_time);
+            application.m_event_manager.dispatchEvents();
+
+            Timer::sleepUntilPrecise(next_frame_time);
         }
 
         shutdown();

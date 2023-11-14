@@ -32,10 +32,9 @@ namespace nebula::threads {
         while (m_running.test(std::memory_order_relaxed))
         {
             int render_fps = application.getRenderFps();
-            render_fps = static_cast<int>(render_fps * 1.035);   //  TODO: Remove hack and resolve timer resolution problem
-            double timestep = render_fps > 0 ? 1.0 / render_fps : 0.0;
+            double render_timestep = render_fps > 0 ? 1.0 / render_fps : 0.0;
 
-            auto frame_time = m_frame_timer.elapsedSeconds(true);
+            auto next_frame_time = application.getTime() + render_timestep;
             auto frame = m_frame_queue.pop(0);
 
             NB_CORE_INFO("Number of frames in queue: {}", m_frame_queue.size());
@@ -71,8 +70,7 @@ namespace nebula::threads {
                 m_render_context->swapBuffers();
             }
 
-            double wait_time = std::max(timestep - m_frame_timer.elapsedSeconds(), 0.0);
-            Timer::sleep(wait_time);
+            Timer::sleepUntilPrecise(next_frame_time);
         }
 
         shutdown();

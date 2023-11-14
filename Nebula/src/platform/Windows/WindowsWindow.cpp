@@ -124,7 +124,8 @@ namespace nebula {
 
     void WindowsWindow::onUpdate()
     {
-        glfwPollEvents();
+        // glfwPollEvents();
+        glfwWaitEvents();
     }
 
     void WindowsWindow::setVSync(bool enabled)

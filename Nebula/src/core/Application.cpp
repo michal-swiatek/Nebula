@@ -51,14 +51,13 @@ namespace nebula {
         auto window_properties = m_window->getProperties();
 
         std::thread render_thread(&threads::RenderThread::run, &m_render_thread, window_properties.api);
-        m_render_thread.blockUntilInitialized();
+        threads::RenderThread::blockUntilInitialized();
         std::thread update_thread(&threads::UpdateThread::run, &m_update_thread);
 
         while (m_running)
         {
-            //  Poll and dispatch events
+            //  Poll events
             m_window->onUpdate();
-            m_event_manager.dispatchEvents();
         }
 
         render_thread.join();

@@ -34,7 +34,7 @@ namespace nebula {
         std::string working_directory;
 
         int render_fps = 0;
-        int update_fps = 120;
+        double update_timestep = 0.02;
     };
 
     class NEBULA_API Application
@@ -68,10 +68,11 @@ namespace nebula {
         Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { std::lock_guard<std::mutex> lock{m_mutex}; return m_layer_stack.popOverlay(layer_id); }
 
         [[nodiscard]] int getRenderFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.render_fps; }
-        [[nodiscard]] int getUpdateFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.update_fps; }
+        [[nodiscard]] double getUpdateTimestep() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.update_timestep; }
+        [[nodiscard]] double getTime() { std::lock_guard<std::mutex> lock{m_mutex}; return m_application_timer.elapsedSeconds(); }
 
-        void setRenderFps(int render_fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = render_fps; }
-        void setUpdateFps(int update_fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_fps = update_fps; }
+        void setRenderFps(int fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = fps; }
+        void setUpdateTimestep(double timestep) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_timestep = timestep; }
 
         void setRenderingAPI(rendering::API api);
 
@@ -87,6 +88,7 @@ namespace nebula {
 
         bool m_running = true;
         bool m_minimized = false;
+        Timer m_application_timer;
 
         Scope<Input> m_input;
         Scope<Window> m_window;

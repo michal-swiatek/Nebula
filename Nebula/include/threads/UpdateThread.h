@@ -28,7 +28,7 @@ namespace nebula::threads {
         void minimize(bool minimize);
 
     private:
-        Timer m_frame_timer;
+        Timer m_update_timer;
         double m_update_accumulator = 0.0;
 
         std::atomic_flag m_running = true;

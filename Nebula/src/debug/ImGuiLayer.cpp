@@ -72,7 +72,7 @@ namespace nebula {
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        std::lock_guard<std::mutex> lock{mutex};
+        // std::lock_guard<std::mutex> lock{mutex};
         ImGui::NewFrame();
     }
 
@@ -123,14 +123,14 @@ namespace nebula {
 
         //  FPS control variables
         static bool vsync = Application::get().getWindow().getProperties().vsync;
-        static int update_fps = Application::get().getUpdateFps();
+        static float update_timestep = Application::get().getUpdateTimestep();
         static int render_fps = Application::get().getRenderFps();
 
         //  Update current application settings
         auto& application = Application::get();
 
         vsync = application.getWindow().getProperties().vsync;
-        update_fps = application.getUpdateFps();
+        update_timestep = application.getUpdateTimestep();
         render_fps = application.getRenderFps();
 
         //  Update current frame time info
@@ -138,9 +138,7 @@ namespace nebula {
         auto frame_milliseconds = frame_time.getMilliSeconds();
 
         int current_fps = 1.0 / frame_time;
-        int target_update_fps = update_fps;
-        int target_render_fps = render_fps;
-        float target_milliseconds = target_render_fps == 0 ? 0.0f : 1000.0f / target_render_fps;
+        float target_milliseconds = render_fps == 0 ? 0.0f : 1000.0f / render_fps;
 
         //  Update graph info
         frame_times[frame_offset] = static_cast<float>(frame_milliseconds);
@@ -150,19 +148,19 @@ namespace nebula {
         int one_percent_low = 1000.0f / *std::ranges::max_element(frame_times);
 
         //  Prepare text
-        auto fps_text = target_render_fps == 0 ? "unlimited" : std::to_string(target_render_fps);
+        auto fps_text = render_fps == 0 ? "unlimited" : std::to_string(render_fps);
         auto average_fps_text = std::format("avg fps: {}, 1% low: {}", average_fps, one_percent_low);
-        auto text_color = (float)current_fps / target_render_fps > 0.9f ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+        auto text_color = (float)current_fps / render_fps > 0.9f ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 
         if (ImGui::CollapsingHeader("Frames per second", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::Checkbox("VSync", &vsync);
-            ImGui::SliderInt("Update fps", &update_fps, 0, 200);
+            ImGui::SliderFloat("Update timestep", &update_timestep, 0.01, 1.0);
             ImGui::SliderInt("Render fps", &render_fps, 0, 500);
 
             ImGui::Separator();
 
-            ImGui::Text("Target update fps: %i (%.3fms)", target_update_fps, 1000.0f / target_update_fps);
+            ImGui::Text("Fixed update timestep: %.3fs", update_timestep);
             ImGui::Text("Target render fps: %s (%.3fms)", fps_text.c_str(), target_milliseconds);
 
             ImGui::TextColored(text_color, "Current fps: %i", current_fps);
@@ -174,7 +172,7 @@ namespace nebula {
         }
 
         //  Set new fps settings
-        application.setUpdateFps(update_fps);
+        application.setUpdateTimestep(update_timestep);
         application.setRenderFps(render_fps);
         application.getWindow().setVSync(vsync);
     }

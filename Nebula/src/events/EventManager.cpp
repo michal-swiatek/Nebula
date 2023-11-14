@@ -40,6 +40,8 @@ namespace nebula {
 
     void EventManager::dispatchEvents()
     {
+        std::lock_guard<std::mutex> lock{m_mutex};
+
         //  Events don't get destroyed, so their destructors aren't called
         for (const auto& event : m_events)
             broadcastEvent(*event);

@@ -32,10 +32,10 @@ namespace nebula::threads {
         void changeAPI(rendering::API api);
 
         void onWindowResize(WindowResizeEvent& event) const;
-        void blockUntilInitialized();
+        static void blockUntilInitialized();
 
     private:
-        Timer m_frame_timer;
+        Timer m_render_timer;
         Scope<rendering::impl::RenderContext> m_render_context = nullptr;
 
         std::atomic<rendering::API> m_api_change;

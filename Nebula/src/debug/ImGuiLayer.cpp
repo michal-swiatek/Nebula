@@ -5,7 +5,6 @@
 
 #include "debug/ImGuiLayer.h"
 
-#include <mutex>
 #include <array>
 #include <format>
 
@@ -33,7 +32,8 @@ namespace nebula {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+        // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+        //  TODO: Fix multi viewports
 
         ImGui::StyleColorsDark();
 
@@ -72,7 +72,6 @@ namespace nebula {
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        // std::lock_guard<std::mutex> lock{mutex};
         ImGui::NewFrame();
     }
 
@@ -82,7 +81,6 @@ namespace nebula {
         Application& app = Application::get();
         io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
 
-        // std::lock_guard<std::mutex> lock{mutex};
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

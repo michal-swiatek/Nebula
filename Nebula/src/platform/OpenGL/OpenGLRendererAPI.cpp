@@ -60,6 +60,11 @@ namespace nebula::rendering::impl {
         glEnable(GL_LINE_SMOOTH);
     }
 
+    void OpenGlRendererApi::shutdown()
+    {
+
+    }
+
     void OpenGlRendererApi::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
     {
         glViewport(x, y, width, height);

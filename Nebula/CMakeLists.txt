@@ -24,6 +24,8 @@ set(NEBULA_SOURCE_FILES
         src/platform/Windows/WindowsWindow.cpp
         src/platform/OpenGL/OpenGLContext.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
+        src/platform/Vulkan/VulkanContext.cpp
+        src/platform/Vulkan/VulkanRendererAPI.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp

@@ -1,16 +1,16 @@
 //
-// Created by michal-swiatek on 12.11.2023.
+// Created by michal-swiatek on 15.11.2023.
 // Github: https://github.com/michal-swiatek
 //
 
-#ifndef OPENGLRENDERERAPI_H
-#define OPENGLRENDERERAPI_H
+#ifndef VULKANRENDERERAPI_H
+#define VULKANRENDERERAPI_H
 
 #include "renderer/RendererAPI.h"
 
 namespace nebula::rendering::impl {
 
-    class OpenGlRendererApi final : public RendererApi
+    class VulkanRendererApi final : public RendererApi
     {
     public:
         void init() override;
@@ -24,4 +24,4 @@ namespace nebula::rendering::impl {
 
 }
 
-#endif //OPENGLRENDERERAPI_H
+#endif //VULKANRENDERERAPI_H

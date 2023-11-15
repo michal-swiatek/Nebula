@@ -15,7 +15,8 @@ namespace nebula::rendering {
     enum class API
     {
         cUndefined = 0,
-        cOpenGL = 1
+        cOpenGL = 1,
+        cVulkan = 2
     };
 
     enum ClearBufferType : uint8_t
@@ -35,6 +36,7 @@ namespace nebula::rendering {
             virtual ~RendererApi() = default;
 
             virtual void init() = 0;
+            virtual void shutdown() = 0;
 
             virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 

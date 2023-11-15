@@ -70,6 +70,7 @@ namespace nebula {
         [[nodiscard]] int getRenderFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.render_fps; }
         [[nodiscard]] double getUpdateTimestep() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.update_timestep; }
         [[nodiscard]] double getTime() { std::lock_guard<std::mutex> lock{m_mutex}; return m_application_timer.elapsedSeconds(); }
+        [[nodiscard]] std::string getName() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.name; }
 
         void setRenderFps(int fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = fps; }
         void setUpdateTimestep(double timestep) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_timestep = timestep; }

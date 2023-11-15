@@ -1,6 +1,9 @@
 set(OPENGL_MAJOR_VERSION 4)
 set(OPENGL_MINOR_VERSION 6)
+set(VULKAN_MAJOR_VERSION 1)
+set(VULKAN_MINOR_VERSION 3)
 configure_file(include/platform/OpenGL/OpenGLConfiguration.h.in include/platform/OpenGL/OpenGLConfiguration.h @ONLY)
+configure_file(include/platform/Vulkan/VulkanConfiguration.h.in include/platform/Vulkan/VulkanConfiguration.h @ONLY)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party)
 

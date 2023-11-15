@@ -82,10 +82,15 @@ public:
     {
         if (event.getKeycode() == Keycode::Escape)
             Application::get().close();
-        else if (event.getKeycode() == Keycode::R)
+        else if (event.getKeycode() == Keycode::O)
         {
-            NB_TRACE("Reloading render API");
+            NB_TRACE("Loading OpenGL API");
             Application::get().setRenderingAPI(rendering::API::cOpenGL);
+        }
+        else if (event.getKeycode() == Keycode::V)
+        {
+            NB_TRACE("Loading Vulkan API");
+            Application::get().setRenderingAPI(rendering::API::cVulkan);
         }
 
         return true;

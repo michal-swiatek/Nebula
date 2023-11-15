@@ -7,6 +7,7 @@
 
 #include <glad/glad.h>
 #include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
 
 #include "core/Application.h"
 #include "renderer/Renderer.h"
@@ -82,6 +83,7 @@ namespace nebula::threads {
 
         uint32_t extension_count = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
+        NB_CORE_INFO("GLFW support for Vulkan: {}", glfwVulkanSupported());
         NB_CORE_INFO("Number of supported Vulkan extensions: {}", extension_count);
 
         m_render_context = RenderContext::create(api, window_handle);

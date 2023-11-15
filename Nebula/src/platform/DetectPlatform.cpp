@@ -13,6 +13,9 @@
 #include "core/Types.h"
 
 #include "renderer/RendererAPI.h"
+
+#include "platform/Vulkan/VulkanContext.h"
+#include "platform/Vulkan/VulkanRendererAPI.h"
 #include "platform/OpenGL/OpenGLContext.h"
 #include "platform/OpenGL/OpenGLRendererAPI.h"
 
@@ -53,6 +56,7 @@ namespace nebula {
             switch (api)
             {
                 case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
+                case API::cVulkan:    return createScope<VulkanContext>(static_cast<GLFWwindow*>(window_handle));
                 default:                      NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
         }
@@ -62,6 +66,7 @@ namespace nebula {
             switch (api)
             {
                 case API::cOpenGL:    return memory::MemoryManager::create<OpenGlRendererApi>();
+                case API::cVulkan:    return memory::MemoryManager::create<VulkanRendererApi>();
                 default:     NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
         }

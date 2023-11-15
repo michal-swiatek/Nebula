@@ -5,9 +5,8 @@
 
 #include "threads/RenderThread.h"
 
-#include <condition_variable>
-
 #include <glad/glad.h>
+#include <vulkan/vulkan.h>
 
 #include "core/Application.h"
 #include "renderer/Renderer.h"
@@ -80,6 +79,10 @@ namespace nebula::threads {
     {
         auto& application = Application::get();
         void* window_handle = application.getWindow().getWindowHandle();
+
+        uint32_t extension_count = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
+        NB_CORE_INFO("Number of supported Vulkan extensions: {}", extension_count);
 
         m_render_context = RenderContext::create(api, window_handle);
         Renderer::init(api, this);

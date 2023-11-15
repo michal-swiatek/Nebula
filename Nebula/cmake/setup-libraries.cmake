@@ -29,8 +29,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/include)
 set(OPENGL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/src/glad.cpp)
 
+# Vulkan
+find_package(Vulkan REQUIRED)
+
+# Vulkan Memory Allocator
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/vma)
+set(VMA_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/vma/vk_mem_alloc.cpp)
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/vma/vk_mem_alloc.cpp PROPERTIES COMPILE_FLAGS -Wno-nullability-completeness)
+
 # glm
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glm)
+find_program(GLSL_VALIDATOR glslangValidator HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
 
 # imgui
 include_directories(3rd-party/imgui)

@@ -6,11 +6,9 @@
 #ifndef NEBULAENGINE_WINDOWSWINDOW_H
 #define NEBULAENGINE_WINDOWSWINDOW_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "core/Window.h"
-#include "renderer/RenderContext.h"
+
+struct GLFWwindow;
 
 namespace nebula {
 

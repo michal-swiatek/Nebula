@@ -5,6 +5,8 @@
 
 #include "platform/Windows/WindowsWindow.h"
 
+#include <GLFW/glfw3.h>
+
 #include "core/Logging.h"
 #include "events/MouseEvents.h"
 #include "events/KeyboardEvents.h"

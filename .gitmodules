@@ -13,3 +13,6 @@
 [submodule "Nebula/3rd-party/yaml-cpp"]
 	path = Nebula/3rd-party/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "Nebula/3rd-party/taskflow"]
+	path = Nebula/3rd-party/taskflow
+	url = https://github.com/taskflow/taskflow.git

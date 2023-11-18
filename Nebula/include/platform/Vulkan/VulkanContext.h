@@ -14,11 +14,11 @@ struct GLFWwindow;
 
 namespace nebula::rendering {
 
-    class VulkanContext final : public impl::RenderContext
+    class VulkanContext final : public RenderContext
     {
     public:
         explicit VulkanContext(GLFWwindow* window_handle);
-        ~VulkanContext();
+        ~VulkanContext() override;
 
         void bind() override;
         void unbind() override;

@@ -12,7 +12,7 @@ struct GLFWwindow;
 
 namespace nebula::rendering {
 
-    class OpenGLContext final : public impl::RenderContext
+    class OpenGLContext final : public RenderContext
     {
     public:
         explicit OpenGLContext(GLFWwindow* window_handle);

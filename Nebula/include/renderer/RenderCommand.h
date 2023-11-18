@@ -6,10 +6,11 @@
 #ifndef RENDERCOMMAND_H
 #define RENDERCOMMAND_H
 
-#include "RendererAPI.h"
 #include "core/Types.h"
 
 namespace nebula::rendering {
+
+    class RendererApi;
 
     enum RenderCommandCategory : uint8_t
     {
@@ -29,7 +30,7 @@ namespace nebula::rendering {
         [[nodiscard]] virtual RenderCommandCategory getCategory() const = 0;
 
     protected:
-        static View<impl::RendererApi> s_renderer_api;
+        static View<RendererApi> s_renderer_api;
 
         friend class Renderer;
     };

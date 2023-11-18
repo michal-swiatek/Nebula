@@ -8,7 +8,7 @@
 
 #include "renderer/RendererAPI.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
     class VulkanRendererApi final : public RendererApi
     {

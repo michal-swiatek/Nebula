@@ -35,6 +35,8 @@ namespace nebula {
 
         int render_fps = 0;
         double update_timestep = 0.02;
+
+        rendering::API api = rendering::API::cOpenGL;
     };
 
     class NEBULA_API Application
@@ -75,6 +77,7 @@ namespace nebula {
         void setRenderFps(int fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = fps; }
         void setUpdateTimestep(double timestep) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_timestep = timestep; }
 
+        rendering::API getRenderingAPI();
         void setRenderingAPI(rendering::API api);
 
         [[nodiscard]] Window& getWindow() const { return *m_window; }

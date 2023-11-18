@@ -5,7 +5,7 @@
 
 #include "platform/Vulkan/VulkanRendererAPI.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
     void VulkanRendererApi::init()
     {

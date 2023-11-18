@@ -9,7 +9,7 @@
 #include "core/Types.h"
 #include "RenderPass.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
     class Frame
     {

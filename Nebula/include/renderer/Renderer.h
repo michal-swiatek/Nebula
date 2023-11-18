@@ -10,19 +10,16 @@
 #include "core/Types.h"
 #include "core/Assert.h"
 
-#include "Frame.h"
 #include "RenderPass.h"
-#include "RendererAPI.h"
+#include "platform/PlatformAPI.h"
 
 namespace nebula {
 
-    namespace threads {
-
-        class RenderThread;
-
-    }
+    namespace threads { class RenderThread; }
 
     namespace rendering {
+
+        class Frame;
 
         class NEBULA_API Renderer
         {
@@ -51,9 +48,9 @@ namespace nebula {
 
         protected:
             View<RenderPass> m_current_pass = nullptr;
-            Scope<impl::Frame> m_current_frame = nullptr;
+            Scope<Frame> m_current_frame;
 
-            static View<impl::RendererApi> s_renderer_api;
+            static View<RendererApi> s_renderer_api;
             static View<threads::RenderThread> s_render_thread;
 
         private:

@@ -10,7 +10,7 @@
 #include "core/Core.h"
 #include "core/Logging.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
     void OpenGLMessageCallback(
         GLenum source,

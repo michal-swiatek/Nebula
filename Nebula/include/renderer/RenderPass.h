@@ -13,6 +13,8 @@
 
 namespace nebula::rendering {
 
+    class Renderer;
+
     class NEBULA_API RenderPass
     {
     public:

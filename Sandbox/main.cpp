@@ -12,7 +12,7 @@ using namespace nebula::literals;
 using namespace std::chrono_literals;
 
 auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60);
-auto window_properties = WindowProperties("Sandbox", 1600, 900, false, rendering::API::cOpenGL);
+auto window_properties = WindowProperties("Sandbox", 1600, 900, false);
 
 struct Temp
 {

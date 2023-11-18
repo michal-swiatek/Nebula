@@ -8,7 +8,7 @@
 
 #include "renderer/RendererAPI.h"
 
-namespace nebula::rendering::impl {
+namespace nebula::rendering {
 
     class OpenGlRendererApi final : public RendererApi
     {

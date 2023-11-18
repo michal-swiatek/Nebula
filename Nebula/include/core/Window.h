@@ -11,8 +11,6 @@
 #include "Core.h"
 #include "Types.h"
 #include "events/EventManager.h"
-#include "renderer/RendererAPI.h"
-#include "renderer/RenderContext.h"
 
 namespace nebula {
 
@@ -22,20 +20,17 @@ namespace nebula {
         int32_t width;
         int32_t height;
         bool vsync;
-        rendering::API api;
 
         explicit WindowProperties(
             std::string title = "Nebula Engine",
             int32_t width = 1600,
             int32_t height = 900,
-            bool vsync = true,
-            rendering::API api = rendering::API::cOpenGL
+            bool vsync = true
         ) :
                 title(std::move(title)),
                 width(width),
                 height(height),
-                vsync(vsync),
-                api(api)
+                vsync(vsync)
         {}
     };
 

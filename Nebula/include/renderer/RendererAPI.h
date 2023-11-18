@@ -9,15 +9,9 @@
 #include <glm/glm.hpp>
 
 #include "core/Types.h"
+#include "platform/PlatformAPI.h"
 
 namespace nebula::rendering {
-
-    enum class API
-    {
-        cUndefined = 0,
-        cOpenGL = 1,
-        cVulkan = 2
-    };
 
     enum ClearBufferType : uint8_t
     {
@@ -28,29 +22,25 @@ namespace nebula::rendering {
 
     class Renderer;
 
-    namespace impl {
+    class RendererApi
+    {
+    public:
+        virtual ~RendererApi() = default;
 
-        class RendererApi
-        {
-        public:
-            virtual ~RendererApi() = default;
+        virtual void init() = 0;
+        virtual void shutdown() = 0;
 
-            virtual void init() = 0;
-            virtual void shutdown() = 0;
+        virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 
-            virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+        virtual void setClearColor(const glm::vec4& color) = 0;
+        virtual void clear(ClearBufferType flags) = 0;
 
-            virtual void setClearColor(const glm::vec4& color) = 0;
-            virtual void clear(ClearBufferType flags) = 0;
+    private:
+        static View<RendererApi> create(API api);
+        static void destroy(RendererApi* api);
 
-        private:
-            static View<RendererApi> create(API api);
-            static void destroy(RendererApi* api);
-
-            friend class nebula::rendering::Renderer;
-        };
-
-    }
+        friend class nebula::rendering::Renderer;
+    };
 
 }
 

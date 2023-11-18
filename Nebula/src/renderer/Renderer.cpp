@@ -6,12 +6,11 @@
 #include "renderer/Renderer.h"
 
 #include "threads/RenderThread.h"
+#include "renderer/RendererAPI.h"
 #include "renderer/RenderCommand.h"
 #include "renderer/utils/RenderPassTemplates.h"
 
 namespace nebula::rendering {
-
-    using namespace impl;
 
     View<RendererApi> Renderer::s_renderer_api = nullptr;
     View<RendererApi> RenderCommand::s_renderer_api = nullptr;

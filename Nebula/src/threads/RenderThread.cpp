@@ -17,7 +17,6 @@
 namespace nebula::threads {
 
     using namespace rendering;
-    using namespace rendering::impl;
 
     std::atomic_flag initialized = false;
 
@@ -71,7 +70,7 @@ namespace nebula::threads {
         shutdown();
     }
 
-    void RenderThread::submitFrame(Scope<rendering::impl::Frame>&& frame)
+    void RenderThread::submitFrame(Scope<rendering::Frame>&& frame)
     {
         m_frame_queue.push(std::move(frame));
     }
@@ -79,14 +78,13 @@ namespace nebula::threads {
     void RenderThread::init(const API api)
     {
         auto& application = Application::get();
-        void* window_handle = application.getWindow().getWindowHandle();
 
         uint32_t extension_count = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr);
         NB_CORE_INFO("GLFW support for Vulkan: {}", glfwVulkanSupported());
         NB_CORE_INFO("Number of supported Vulkan extensions: {}", extension_count);
 
-        m_render_context = RenderContext::create(api, window_handle);
+        m_render_context = RenderContext::create(application.getWindow().getWindowHandle());
         Renderer::init(api, this);
 
         application.pushOverlay<ImGuiLayer>();
@@ -103,8 +101,7 @@ namespace nebula::threads {
 
     void RenderThread::setRenderingAPI(const API api)
     {
-        void* window_handle = Application::get().getWindow().getWindowHandle();
-        m_render_context = RenderContext::create(api, window_handle);
+        m_render_context = RenderContext::create(&Application::get().getWindow());
         Renderer::setRenderingApi(api);
 
         m_api_change.store(API::cUndefined);

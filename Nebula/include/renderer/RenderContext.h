@@ -7,17 +7,13 @@
 #define RENDERCONTEXT_H
 
 #include "core/Types.h"
-#include "renderer/RendererAPI.h"
 
 namespace nebula {
 
-    namespace threads {
+    class Window;
+    namespace threads { class RenderThread; }
 
-        class RenderThread;
-
-    }
-
-    namespace rendering::impl {
+    namespace rendering {
 
         class RenderContext
         {
@@ -31,7 +27,7 @@ namespace nebula {
 
         private:
             friend class nebula::threads::RenderThread;
-            static Scope<RenderContext> create(API api, void* window_handle);
+            static Scope<RenderContext> create(void* window_handle);
         };
 
     }

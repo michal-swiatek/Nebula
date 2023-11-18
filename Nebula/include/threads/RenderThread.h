@@ -14,8 +14,8 @@
 #include "events/ApplicationEvents.h"
 
 #include "renderer/Frame.h"
-#include "renderer/RendererAPI.h"
 #include "renderer/RenderContext.h"
+#include "platform/PlatformAPI.h"
 
 namespace nebula::threads {
 
@@ -24,7 +24,7 @@ namespace nebula::threads {
     public:
         void run(rendering::API api);
 
-        void submitFrame(Scope<rendering::impl::Frame>&& frame);
+        void submitFrame(Scope<rendering::Frame>&& frame);
 
         void close();
         void minimize(bool minimize);
@@ -36,14 +36,14 @@ namespace nebula::threads {
 
     private:
         Timer m_render_timer;
-        Scope<rendering::impl::Frame> m_current_frame = nullptr;
-        Scope<rendering::impl::RenderContext> m_render_context = nullptr;
+        Scope<rendering::Frame> m_current_frame = nullptr;
+        Scope<rendering::RenderContext> m_render_context = nullptr;
 
         std::atomic<rendering::API> m_api_change;
         std::atomic_flag m_running = true;
         std::atomic_flag m_minimized = false;
 
-        BlockingQueue<Scope<rendering::impl::Frame>, 1> m_frame_queue;
+        BlockingQueue<Scope<rendering::Frame>, 1> m_frame_queue;
 
         void init(rendering::API api);
         void shutdown();

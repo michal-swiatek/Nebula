@@ -5,6 +5,8 @@
 
 #include "platform/DetectPlatform.h"
 
+#include <core/Application.h>
+
 #include "memory/MemoryManager.h"
 
 #include "core/Window.h"
@@ -49,11 +51,11 @@ namespace nebula {
         #endif
     }
 
-    namespace rendering::impl {
+    namespace rendering {
 
-        Scope<RenderContext> RenderContext::create(const API api, void* window_handle)
+        Scope<RenderContext> RenderContext::create(void* window_handle)
         {
-            switch (api)
+            switch (Application::get().getRenderingAPI())
             {
                 case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
                 case API::cVulkan:    return createScope<VulkanContext>(static_cast<GLFWwindow*>(window_handle));

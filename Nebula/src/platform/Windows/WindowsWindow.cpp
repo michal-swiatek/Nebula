@@ -12,6 +12,7 @@
 #include "events/KeyboardEvents.h"
 #include "events/ApplicationEvents.h"
 
+#include "platform/EngineConfiguration.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
 
 namespace nebula {
@@ -30,16 +31,17 @@ namespace nebula {
         m_window_data.height = properties.height;
         m_window_data.vsync = properties.vsync;
 
-        NB_CORE_INFO("Creating window: {} ({}, {})", properties.title, properties.width, properties.height);
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+            NB_CORE_INFO("Creating window: {} ({}, {})", properties.title, properties.width, properties.height);
         if (window_count++ == 0)
         {
-            NB_CORE_INFO("Initializing GLFW");
+            if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+                NB_CORE_INFO("Initializing GLFW");
             auto success = glfwInit();
             NB_CORE_ASSERT(success, "Could not initialize GLFW!");
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
-        //  TODO: Check context type
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -56,7 +58,8 @@ namespace nebula {
 
         if (--window_count == 0)
         {
-            NB_CORE_INFO("Terminating GLFW");
+            if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+                NB_CORE_INFO("Terminating GLFW");
             glfwTerminate();
         }
     }

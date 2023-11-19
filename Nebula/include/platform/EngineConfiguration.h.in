@@ -1,0 +1,15 @@
+//
+// Created by michal-swiatek on 18.11.2023.
+// Github: https://github.com/michal-swiatek
+//
+
+#ifndef NEBULA_ENGINECONFIGURATION_H
+#define NEBULA_ENGINECONFIGURATION_H
+
+static const int NEBULA_MAJOR_VERSION = @NEBULA_MAJOR_VERSION@;
+static const int NEBULA_MINOR_VERSION = @NEBULA_MINOR_VERSION@;
+static const int NEBULA_PATCH_VERSION = @NEBULA_PATCH_VERSION@;
+
+static const int NEBULA_INITIALIZATION_VERBOSITY = @NEBULA_INITIALIZATION_VERBOSITY@;
+
+#endif //NEBULA_ENGINECONFIGURATION_H

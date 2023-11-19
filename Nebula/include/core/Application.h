@@ -27,6 +27,13 @@ int main(int argc, char** argv);
 
 namespace nebula {
 
+    struct ApplicationVersion
+    {
+        uint16_t major;
+        uint16_t minor;
+        uint16_t patch;
+    };
+
     struct ApplicationSpecification
     {
         std::string name = "Nebula Application";
@@ -37,6 +44,7 @@ namespace nebula {
         double update_timestep = 0.02;
 
         rendering::API api = rendering::API::cOpenGL;
+        ApplicationVersion version = ApplicationVersion{1, 0, 0};
     };
 
     class NEBULA_API Application
@@ -80,6 +88,7 @@ namespace nebula {
         rendering::API getRenderingAPI();
         void setRenderingAPI(rendering::API api);
 
+        [[nodiscard]] ApplicationVersion getVersion() const { return m_specification.version; }
         [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }
 

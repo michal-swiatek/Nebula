@@ -10,7 +10,6 @@
 
 namespace nebula {
 
-    class Window;
     namespace threads { class RenderThread; }
 
     namespace rendering {

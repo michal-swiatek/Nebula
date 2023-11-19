@@ -1,10 +1,3 @@
-set(OPENGL_MAJOR_VERSION 4)
-set(OPENGL_MINOR_VERSION 6)
-set(VULKAN_MAJOR_VERSION 1)
-set(VULKAN_MINOR_VERSION 3)
-configure_file(include/platform/OpenGL/OpenGLConfiguration.h.in include/platform/OpenGL/OpenGLConfiguration.h @ONLY)
-configure_file(include/platform/Vulkan/VulkanConfiguration.h.in include/platform/Vulkan/VulkanConfiguration.h @ONLY)
-
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party)
 
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
@@ -78,3 +71,19 @@ set(YAML_CPP_DISABLE_UNINSTALL ON CACHE BOOL "Build lib only")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/yaml-cpp/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/yaml-cpp)
+
+# Graphics API version
+set(OPENGL_MAJOR_VERSION 4)
+set(OPENGL_MINOR_VERSION 6)
+set(OPENGL_PATCH_VERSION 0)
+
+set(VULKAN_MAJOR_VERSION 1)
+set(VULKAN_MINOR_VERSION 3)
+set(VULKAN_PATCH_VERSION 0)
+
+set(GLSL_MAJOR_VERSION 4)
+set(GLSL_MINOR_VERSION 6)
+set(GLSL_PATCH_VERSION 0)
+
+configure_file(include/platform/OpenGL/OpenGLConfiguration.h.in include/platform/OpenGL/OpenGLConfiguration.h @ONLY)
+configure_file(include/platform/Vulkan/VulkanConfiguration.h.in include/platform/Vulkan/VulkanConfiguration.h @ONLY)

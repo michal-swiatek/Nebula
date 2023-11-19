@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
 
 set(BUILD_LIBRARIES_RELEASE ON)
+include(cmake/configure-engine.cmake)
 include(cmake/setup-libraries.cmake)
 
 include_directories(include)

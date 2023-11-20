@@ -6,11 +6,23 @@
 #ifndef VULKANCONTEXT_H
 #define VULKANCONTEXT_H
 
-#include "renderer/RenderContext.h"
-
+#include <optional>
 #include <vulkan/vulkan.h>
 
+#include "renderer/RenderContext.h"
+
 struct GLFWwindow;
+
+struct QueueFamilyIndices
+{
+    std::optional<uint32_t> graphics_family;
+    std::optional<uint32_t> presentation_family;
+
+    [[nodiscard]] bool checkMinimalSupport() const
+    {
+        return graphics_family.has_value();
+    }
+};
 
 namespace nebula::rendering {
 
@@ -27,10 +39,22 @@ namespace nebula::rendering {
 
     private:
         GLFWwindow* m_window;
-        VkInstance m_instance;
+        VkSurfaceKHR m_surface = VK_NULL_HANDLE;
+
+        VkInstance m_instance{};
+        VkDevice m_device{};
+        VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
+
+        VkQueue m_graphics_queue = VK_NULL_HANDLE;
+        QueueFamilyIndices m_queue_family_indices{};
+
+        void createVulkanInstance();
+        void pickPhysicalDevice();
+        void createLogicalDevice();
+        void createSurface();
 
         #ifdef NB_DEBUG_BUILD
-        VkDebugUtilsMessengerEXT m_debug_messenger;
+        VkDebugUtilsMessengerEXT m_debug_messenger{};
         #endif
     };
 

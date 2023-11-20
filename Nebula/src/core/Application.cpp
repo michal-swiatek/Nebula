@@ -36,7 +36,7 @@ namespace nebula {
 
         logging::initClient(m_specification.logger_name);
 
-        auto window_settings = window_properties ? *window_properties : WindowProperties(m_specification.name);
+        const auto window_settings = window_properties ? *window_properties : WindowProperties(m_specification.name);
         m_window = Window::create(window_settings);
 
         m_window->setEventManager(m_event_manager);
@@ -73,15 +73,9 @@ namespace nebula {
         m_render_thread.minimize(minimized);
     }
 
-    rendering::API Application::getRenderingAPI()
+    rendering::API Application::getRenderingAPI() const
     {
         return m_specification.api;
-    }
-
-    void Application::setRenderingAPI(rendering::API api)
-    {
-        m_specification.api = api;
-        m_render_thread.changeAPI(api);
     }
 
     void Application::onEvent(Event& event)

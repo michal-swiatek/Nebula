@@ -29,8 +29,6 @@ namespace nebula::threads {
         void close();
         void minimize(bool minimize);
 
-        void changeAPI(rendering::API api);
-
         void onWindowResize(WindowResizeEvent& event) const;
         static void blockUntilInitialized();
 
@@ -39,7 +37,6 @@ namespace nebula::threads {
         Scope<rendering::Frame> m_current_frame = nullptr;
         Scope<rendering::RenderContext> m_render_context = nullptr;
 
-        std::atomic<rendering::API> m_api_change;
         std::atomic_flag m_running = true;
         std::atomic_flag m_minimized = false;
 
@@ -47,7 +44,6 @@ namespace nebula::threads {
 
         void init(rendering::API api);
         void shutdown();
-        void setRenderingAPI(rendering::API api);
     };
 
 }

@@ -36,9 +36,6 @@ namespace nebula::threads {
             auto next_frame_time = application.getTime() + render_timestep;
             auto frame = m_frame_queue.pop(0);
 
-            if (api = m_api_change.load(std::memory_order_relaxed); api != API::cUndefined)
-                setRenderingAPI(api);
-
             if (!m_minimized.test(std::memory_order_relaxed))
             {
                 if (frame)
@@ -99,14 +96,6 @@ namespace nebula::threads {
         m_render_context.reset();
     }
 
-    void RenderThread::setRenderingAPI(const API api)
-    {
-        m_render_context = RenderContext::create(&Application::get().getWindow());
-        Renderer::setRenderingApi(api);
-
-        m_api_change.store(API::cUndefined);
-    }
-
     void RenderThread::close()
     {
         m_running.clear(std::memory_order_release);
@@ -118,12 +107,6 @@ namespace nebula::threads {
             m_minimized.test_and_set(std::memory_order_acquire);
         else
             m_minimized.clear(std::memory_order_release);
-    }
-
-    void RenderThread::changeAPI(const API api)
-    {
-        NB_CORE_ASSERT(api != API::cUndefined, "Trying to change render API to Undefined API!");
-        m_api_change.store(api);
     }
 
     void RenderThread::onWindowResize(WindowResizeEvent& event) const

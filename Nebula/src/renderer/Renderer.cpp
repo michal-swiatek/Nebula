@@ -49,12 +49,15 @@ namespace nebula::rendering {
         m_current_pass = nullptr;
     }
 
-    void Renderer::init(API api, View<threads::RenderThread> render_thread)
+    void Renderer::init(const API api, const View<threads::RenderThread> render_thread)
     {
         NB_CORE_ASSERT(!s_renderer_api, "Renderer should only be initialized once!");
         NB_CORE_ASSERT(!s_render_thread, "Renderer should only be initialized once!");
 
-        setRenderingApi(api);
+        s_renderer_api = RendererApi::create(api);
+        RenderCommand::s_renderer_api = s_renderer_api;
+
+        s_renderer_api->init();
         s_render_thread = render_thread;
     }
 
@@ -63,19 +66,7 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(s_renderer_api, "Uninitialized Rendering API!");
         RendererApi::destroy(s_renderer_api);
         s_renderer_api = nullptr;
-        s_render_thread = nullptr;
         RenderCommand::s_renderer_api = nullptr;
-    }
-
-    void Renderer::setRenderingApi(const API api)
-    {
-        if (s_renderer_api)
-            RendererApi::destroy(s_renderer_api);
-
-        s_renderer_api = RendererApi::create(api);
-        RenderCommand::s_renderer_api = s_renderer_api;
-
-        s_renderer_api->init();
     }
 
 }

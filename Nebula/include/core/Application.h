@@ -85,8 +85,7 @@ namespace nebula {
         void setRenderFps(int fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = fps; }
         void setUpdateTimestep(double timestep) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_timestep = timestep; }
 
-        rendering::API getRenderingAPI();
-        void setRenderingAPI(rendering::API api);
+        rendering::API getRenderingAPI() const;
 
         [[nodiscard]] ApplicationVersion getVersion() const { return m_specification.version; }
         [[nodiscard]] Window& getWindow() const { return *m_window; }

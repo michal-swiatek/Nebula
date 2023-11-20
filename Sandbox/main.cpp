@@ -11,7 +11,7 @@ using namespace nebula;
 using namespace nebula::literals;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60);
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, rendering::API::cOpenGL);
 auto window_properties = WindowProperties("Sandbox", 1600, 900, false);
 
 struct Temp
@@ -82,16 +82,6 @@ public:
     {
         if (event.getKeycode() == Keycode::Escape)
             Application::get().close();
-        else if (event.getKeycode() == Keycode::O)
-        {
-            NB_TRACE("Loading OpenGL API");
-            Application::get().setRenderingAPI(rendering::API::cOpenGL);
-        }
-        else if (event.getKeycode() == Keycode::V)
-        {
-            NB_TRACE("Loading Vulkan API");
-            Application::get().setRenderingAPI(rendering::API::cVulkan);
-        }
 
         return true;
     }

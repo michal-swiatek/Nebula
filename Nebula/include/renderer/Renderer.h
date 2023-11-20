@@ -57,8 +57,6 @@ namespace nebula {
             static void init(API api, View<threads::RenderThread> render_thread);
             static void shutdown();
 
-            static void setRenderingApi(API api);
-
             friend class nebula::threads::RenderThread;
         };
 

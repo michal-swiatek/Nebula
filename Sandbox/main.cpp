@@ -11,7 +11,7 @@ using namespace nebula;
 using namespace nebula::literals;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, rendering::API::cOpenGL);
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, rendering::API::cVulkan);
 auto window_properties = WindowProperties("Sandbox", 1600, 900, false);
 
 struct Temp

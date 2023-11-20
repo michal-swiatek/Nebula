@@ -51,12 +51,12 @@ namespace nebula::threads {
                 else
                     ClearColorCommand(0.2f, 0.2f, 0.2f, 1.0f).execute();
 
-                ImGuiLayer::begin();
+                // ImGuiLayer::begin();
 
                 for (const auto& layer : application.m_layer_stack)
                     layer->onImGuiRender();
 
-                ImGuiLayer::end();
+                // ImGuiLayer::end();
 
                 m_render_context->swapBuffers();
             }
@@ -84,7 +84,7 @@ namespace nebula::threads {
         m_render_context = RenderContext::create(application.getWindow().getWindowHandle());
         Renderer::init(api, this);
 
-        application.pushOverlay<ImGuiLayer>();
+        // application.pushOverlay<ImGuiLayer>();
 
         initialized.test_and_set();
         initialized.notify_one();

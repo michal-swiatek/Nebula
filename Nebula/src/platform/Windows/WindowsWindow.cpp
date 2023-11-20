@@ -24,7 +24,7 @@ namespace nebula {
         NB_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
     }
 
-    WindowsWindow::WindowsWindow(const WindowProperties& properties)
+    WindowsWindow::WindowsWindow(const WindowProperties& properties, const rendering::API api)
     {
         m_window_data.title = properties.title;
         m_window_data.width = properties.width;
@@ -42,9 +42,21 @@ namespace nebula {
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        switch (api)
+        {
+            case rendering::API::cOpenGL:
+            {
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_MAJOR_VERSION);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_MINOR_VERSION);
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+                break;
+            }
+            case rendering::API::cVulkan:
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+                break;
+            default: NB_CORE_ASSERT(false, "Unknown rendering API!");
+        }
 
         m_window = glfwCreateWindow(properties.width, properties.height, properties.title.c_str(), nullptr, nullptr);
 

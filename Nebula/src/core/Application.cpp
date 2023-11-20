@@ -37,7 +37,7 @@ namespace nebula {
         logging::initClient(m_specification.logger_name);
 
         const auto window_settings = window_properties ? *window_properties : WindowProperties(m_specification.name);
-        m_window = Window::create(window_settings);
+        m_window = Window::create(window_settings, m_specification.api);
 
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());

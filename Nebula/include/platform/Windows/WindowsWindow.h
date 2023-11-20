@@ -15,7 +15,7 @@ namespace nebula {
     class WindowsWindow final : public Window
     {
     public:
-        explicit WindowsWindow(const WindowProperties& properties);
+        explicit WindowsWindow(const WindowProperties& properties, rendering::API api);
         ~WindowsWindow() override;
 
         void onUpdate() override;

@@ -11,6 +11,7 @@
 #include "Core.h"
 #include "Types.h"
 #include "events/EventManager.h"
+#include "platform/PlatformAPI.h"
 
 namespace nebula {
 
@@ -55,7 +56,7 @@ namespace nebula {
         virtual void onUpdate() = 0;
         virtual void setEventManager(EventManager& event_manager) = 0;
 
-        static Scope<Window> create(const WindowProperties& properties = WindowProperties());
+        static Scope<Window> create(const WindowProperties& properties, rendering::API api);
     };
 
 }

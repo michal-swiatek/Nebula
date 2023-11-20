@@ -31,10 +31,10 @@ namespace nebula {
 
     Input* Input::s_instance = nullptr;
 
-    Scope<Window> Window::create(const WindowProperties& properties)
+    Scope<Window> Window::create(const WindowProperties& properties, const rendering::API api)
     {
         #ifdef NB_PLATFORM_WINDOWS
-        return createScope<WindowsWindow>(properties);
+        return createScope<WindowsWindow>(properties, api);
         #else
         NB_CORE_ASSERT(false, "Unknown platform!");
         return nullptr;

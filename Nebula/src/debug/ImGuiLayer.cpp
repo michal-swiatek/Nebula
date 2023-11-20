@@ -12,6 +12,7 @@
 #include <numeric>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_opengl3.h>
 
 #include "core/Application.h"
@@ -47,13 +48,29 @@ namespace nebula {
         auto& application = Application::get();
         auto* window = static_cast<GLFWwindow*>(application.getWindow().getWindowHandle());
 
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init(GLSL_VERSION_STRING.c_str());
+        switch (Application::get().getRenderingAPI())
+        {
+            case rendering::API::cOpenGL:
+            {
+                ImGui_ImplGlfw_InitForOpenGL(window, true);
+                ImGui_ImplOpenGL3_Init(GLSL_VERSION_STRING.c_str());
+
+                break;
+            }
+            case rendering::API::cVulkan:
+            {
+                ImGui_ImplGlfw_InitForVulkan(window, true);
+                // ImGui_ImplVulkan_Init();
+                break;
+            }
+            default: break;
+        }
     }
 
     void ImGuiLayer::onDetach()
     {
-        ImGui_ImplOpenGL3_Shutdown();
+        if (Application::get().getRenderingAPI() == rendering::API::cOpenGL)
+            ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
@@ -70,7 +87,13 @@ namespace nebula {
 
     void ImGuiLayer::begin()
     {
-        ImGui_ImplOpenGL3_NewFrame();
+        switch (Application::get().getRenderingAPI())
+        {
+            case rendering::API::cOpenGL:   ImGui_ImplOpenGL3_NewFrame();   break;
+            case rendering::API::cVulkan:   ImGui_ImplVulkan_NewFrame();    break;
+            default: break;
+        }
+
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }

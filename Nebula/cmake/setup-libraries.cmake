@@ -47,6 +47,7 @@ set(IMGUI_SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imgui_widgets.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_glfw.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_opengl3.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_vulkan.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/misc/cpp/imgui_stdlib.cpp")
 
 set(IMGUI_HEADER_FILES
@@ -58,6 +59,7 @@ set(IMGUI_HEADER_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/imstb_truetype.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_glfw.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_opengl3.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/backends/imgui_impl_vulkan.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/imgui/misc/cpp/imgui_stdlib.h")
 
 # Restore project build type

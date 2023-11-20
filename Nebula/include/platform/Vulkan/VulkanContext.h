@@ -20,7 +20,7 @@ struct QueueFamilyIndices
 
     [[nodiscard]] bool checkMinimalSupport() const
     {
-        return graphics_family.has_value();
+        return graphics_family && presentation_family;
     }
 };
 
@@ -46,12 +46,15 @@ namespace nebula::rendering {
         VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
 
         VkQueue m_graphics_queue = VK_NULL_HANDLE;
+        VkQueue m_presentation_queue = VK_NULL_HANDLE;
         QueueFamilyIndices m_queue_family_indices{};
 
         void createVulkanInstance();
         void pickPhysicalDevice();
-        void createLogicalDevice();
         void createSurface();
+        void createLogicalDevice();
+
+        QueueFamilyIndices findQueueFamilies() const;
 
         #ifdef NB_DEBUG_BUILD
         VkDebugUtilsMessengerEXT m_debug_messenger{};

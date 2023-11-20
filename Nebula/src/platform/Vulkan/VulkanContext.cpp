@@ -5,6 +5,7 @@
 
 #include "platform/Vulkan/VulkanContext.h"
 
+#include <set>
 #include <map>
 
 #include <vulkan/vulkan.h>
@@ -29,7 +30,6 @@ VkApplicationInfo createApplicationInfo();
 VkDeviceQueueCreateInfo createQueueInfo(uint32_t queue_family_index, float priority = 1.0);
 
 int ratePhysicalDevice(VkPhysicalDevice device);
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance);
 std::vector<VkQueueFamilyProperties> getQueueFamilies(VkPhysicalDevice device);
@@ -147,37 +147,71 @@ namespace nebula::rendering {
 
         for (const auto& device : devices)
         {
-            if (auto queue_indices = findQueueFamilies(device); queue_indices.checkMinimalSupport())
+            if (auto queue_indices = findQueueFamilies(); queue_indices.checkMinimalSupport())
                 candidates.insert(std::make_pair(ratePhysicalDevice(device), device));
         }
 
         NB_CORE_ASSERT(candidates.rbegin()->first > 0, "Failed to find a suitable GPU!")
         m_physical_device = candidates.rbegin()->second;
-        m_queue_family_indices = findQueueFamilies(m_physical_device);
+        m_queue_family_indices = findQueueFamilies();
     }
 
     void VulkanContext::createLogicalDevice()
     {
-        VkDeviceQueueCreateInfo create_queue_info = createQueueInfo(*m_queue_family_indices.graphics_family);
+        const auto [graphics_family, presentation_family] = m_queue_family_indices;    //  For shorter typing
+
+        std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
+        std::set unique_queue_indices = {*graphics_family, *presentation_family};
+
+        queue_create_infos.reserve(unique_queue_indices.size());
+        for (const auto queue_index : unique_queue_indices)
+            queue_create_infos.push_back(createQueueInfo(queue_index));
+
         VkPhysicalDeviceFeatures device_features{};
 
         VkDeviceCreateInfo create_info{};
         create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        create_info.pQueueCreateInfos = &create_queue_info;
-        create_info.queueCreateInfoCount = 1;
+        create_info.pQueueCreateInfos = queue_create_infos.data();
+        create_info.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size());
         create_info.pEnabledFeatures = &device_features;
 
         const VkResult status = vkCreateDevice(m_physical_device, &create_info, nullptr, &m_device);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Vulkan logical device!");
 
-        vkGetDeviceQueue(m_device, *m_queue_family_indices.graphics_family, 0, &m_graphics_queue);
+        vkGetDeviceQueue(m_device, *graphics_family, 0, &m_graphics_queue);
         NB_CORE_ASSERT(m_graphics_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan graphics queue handle!");
+
+        vkGetDeviceQueue(m_device, *presentation_family, 0, &m_presentation_queue);
+        NB_CORE_ASSERT(m_presentation_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan presentation queue handle!");
     }
 
     void VulkanContext::createSurface()
     {
         const VkResult status = glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Window surface!");
+    }
+
+    QueueFamilyIndices VulkanContext::findQueueFamilies() const
+    {
+        QueueFamilyIndices indices;
+        VkBool32 present_support = false;
+
+        const auto queue_families = getQueueFamilies(m_physical_device);
+        for (int index = 0; index < queue_families.size(); ++index)
+        {
+            vkGetPhysicalDeviceSurfaceSupportKHR(m_physical_device, index, m_surface, &present_support);
+
+            if (queue_families[index].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+                indices.graphics_family = index;
+
+            if (present_support)
+                indices.presentation_family = index;
+
+            if (indices.checkMinimalSupport())
+                break;
+        }
+
+        return indices;
     }
 
 }
@@ -198,7 +232,7 @@ VkApplicationInfo createApplicationInfo()
     return app_info;
 }
 
-VkDeviceQueueCreateInfo createQueueInfo(uint32_t queue_family_index, float priority)
+VkDeviceQueueCreateInfo createQueueInfo(const uint32_t queue_family_index, float priority)
 {
     static float queue_priority = 1.0f; //  Fight stupid pointer reference in struct
     queue_priority = priority;
@@ -227,23 +261,6 @@ int ratePhysicalDevice(const VkPhysicalDevice device)
     score += static_cast<int>(device_properties.limits.maxImageDimension2D);
 
     return score;
-}
-
-QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice device)
-{
-    QueueFamilyIndices indices;
-
-    const auto queue_families = getQueueFamilies(device);
-    for (int index = 0; index < queue_families.size(); ++index)
-    {
-        if (queue_families[index].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-            indices.graphics_family = index;
-
-        if (indices.checkMinimalSupport())
-            break;
-    }
-
-    return indices;
 }
 
 std::vector<VkPhysicalDevice> getPhysicalDevices(const VkInstance instance)

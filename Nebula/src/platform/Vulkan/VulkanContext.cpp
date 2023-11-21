@@ -29,6 +29,7 @@ struct DeviceProperties
 //  Create helpers
 VkApplicationInfo createApplicationInfo();
 VkDeviceQueueCreateInfo createQueueInfo(uint32_t queue_family_index, float priority = 1.0);
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surface_format);
 
 //  Listing helpers
 std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance);
@@ -70,6 +71,7 @@ namespace nebula::rendering {
         createPhysicalDevice();
         createLogicalDevice();
         createSwapchain();
+        createImageViews();
 
         setVSync(true);
 
@@ -96,6 +98,9 @@ namespace nebula::rendering {
         #ifdef NB_DEBUG_BUILD
         destroyDebugUtilsMessengerEXT(m_instance, m_debug_messenger, nullptr);
         #endif
+
+        for (const auto& image_view : m_swapchain_image_views)
+            vkDestroyImageView(m_device, image_view, nullptr);
 
         vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
         vkDestroyDevice(m_device, nullptr);
@@ -239,6 +244,23 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain!");
     }
 
+    void VulkanContext::createImageViews()
+    {
+        uint32_t image_count;
+        vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, nullptr);
+
+        m_swapchain_images.resize(image_count);
+        vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, m_swapchain_images.data());
+
+        m_swapchain_image_views.resize(image_count);
+        for (int i = 0; i < m_swapchain_images.size(); ++i)
+        {
+            auto create_info = createSwapchainImageViewInfo(m_swapchain_images[i], m_surface_format.format);
+            const VkResult status = vkCreateImageView(m_device, &create_info, nullptr, &m_swapchain_image_views[i]);
+            NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
+        }
+    }
+
     VkSurfaceFormatKHR VulkanContext::chooseSwapSurfaceFormat() const
     {
         for (const auto& format : m_swapchain_details.formats)
@@ -377,6 +399,26 @@ VkDeviceQueueCreateInfo createQueueInfo(const uint32_t queue_family_index, float
     queue_create_info.pQueuePriorities = &queue_priority;
 
     return queue_create_info;
+}
+
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surface_format)
+{
+    VkImageViewCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    create_info.image = image;
+    create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    create_info.format = surface_format;
+    create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    create_info.subresourceRange.baseMipLevel = 0;
+    create_info.subresourceRange.levelCount = 1;
+    create_info.subresourceRange.baseArrayLayer = 0;
+    create_info.subresourceRange.layerCount = 1;
+
+    return create_info;
 }
 
 int ratePhysicalDevice(VkPhysicalDevice device)
@@ -586,4 +628,3 @@ void destroyDebugUtilsMessengerEXT(const VkInstance instance, const VkDebugUtils
 }
 
 #endif
-

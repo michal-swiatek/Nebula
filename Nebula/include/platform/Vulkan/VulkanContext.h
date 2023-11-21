@@ -52,11 +52,13 @@ namespace nebula::rendering {
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 
-        VkSurfaceFormatKHR m_surface_format{};
-        VkPresentModeKHR m_present_mode{};
-        VkExtent2D m_extent{};
         bool m_vsync = true;
+        VkExtent2D m_extent{};
+        VkPresentModeKHR m_present_mode{};
+        VkSurfaceFormatKHR m_surface_format{};
 
+        std::vector<VkImage> m_swapchain_images{};
+        std::vector<VkImageView> m_swapchain_image_views{};
         std::vector<const char*> m_device_extensions{};
 
         VkInstance m_instance{};
@@ -74,6 +76,7 @@ namespace nebula::rendering {
         void createPhysicalDevice();
         void createLogicalDevice();
         void createSwapchain();
+        void createImageViews();
 
         [[nodiscard]] VkSurfaceFormatKHR chooseSwapSurfaceFormat() const;
         [[nodiscard]] VkPresentModeKHR chooseSwapPresentMode() const;

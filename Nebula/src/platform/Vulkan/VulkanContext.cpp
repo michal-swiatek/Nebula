@@ -26,16 +26,21 @@ struct DeviceProperties
     std::string api_version;
 };
 
+//  Create helpers
 VkApplicationInfo createApplicationInfo();
 VkDeviceQueueCreateInfo createQueueInfo(uint32_t queue_family_index, float priority = 1.0);
 
-int ratePhysicalDevice(VkPhysicalDevice device);
-
+//  Listing helpers
 std::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance);
 std::vector<VkQueueFamilyProperties> getQueueFamilies(VkPhysicalDevice device);
+std::vector<VkExtensionProperties> getDeviceExtensions(VkPhysicalDevice device);
 std::vector<VkExtensionProperties> getSupportedExtensions();
 
-DeviceProperties getDeviceProperties(VkPhysicalDevice);
+//  Device helpers
+int ratePhysicalDevice(VkPhysicalDevice device);
+bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*>& required_extensions);
+bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& required_extensions);
+DeviceProperties getDeviceProperties(VkPhysicalDevice device);
 
 #ifdef NB_DEBUG_BUILD
 bool checkValidationLayerSupport(const std::vector<const char*>& requested_layers);
@@ -48,14 +53,23 @@ void destroyDebugUtilsMessengerEXT(VkInstance, VkDebugUtilsMessengerEXT, const V
 
 namespace nebula::rendering {
 
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+    SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
+
     VulkanContext::VulkanContext(GLFWwindow* window_handle) : m_window(window_handle)
     {
         NB_CORE_ASSERT(m_window, "Window handle in null!");
 
+        //  Required extensions
+        m_device_extensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
         createVulkanInstance();
         createSurface();
-        pickPhysicalDevice();
+        createPhysicalDevice();
         createLogicalDevice();
+        createSwapchain();
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
         {
@@ -81,6 +95,7 @@ namespace nebula::rendering {
         destroyDebugUtilsMessengerEXT(m_instance, m_debug_messenger, nullptr);
         #endif
 
+        vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
         vkDestroyDevice(m_device, nullptr);
         vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
         vkDestroyInstance(m_instance, nullptr);
@@ -140,20 +155,27 @@ namespace nebula::rendering {
         #endif
     }
 
-    void VulkanContext::pickPhysicalDevice()
+    void VulkanContext::createSurface()
+    {
+        const VkResult status = glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface);
+        NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Window surface!");
+    }
+
+    void VulkanContext::createPhysicalDevice()
     {
         const auto devices = getPhysicalDevices(m_instance);
         std::multimap<int, VkPhysicalDevice> candidates;
 
         for (const auto& device : devices)
         {
-            if (auto queue_indices = findQueueFamilies(); queue_indices.checkMinimalSupport())
+            if (isDeviceSuitable(device, m_surface, m_device_extensions))
                 candidates.insert(std::make_pair(ratePhysicalDevice(device), device));
         }
 
         NB_CORE_ASSERT(candidates.rbegin()->first > 0, "Failed to find a suitable GPU!")
         m_physical_device = candidates.rbegin()->second;
-        m_queue_family_indices = findQueueFamilies();
+        m_queue_family_indices = findQueueFamilies(m_physical_device, m_surface);
+        m_swapchain_details = querySwapchainSupport(m_physical_device, m_surface);
     }
 
     void VulkanContext::createLogicalDevice()
@@ -174,6 +196,8 @@ namespace nebula::rendering {
         create_info.pQueueCreateInfos = queue_create_infos.data();
         create_info.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size());
         create_info.pEnabledFeatures = &device_features;
+        create_info.enabledExtensionCount = static_cast<uint32_t>(m_device_extensions.size());
+        create_info.ppEnabledExtensionNames = m_device_extensions.data();
 
         const VkResult status = vkCreateDevice(m_physical_device, &create_info, nullptr, &m_device);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Vulkan logical device!");
@@ -185,21 +209,93 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_presentation_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan presentation queue handle!");
     }
 
-    void VulkanContext::createSurface()
+    void VulkanContext::createSwapchain()
     {
-        const VkResult status = glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface);
-        NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Window surface!");
+        m_surface_format = chooseSwapSurfaceFormat();
+        m_present_mode = chooseSwapPresentMode();
+        m_extent = chooseSwapExtent();
+
+        uint32_t image_count = m_swapchain_details.capabilities.minImageCount + 1;
+        if (m_swapchain_details.capabilities.maxImageCount > 0 && image_count > m_swapchain_details.capabilities.maxImageCount)
+            image_count = m_swapchain_details.capabilities.maxImageCount;
+
+        VkSwapchainCreateInfoKHR create_info{};
+        create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        create_info.surface = m_surface;
+        create_info.minImageCount = image_count;
+        create_info.imageFormat = m_surface_format.format;
+        create_info.imageColorSpace = m_surface_format.colorSpace;
+        create_info.imageExtent = m_extent;
+        create_info.imageArrayLayers = 1;
+        create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        create_info.preTransform = m_swapchain_details.capabilities.currentTransform;
+        create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        create_info.presentMode = m_present_mode;
+        create_info.clipped = VK_TRUE;
+        create_info.oldSwapchain = m_swapchain;
+
+        uint32_t queue_family_indices[] = {*m_queue_family_indices.graphics_family, *m_queue_family_indices.presentation_family};
+        if (m_queue_family_indices.graphics_family != m_queue_family_indices.presentation_family)
+        {
+            create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            create_info.queueFamilyIndexCount = 2;
+            create_info.pQueueFamilyIndices = queue_family_indices;
+        }
+        else
+        {
+            create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            create_info.queueFamilyIndexCount = 0;
+            create_info.pQueueFamilyIndices = nullptr;
+        }
+
+        const VkResult status = vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain);
+        NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain!");
     }
 
-    QueueFamilyIndices VulkanContext::findQueueFamilies() const
+    VkSurfaceFormatKHR VulkanContext::chooseSwapSurfaceFormat() const
+    {
+        for (const auto& format : m_swapchain_details.formats)
+            if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+                return format;
+        return m_swapchain_details.formats[0];
+    }
+
+    VkPresentModeKHR VulkanContext::chooseSwapPresentMode() const
+    {
+        for (const auto& present_mode : m_swapchain_details.present_modes)
+            if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR)
+                return present_mode;
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+
+    VkExtent2D VulkanContext::chooseSwapExtent() const
+    {
+        const auto capabilities = m_swapchain_details.capabilities;
+        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+            return capabilities.currentExtent;
+
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+
+        VkExtent2D extent = {
+            static_cast<uint32_t>(width),
+            static_cast<uint32_t>(height)
+        };
+
+        extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+        return extent;
+    }
+
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
     {
         QueueFamilyIndices indices;
         VkBool32 present_support = false;
 
-        const auto queue_families = getQueueFamilies(m_physical_device);
+        const auto queue_families = getQueueFamilies(device);
         for (int index = 0; index < queue_families.size(); ++index)
         {
-            vkGetPhysicalDeviceSurfaceSupportKHR(m_physical_device, index, m_surface, &present_support);
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, index, surface, &present_support);
 
             if (queue_families[index].queueFlags & VK_QUEUE_GRAPHICS_BIT)
                 indices.graphics_family = index;
@@ -212,6 +308,31 @@ namespace nebula::rendering {
         }
 
         return indices;
+    }
+
+    SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
+    {
+        SwapchainSupportDetails details;
+        uint32_t format_count;
+        uint32_t present_mode_count;
+
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_count, nullptr);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_count, nullptr);
+
+        if (format_count > 0)
+        {
+            details.formats.resize(format_count);
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_count, details.formats.data());
+        }
+
+        if (present_mode_count > 0)
+        {
+            details.present_modes.resize(present_mode_count);
+            vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_count, details.present_modes.data());
+        }
+
+        return details;
     }
 
 }
@@ -246,7 +367,7 @@ VkDeviceQueueCreateInfo createQueueInfo(const uint32_t queue_family_index, float
     return queue_create_info;
 }
 
-int ratePhysicalDevice(const VkPhysicalDevice device)
+int ratePhysicalDevice(VkPhysicalDevice device)
 {
     VkPhysicalDeviceFeatures device_features;
     VkPhysicalDeviceProperties device_properties;
@@ -261,6 +382,33 @@ int ratePhysicalDevice(const VkPhysicalDevice device)
     score += static_cast<int>(device_properties.limits.maxImageDimension2D);
 
     return score;
+}
+
+bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*>& required_extensions)
+{
+    auto device_extensions = getDeviceExtensions(device);
+
+    for (const auto& extension : required_extensions)
+    {
+        auto it = std::ranges::find_if(device_extensions, [&extension](const auto& properties){ return std::strcmp(properties.extensionName, extension) == 0; });
+        if (it == device_extensions.end())
+            return false;
+    }
+
+    return true;
+}
+
+bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& required_extensions)
+{
+    if (checkDeviceExtensionSupport(device, required_extensions))
+    {
+        const auto queue_indices = nebula::rendering::findQueueFamilies(device, surface);
+        const auto swapchain_details = nebula::rendering::querySwapchainSupport(device, surface);
+
+        return queue_indices.checkMinimalSupport() && !swapchain_details.formats.empty() && !swapchain_details.present_modes.empty();
+    }
+
+    return false;
 }
 
 std::vector<VkPhysicalDevice> getPhysicalDevices(const VkInstance instance)
@@ -296,6 +444,17 @@ std::vector<VkExtensionProperties> getSupportedExtensions()
     vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, supported_extensions.data());
 
     return supported_extensions;
+}
+
+std::vector<VkExtensionProperties> getDeviceExtensions(VkPhysicalDevice device)
+{
+    uint32_t extension_count = 0;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
+
+    std::vector<VkExtensionProperties> device_extensions(extension_count);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, device_extensions.data());
+
+    return device_extensions;
 }
 
 DeviceProperties getDeviceProperties(VkPhysicalDevice device)

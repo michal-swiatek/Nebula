@@ -13,18 +13,25 @@
 
 struct GLFWwindow;
 
-struct QueueFamilyIndices
-{
-    std::optional<uint32_t> graphics_family;
-    std::optional<uint32_t> presentation_family;
-
-    [[nodiscard]] bool checkMinimalSupport() const
-    {
-        return graphics_family && presentation_family;
-    }
-};
-
 namespace nebula::rendering {
+
+    struct QueueFamilyIndices
+    {
+        std::optional<uint32_t> graphics_family;
+        std::optional<uint32_t> presentation_family;
+
+        [[nodiscard]] bool checkMinimalSupport() const
+        {
+            return graphics_family && presentation_family;
+        }
+    };
+
+    struct SwapchainSupportDetails
+    {
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> present_modes;
+    };
 
     class VulkanContext final : public RenderContext
     {
@@ -40,6 +47,13 @@ namespace nebula::rendering {
     private:
         GLFWwindow* m_window;
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
+        VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+
+        VkSurfaceFormatKHR m_surface_format{};
+        VkPresentModeKHR m_present_mode{};
+        VkExtent2D m_extent{};
+
+        std::vector<const char*> m_device_extensions{};
 
         VkInstance m_instance{};
         VkDevice m_device{};
@@ -47,14 +61,19 @@ namespace nebula::rendering {
 
         VkQueue m_graphics_queue = VK_NULL_HANDLE;
         VkQueue m_presentation_queue = VK_NULL_HANDLE;
+
         QueueFamilyIndices m_queue_family_indices{};
+        SwapchainSupportDetails m_swapchain_details{};
 
         void createVulkanInstance();
-        void pickPhysicalDevice();
         void createSurface();
+        void createPhysicalDevice();
         void createLogicalDevice();
+        void createSwapchain();
 
-        QueueFamilyIndices findQueueFamilies() const;
+        [[nodiscard]] VkSurfaceFormatKHR chooseSwapSurfaceFormat() const;
+        [[nodiscard]] VkPresentModeKHR chooseSwapPresentMode() const;
+        [[nodiscard]] VkExtent2D chooseSwapExtent() const;
 
         #ifdef NB_DEBUG_BUILD
         VkDebugUtilsMessengerEXT m_debug_messenger{};

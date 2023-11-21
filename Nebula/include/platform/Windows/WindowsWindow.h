@@ -20,12 +20,10 @@ namespace nebula {
 
         void onUpdate() override;
 
-        [[nodiscard]] bool checkVSync() const override { return m_window_data.vsync; }
         [[nodiscard]] uint32_t getWidth() const override { return m_window_data.width; }
         [[nodiscard]] uint32_t getHeight() const override { return m_window_data.height; }
         [[nodiscard]] WindowProperties getProperties() const override { return static_cast<WindowProperties>(m_window_data); }
 
-        void setVSync(bool enabled) override;
         void setEventManager(EventManager& event_manager) override { m_window_data.event_manager = &event_manager; }
         void setProperties(const WindowProperties& window_properties) override;
 
@@ -41,13 +39,12 @@ namespace nebula {
             std::string title;
             int32_t width;
             int32_t height;
-            bool vsync;
 
             View<EventManager> event_manager;
 
             explicit operator WindowProperties() const
             {
-                return WindowProperties(title, width, height, vsync);
+                return WindowProperties(title, width, height);
             }
         };
 

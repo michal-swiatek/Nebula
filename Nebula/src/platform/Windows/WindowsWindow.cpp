@@ -29,7 +29,6 @@ namespace nebula {
         m_window_data.title = properties.title;
         m_window_data.width = properties.width;
         m_window_data.height = properties.height;
-        m_window_data.vsync = properties.vsync;
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
             NB_CORE_INFO("Creating window: {} ({}, {})", properties.title, properties.width, properties.height);
@@ -141,18 +140,7 @@ namespace nebula {
 
     void WindowsWindow::onUpdate()
     {
-        // glfwPollEvents();
         glfwWaitEvents();
-    }
-
-    void WindowsWindow::setVSync(bool enabled)
-    {
-        if (enabled)
-            glfwSwapInterval(1);
-        else
-            glfwSwapInterval(0);
-
-        m_window_data.vsync = enabled;
     }
 
     void WindowsWindow::setProperties(const WindowProperties& window_properties)
@@ -160,9 +148,6 @@ namespace nebula {
         m_window_data.title = window_properties.title;
         m_window_data.width = window_properties.width;
         m_window_data.height = window_properties.height;
-        m_window_data.vsync = window_properties.vsync;
-
-        setVSync(m_window_data.vsync);
     }
 
 }

@@ -20,10 +20,14 @@ namespace nebula::rendering {
         void bind() override;
         void unbind() override;
 
+        bool checkVSync() override;
+        void setVSync(bool vsync) override;
+
         void swapBuffers() override;
 
     private:
         GLFWwindow* m_window;
+        bool m_vsync = true;
     };
 
 }

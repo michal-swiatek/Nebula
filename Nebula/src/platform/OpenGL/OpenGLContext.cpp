@@ -24,6 +24,8 @@ namespace nebula::rendering {
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         NB_CORE_ASSERT(status, "Failed to initialize Glad!");
 
+        setVSync(true);
+
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
         {
             NB_CORE_INFO("OpenGL Info:");
@@ -46,6 +48,20 @@ namespace nebula::rendering {
     void OpenGLContext::unbind()
     {
         glfwMakeContextCurrent(nullptr);
+    }
+
+    void OpenGLContext::setVSync(const bool vsync)
+    {
+        if (vsync)
+            glfwSwapInterval(1);
+        else
+            glfwSwapInterval(0);
+        m_vsync = vsync;
+    }
+
+    bool OpenGLContext::checkVSync()
+    {
+        return m_vsync;
     }
 
     void OpenGLContext::swapBuffers()

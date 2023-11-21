@@ -24,9 +24,6 @@ namespace nebula::threads {
     {
         init(api);
         auto& application = Application::get();
-        auto& window = application.getWindow();
-
-        window.setVSync(window.checkVSync());
 
         while (m_running.test(std::memory_order_relaxed))
         {

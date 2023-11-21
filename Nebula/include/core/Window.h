@@ -20,18 +20,15 @@ namespace nebula {
         std::string title;
         int32_t width;
         int32_t height;
-        bool vsync;
 
         explicit WindowProperties(
             std::string title = "Nebula Engine",
-            int32_t width = 1600,
-            int32_t height = 900,
-            bool vsync = true
+            const int32_t width = 1600,
+            const int32_t height = 900
         ) :
                 title(std::move(title)),
                 width(width),
-                height(height),
-                vsync(vsync)
+                height(height)
         {}
     };
 
@@ -40,12 +37,10 @@ namespace nebula {
     public:
         virtual ~Window() = default;
 
-        [[nodiscard]] virtual bool checkVSync() const = 0;
         [[nodiscard]] virtual uint32_t getWidth() const = 0;
         [[nodiscard]] virtual uint32_t getHeight() const = 0;
         [[nodiscard]] virtual WindowProperties getProperties() const = 0;
 
-        virtual void setVSync(bool enabled) = 0;
         virtual void setProperties(const WindowProperties& window_properties) = 0;
 
         [[nodiscard]] virtual void* getWindowHandle() const = 0;

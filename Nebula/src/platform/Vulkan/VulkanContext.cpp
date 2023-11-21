@@ -71,6 +71,8 @@ namespace nebula::rendering {
         createLogicalDevice();
         createSwapchain();
 
+        setVSync(true);
+
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
         {
             auto device_properties = getDeviceProperties(m_physical_device);
@@ -99,21 +101,6 @@ namespace nebula::rendering {
         vkDestroyDevice(m_device, nullptr);
         vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
         vkDestroyInstance(m_instance, nullptr);
-    }
-
-    void VulkanContext::bind()
-    {
-
-    }
-
-    void VulkanContext::unbind()
-    {
-
-    }
-
-    void VulkanContext::swapBuffers()
-    {
-
     }
 
     void VulkanContext::createVulkanInstance()
@@ -333,6 +320,31 @@ namespace nebula::rendering {
         }
 
         return details;
+    }
+
+    void VulkanContext::bind()
+    {
+
+    }
+
+    void VulkanContext::unbind()
+    {
+
+    }
+
+    void VulkanContext::swapBuffers()
+    {
+
+    }
+
+    bool VulkanContext::checkVSync()
+    {
+        return m_vsync;
+    }
+
+    void VulkanContext::setVSync(const bool vsync)
+    {
+        m_vsync = vsync;
     }
 
 }

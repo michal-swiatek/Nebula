@@ -22,6 +22,9 @@ namespace nebula {
             virtual void bind() = 0;
             virtual void unbind() = 0;
 
+            virtual bool checkVSync() = 0;
+            virtual void setVSync(bool vsync) = 0;
+
             virtual void swapBuffers() = 0;
 
         private:

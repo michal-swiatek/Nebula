@@ -143,14 +143,16 @@ namespace nebula {
         static int frame_offset = 0;
 
         //  FPS control variables
-        static bool vsync = Application::get().getWindow().getProperties().vsync;
+        // static bool vsync = Application::get().getWindow().getProperties().vsync;
+        static bool vsync = true;
         static float update_timestep = Application::get().getUpdateTimestep();
         static int render_fps = Application::get().getRenderFps();
 
         //  Update current application settings
         auto& application = Application::get();
 
-        vsync = application.getWindow().getProperties().vsync;
+        // vsync = application.getWindow().getProperties().vsync;
+        vsync = true;
         update_timestep = application.getUpdateTimestep();
         render_fps = application.getRenderFps();
 
@@ -195,7 +197,7 @@ namespace nebula {
         //  Set new fps settings
         application.setUpdateTimestep(update_timestep);
         application.setRenderFps(render_fps);
-        application.getWindow().setVSync(vsync);
+        // application.getWindow().setVSync(vsync);
     }
 
 }

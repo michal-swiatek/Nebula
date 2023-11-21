@@ -42,6 +42,9 @@ namespace nebula::rendering {
         void bind() override;
         void unbind() override;
 
+        bool checkVSync() override;
+        void setVSync(bool vsync) override;
+
         void swapBuffers() override;
 
     private:
@@ -52,6 +55,7 @@ namespace nebula::rendering {
         VkSurfaceFormatKHR m_surface_format{};
         VkPresentModeKHR m_present_mode{};
         VkExtent2D m_extent{};
+        bool m_vsync = true;
 
         std::vector<const char*> m_device_extensions{};
 

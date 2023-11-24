@@ -24,14 +24,17 @@ set(NEBULA_SOURCE_FILES
         src/platform/Windows/WindowsInput.cpp
         src/platform/Windows/WindowsWindow.cpp
         src/platform/OpenGL/OpenGLContext.cpp
+        src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
         src/platform/Vulkan/VulkanContext.cpp
+        src/platform/Vulkan/VulkanFramebuffer.cpp
         src/platform/Vulkan/VulkanRendererAPI.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp
         src/renderer/Renderer.cpp
         src/renderer/RenderPass.cpp
+        src/renderer/Framebuffer.cpp
         src/threads/UpdateThread.cpp
         src/threads/RenderThread.cpp
 )

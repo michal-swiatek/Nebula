@@ -55,13 +55,25 @@ namespace nebula {
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
 
+    template <typename T>
+    constexpr Scope<T> createScopeFromPointer(T* pointer)
+    {
+        return Scope<T>(pointer);
+    }
+
     template <typename T, typename... Args>
     constexpr Reference<T> createReference(Args&&... args)
     {
-        return std::shared_ptr<T>(
+        return Reference<T>(
             new (memory::MemoryManager::requestMemory(sizeof(T))) T(std::forward<Args>(args)...),
             impl::Deleter<T>()
         );
+    }
+
+    template <typename T>
+    constexpr Reference<T> createReferenceFromPointer(T* pointer)
+    {
+        return Reference<T>(pointer);
     }
 
 }

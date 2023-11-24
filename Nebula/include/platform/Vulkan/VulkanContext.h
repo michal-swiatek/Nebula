@@ -47,6 +47,10 @@ namespace nebula::rendering {
 
         void swapBuffers() override;
 
+        static VkInstance getInstance();
+        static VkDevice getDevice();
+        static VkPhysicalDevice getPhysicalDevice();
+
     private:
         GLFWwindow* m_window;
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
@@ -60,10 +64,6 @@ namespace nebula::rendering {
         std::vector<VkImage> m_swapchain_images{};
         std::vector<VkImageView> m_swapchain_image_views{};
         std::vector<const char*> m_device_extensions{};
-
-        VkInstance m_instance{};
-        VkDevice m_device{};
-        VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
 
         VkQueue m_graphics_queue = VK_NULL_HANDLE;
         VkQueue m_presentation_queue = VK_NULL_HANDLE;
@@ -85,6 +85,10 @@ namespace nebula::rendering {
         #ifdef NB_DEBUG_BUILD
         VkDebugUtilsMessengerEXT m_debug_messenger{};
         #endif
+
+        static VkInstance s_instance;
+        static VkDevice s_device;
+        static VkPhysicalDevice s_physical_device;
     };
 
 }

@@ -54,8 +54,16 @@ void destroyDebugUtilsMessengerEXT(VkInstance, VkDebugUtilsMessengerEXT, const V
 
 namespace nebula::rendering {
 
+    VkInstance VulkanContext::s_instance = VK_NULL_HANDLE;
+    VkDevice VulkanContext::s_device = VK_NULL_HANDLE;
+    VkPhysicalDevice VulkanContext::s_physical_device = VK_NULL_HANDLE;
+
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
     SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
+
+    VkInstance VulkanContext::getInstance() { return s_instance; }
+    VkDevice VulkanContext::getDevice() { return s_device; }
+    VkPhysicalDevice VulkanContext::getPhysicalDevice() { return s_physical_device; }
 
     VulkanContext::VulkanContext(GLFWwindow* window_handle) : m_window(window_handle)
     {
@@ -77,7 +85,7 @@ namespace nebula::rendering {
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
         {
-            auto device_properties = getDeviceProperties(m_physical_device);
+            auto device_properties = getDeviceProperties(s_physical_device);
             NB_CORE_INFO("Vulkan Info:");
             NB_CORE_INFO("  Vendor: {0}", device_properties.vendor);
             NB_CORE_INFO("  Renderer: {0}", device_properties.renderer);
@@ -95,21 +103,31 @@ namespace nebula::rendering {
 
     VulkanContext::~VulkanContext()
     {
+        NB_CORE_ASSERT(s_instance, "No Vulkan instance!");
+        NB_CORE_ASSERT(s_device, "No Vulkan device!");
+        NB_CORE_ASSERT(s_physical_device, "No Vulkan physical device!");
+
         #ifdef NB_DEBUG_BUILD
-        destroyDebugUtilsMessengerEXT(m_instance, m_debug_messenger, nullptr);
+        destroyDebugUtilsMessengerEXT(s_instance, m_debug_messenger, nullptr);
         #endif
 
         for (const auto& image_view : m_swapchain_image_views)
-            vkDestroyImageView(m_device, image_view, nullptr);
+            vkDestroyImageView(s_device, image_view, nullptr);
 
-        vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
-        vkDestroyDevice(m_device, nullptr);
-        vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
-        vkDestroyInstance(m_instance, nullptr);
+        vkDestroySwapchainKHR(s_device, m_swapchain, nullptr);
+        vkDestroyDevice(s_device, nullptr);
+        vkDestroySurfaceKHR(s_instance, m_surface, nullptr);
+        vkDestroyInstance(s_instance, nullptr);
+
+        s_instance = VK_NULL_HANDLE;
+        s_device = VK_NULL_HANDLE;
+        s_physical_device = VK_NULL_HANDLE;
     }
 
     void VulkanContext::createVulkanInstance()
     {
+        NB_CORE_ASSERT(!s_instance, "Can have only one Vulkan instance!");
+
         const VkApplicationInfo app_info = createApplicationInfo();
 
         uint32_t glfw_extension_count;
@@ -133,13 +151,13 @@ namespace nebula::rendering {
         create_info.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         create_info.ppEnabledExtensionNames = extensions.data();
 
-        const VkResult status = vkCreateInstance(&create_info, nullptr, &m_instance);
+        const VkResult status = vkCreateInstance(&create_info, nullptr, &s_instance);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to initialize Vulkan!");
 
         #ifdef NB_DEBUG_BUILD
-        VkDebugUtilsMessengerCreateInfoEXT debug_messenger_info = createDebugUtilsMessengerInfo();
+        const VkDebugUtilsMessengerCreateInfoEXT debug_messenger_info = createDebugUtilsMessengerInfo();
         NB_CORE_ASSERT(
-            createDebugUtilsMessengerEXT(m_instance, &debug_messenger_info, nullptr, &m_debug_messenger) == VK_SUCCESS,
+            createDebugUtilsMessengerEXT(s_instance, &debug_messenger_info, nullptr, &m_debug_messenger) == VK_SUCCESS,
             "Unable to set Vulkan debug callback!"
         );
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
@@ -149,13 +167,15 @@ namespace nebula::rendering {
 
     void VulkanContext::createSurface()
     {
-        const VkResult status = glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface);
+        const VkResult status = glfwCreateWindowSurface(s_instance, m_window, nullptr, &m_surface);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Window surface!");
     }
 
     void VulkanContext::createPhysicalDevice()
     {
-        const auto devices = getPhysicalDevices(m_instance);
+        NB_CORE_ASSERT(!s_physical_device, "Can have only one Vulkan physical device!");
+
+        const auto devices = getPhysicalDevices(s_instance);
         std::multimap<int, VkPhysicalDevice> candidates;
 
         for (const auto& device : devices)
@@ -165,13 +185,15 @@ namespace nebula::rendering {
         }
 
         NB_CORE_ASSERT(candidates.rbegin()->first > 0, "Failed to find a suitable GPU!")
-        m_physical_device = candidates.rbegin()->second;
-        m_queue_family_indices = findQueueFamilies(m_physical_device, m_surface);
-        m_swapchain_details = querySwapchainSupport(m_physical_device, m_surface);
+        s_physical_device = candidates.rbegin()->second;
+        m_queue_family_indices = findQueueFamilies(s_physical_device, m_surface);
+        m_swapchain_details = querySwapchainSupport(s_physical_device, m_surface);
     }
 
     void VulkanContext::createLogicalDevice()
     {
+        NB_CORE_ASSERT(!s_device, "Can have only one Vulkan device!");
+
         const auto [graphics_family, presentation_family] = m_queue_family_indices;    //  For shorter typing
 
         std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
@@ -191,13 +213,13 @@ namespace nebula::rendering {
         create_info.enabledExtensionCount = static_cast<uint32_t>(m_device_extensions.size());
         create_info.ppEnabledExtensionNames = m_device_extensions.data();
 
-        const VkResult status = vkCreateDevice(m_physical_device, &create_info, nullptr, &m_device);
+        const VkResult status = vkCreateDevice(s_physical_device, &create_info, nullptr, &s_device);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Vulkan logical device!");
 
-        vkGetDeviceQueue(m_device, *graphics_family, 0, &m_graphics_queue);
+        vkGetDeviceQueue(s_device, *graphics_family, 0, &m_graphics_queue);
         NB_CORE_ASSERT(m_graphics_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan graphics queue handle!");
 
-        vkGetDeviceQueue(m_device, *presentation_family, 0, &m_presentation_queue);
+        vkGetDeviceQueue(s_device, *presentation_family, 0, &m_presentation_queue);
         NB_CORE_ASSERT(m_presentation_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan presentation queue handle!");
     }
 
@@ -240,23 +262,23 @@ namespace nebula::rendering {
             create_info.pQueueFamilyIndices = nullptr;
         }
 
-        const VkResult status = vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain);
+        const VkResult status = vkCreateSwapchainKHR(s_device, &create_info, nullptr, &m_swapchain);
         NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain!");
     }
 
     void VulkanContext::createImageViews()
     {
         uint32_t image_count;
-        vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, nullptr);
+        vkGetSwapchainImagesKHR(s_device, m_swapchain, &image_count, nullptr);
 
         m_swapchain_images.resize(image_count);
-        vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, m_swapchain_images.data());
+        vkGetSwapchainImagesKHR(s_device, m_swapchain, &image_count, m_swapchain_images.data());
 
         m_swapchain_image_views.resize(image_count);
         for (int i = 0; i < m_swapchain_images.size(); ++i)
         {
             auto create_info = createSwapchainImageViewInfo(m_swapchain_images[i], m_surface_format.format);
-            const VkResult status = vkCreateImageView(m_device, &create_info, nullptr, &m_swapchain_image_views[i]);
+            const VkResult status = vkCreateImageView(s_device, &create_info, nullptr, &m_swapchain_image_views[i]);
             NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
         }
     }

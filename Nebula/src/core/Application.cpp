@@ -5,13 +5,10 @@
 
 #include "core/Application.h"
 
-#include <thread>
 #include <filesystem>
 
 #include "core/Config.h"
 #include "core/Logging.h"
-
-#include "renderer/Renderer.h"
 
 namespace nebula {
 
@@ -41,36 +38,59 @@ namespace nebula {
 
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
+
+        m_render_context = rendering::RenderContext::create(m_window->getWindowHandle());
     }
 
     void Application::run()
     {
-        std::thread render_thread(&threads::RenderThread::run, &m_render_thread, getRenderingAPI());
-        threads::RenderThread::blockUntilInitialized();
-        std::thread update_thread(&threads::UpdateThread::run, &m_update_thread);
-
         while (m_running)
         {
-            //  Poll events
-            m_window->onUpdate();
-        }
+            int render_fps = getRenderFps();
+            double render_timestep = render_fps > 0 ? 1.0 / render_fps : 0.0;
+            double update_timestep = getUpdateTimestep();
 
-        update_thread.join();
-        render_thread.join();
+            auto next_frame_time = getTime() + render_timestep;
+            auto frame_time = m_update_timer.elapsedSeconds(true);
+            m_update_accumulator += frame_time;
+
+            if (!m_minimized)
+            {
+                for (const auto& layer : m_layer_stack)
+                    layer->onUpdate(Timestep(frame_time));
+
+                while (m_update_accumulator > update_timestep)
+                {
+                    for (const auto& layer : m_layer_stack)
+                        layer->onFixedUpdate(Timestep(update_timestep));
+
+                    m_update_accumulator -= update_timestep;
+                }
+
+                for (const auto& layer : m_layer_stack)
+                    layer->onRender();
+
+                for (const auto& layer : m_layer_stack)
+                    layer->onImGuiRender();
+            }
+
+            //  Poll events
+            m_event_manager.dispatchEvents();
+            m_render_context->swapBuffers();
+            m_window->onUpdate();
+
+            Timer::sleepUntilPrecise(next_frame_time);
+        }
     }
 
     void Application::close()
     {
         m_running = false;
-        m_update_thread.close();
-        m_render_thread.close();
     }
 
     void Application::minimize(bool minimized)
     {
         m_minimized = minimized;
-        m_update_thread.minimize(minimized);
-        m_render_thread.minimize(minimized);
     }
 
     rendering::API Application::getRenderingAPI() const
@@ -101,7 +121,6 @@ namespace nebula {
 
         minimize(false);
 
-        m_render_thread.onWindowResize(event);
         return false;
     }
 

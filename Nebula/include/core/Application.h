@@ -6,7 +6,6 @@
 #ifndef NEBULAENGINE_APPLICATION_H
 #define NEBULAENGINE_APPLICATION_H
 
-#include <mutex>
 #include <string>
 #include <optional>
 
@@ -20,8 +19,7 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
-#include "threads/UpdateThread.h"
-#include "threads/RenderThread.h"
+#include "renderer/RenderContext.h"
 
 int main(int argc, char** argv);
 
@@ -61,7 +59,6 @@ namespace nebula {
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
-            std::lock_guard<std::mutex> lock{m_mutex};
             return m_layer_stack.pushLayer(layer);
         }
 
@@ -70,20 +67,19 @@ namespace nebula {
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
-            std::lock_guard<std::mutex> lock{m_mutex};
             return m_layer_stack.pushOverlay(layer);
         }
 
-        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { std::lock_guard<std::mutex> lock{m_mutex}; return m_layer_stack.popLayer(layer_id); }
-        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { std::lock_guard<std::mutex> lock{m_mutex}; return m_layer_stack.popOverlay(layer_id); }
+        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
 
-        [[nodiscard]] int getRenderFps() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.render_fps; }
-        [[nodiscard]] double getUpdateTimestep() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.update_timestep; }
-        [[nodiscard]] double getTime() { std::lock_guard<std::mutex> lock{m_mutex}; return m_application_timer.elapsedSeconds(); }
-        [[nodiscard]] std::string getName() { std::lock_guard<std::mutex> lock{m_mutex}; return m_specification.name; }
+        [[nodiscard]] int getRenderFps() { return m_specification.render_fps; }
+        [[nodiscard]] double getUpdateTimestep() { return m_specification.update_timestep; }
+        [[nodiscard]] double getTime() { return m_application_timer.elapsedSeconds(); }
+        [[nodiscard]] std::string getName() { return m_specification.name; }
 
-        void setRenderFps(int fps) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.render_fps = fps; }
-        void setUpdateTimestep(double timestep) { std::lock_guard<std::mutex> lock{m_mutex}; m_specification.update_timestep = timestep; }
+        void setRenderFps(int fps) { m_specification.render_fps = fps; }
+        void setUpdateTimestep(double timestep) { m_specification.update_timestep = timestep; }
 
         rendering::API getRenderingAPI() const;
 
@@ -109,16 +105,16 @@ namespace nebula {
         LayerStack m_layer_stack;
         EventManager m_event_manager;
 
-        //  Multithreading
-        std::mutex m_mutex;
-        threads::UpdateThread m_update_thread;
-        threads::RenderThread m_render_thread;
+        //  Update
+        Timer m_update_timer;
+        double m_update_accumulator = 0.0;
+
+        //  Rendering
+        Timer m_render_timer;
+        Scope<rendering::RenderContext> m_render_context = nullptr;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);
-
-        friend class threads::UpdateThread;
-        friend class threads::RenderThread;
     };
 
     Application* createApplication(int argc, char** argv);

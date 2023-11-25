@@ -10,7 +10,7 @@
 
 namespace nebula {
 
-    namespace threads { class RenderThread; }
+    class Application;
 
     namespace rendering {
 
@@ -28,7 +28,7 @@ namespace nebula {
             virtual void swapBuffers() = 0;
 
         private:
-            friend class nebula::threads::RenderThread;
+            friend class nebula::Application;
             static Scope<RenderContext> create(void* window_handle);
         };
 

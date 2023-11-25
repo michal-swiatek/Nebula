@@ -41,14 +41,6 @@ public:
     {
         if (Input::isKeyPressed(Keycode::Space))
             NB_INFO("Space is being pressed!");
-
-        auto renderer = rendering::Renderer();
-        renderer.beginFrame();
-        renderer.beginPass();
-        // for (int i = 0; i < 16000; ++i)
-            renderer.submit<rendering::ClearColorCommand>(0.0f, 0.0f, 0.2f, 1.0f);
-        renderer.endPass();
-        renderer.endFrame();
     }
 
     void onFixedUpdate(Timestep delta_time) override

@@ -5,8 +5,10 @@
 
 #include "platform/Vulkan/VulkanFramebuffer.h"
 
-#include "platform/Vulkan/VulkanContext.h"
+#include "platform/Vulkan/VulkanAPI.h"
 #include "platform/Vulkan/VulkanTextureFormats.h"
+
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surface_format);
 
 namespace nebula::rendering {
 
@@ -23,10 +25,10 @@ namespace nebula::rendering {
     VulkanFramebuffer::~VulkanFramebuffer()
     {
         for (const auto& image_view : m_image_views)
-            vkDestroyImageView(VulkanContext::getDevice(), image_view, nullptr);
+            vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
 
         for (const auto& image : m_images)
-            vkDestroyImage(VulkanContext::getDevice(), image, nullptr);
+            vkDestroyImage(VulkanAPI::getDevice(), image, nullptr);
     }
 
     void VulkanFramebuffer::bind()
@@ -57,7 +59,7 @@ namespace nebula::rendering {
         create_info.height = m_framebuffer_template->getHeight();
         create_info.layers = m_framebuffer_template->getLayers();
 
-        const auto result = vkCreateFramebuffer(VulkanContext::getDevice(), &create_info, nullptr, &m_framebuffer);
+        const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_framebuffer);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer!");
     }
 
@@ -109,16 +111,86 @@ namespace nebula::rendering {
         VkImageView image_view;
         VkResult result;
 
-        result = vkCreateImage(VulkanContext::getDevice(), &image_create_info, nullptr, &image);
+        result = vkCreateImage(VulkanAPI::getDevice(), &image_create_info, nullptr, &image);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create Vulkan framebuffer image!");
 
         //  TODO: Allocate memory for image and pass it to GPU
 
-        result = vkCreateImageView(VulkanContext::getDevice(), &image_view_create_info, nullptr, &image_view);
+        result = vkCreateImageView(VulkanAPI::getDevice(), &image_view_create_info, nullptr, &image_view);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create Vulkan framebuffer image view!");
 
         m_images.push_back(image);
         m_image_views.push_back(image_view);
     }
 
+    VulkanSwapchainFramebuffer::VulkanSwapchainFramebuffer(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format):
+            m_surface_format(surface_format)
+    {
+        uint32_t image_count;
+        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, nullptr);
+
+        m_swapchain_images.resize(image_count);
+        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, m_swapchain_images.data());
+
+        m_swapchain_image_views.resize(image_count);
+        for (int i = 0; i < m_swapchain_images.size(); ++i)
+        {
+            auto create_info = createSwapchainImageViewInfo(m_swapchain_images[i], m_surface_format.format);
+            const VkResult status = vkCreateImageView(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_image_views[i]);
+            NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
+        }
+    }
+
+    VulkanSwapchainFramebuffer::~VulkanSwapchainFramebuffer()
+    {
+        for (const auto& image_view : m_swapchain_image_views)
+            vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
+    }
+
+    void VulkanSwapchainFramebuffer::bind()
+    {
+
+    }
+
+    void VulkanSwapchainFramebuffer::unbind()
+    {
+
+    }
+
+    bool VulkanSwapchainFramebuffer::attached() const
+    {
+
+    }
+
+    void VulkanSwapchainFramebuffer::attachTo(void* renderpass_handle)
+    {
+
+    }
+
+    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffer::getFramebufferTemplate() const
+    {
+        NB_CORE_ASSERT(false, "VulkanSwapchainFramebuffer has no FramebufferTemplate!");
+        throw std::exception();
+    }
+
+}
+
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, const VkFormat surface_format)
+{
+    VkImageViewCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    create_info.image = image;
+    create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    create_info.format = surface_format;
+    create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    create_info.subresourceRange.baseMipLevel = 0;
+    create_info.subresourceRange.levelCount = 1;
+    create_info.subresourceRange.baseArrayLayer = 0;
+    create_info.subresourceRange.layerCount = 1;
+
+    return create_info;
 }

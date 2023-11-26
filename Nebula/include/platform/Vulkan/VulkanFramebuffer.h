@@ -37,6 +37,27 @@ namespace nebula::rendering {
         void createAttachment(const AttachmentDescription& attachment_description, bool depth_stencil);
     };
 
+    class VulkanSwapchainFramebuffer final : public Framebuffer
+    {
+    public:
+        VulkanSwapchainFramebuffer(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format);
+        ~VulkanSwapchainFramebuffer() override;
+
+        void bind() override;
+        void unbind() override;
+
+        [[nodiscard]] bool attached() const override;
+        void attachTo(void* renderpass_handle) override;
+
+        [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const override;
+
+    private:
+        VkSurfaceFormatKHR m_surface_format;
+
+        std::vector<VkImage> m_swapchain_images{};
+        std::vector<VkImageView> m_swapchain_image_views{};
+    };
+
 }
 
 #endif //VULKANFRAMEBUFFER_H

@@ -123,7 +123,18 @@ namespace nebula::rendering {
         m_image_views.push_back(image_view);
     }
 
-    VulkanSwapchainFramebuffer::VulkanSwapchainFramebuffer(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format):
+    ///////////////////////////////////////////////////////////////////////////////////
+    ////  VulkanSwapchainFramebuffers  ////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    VulkanSwapchainFramebuffers::VulkanSwapchainFramebuffers(
+        VkSwapchainKHR swapchain,
+        VkSurfaceFormatKHR surface_format,
+        const uint32_t width,
+        const uint32_t height
+    ):
+            m_width(width),
+            m_height(height),
             m_surface_format(surface_format)
     {
         uint32_t image_count;
@@ -141,33 +152,54 @@ namespace nebula::rendering {
         }
     }
 
-    VulkanSwapchainFramebuffer::~VulkanSwapchainFramebuffer()
+    VulkanSwapchainFramebuffers::~VulkanSwapchainFramebuffers()
     {
+        for (const auto& framebuffer : m_swapchain_framebuffers)
+            vkDestroyFramebuffer(VulkanAPI::getDevice(), framebuffer, nullptr);
+
         for (const auto& image_view : m_swapchain_image_views)
             vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
     }
 
-    void VulkanSwapchainFramebuffer::bind()
+    void VulkanSwapchainFramebuffers::bind()
+    {
+        NB_CORE_ASSERT(attached(), "Cannot bind framebuffer that is not attached to any renderpass!");
+    }
+
+    void VulkanSwapchainFramebuffers::unbind()
     {
 
     }
 
-    void VulkanSwapchainFramebuffer::unbind()
+    bool VulkanSwapchainFramebuffers::attached() const
     {
-
+        return !m_swapchain_framebuffers.empty();
     }
 
-    bool VulkanSwapchainFramebuffer::attached() const
+    void VulkanSwapchainFramebuffers::attachTo(void* renderpass_handle)
     {
+        NB_ASSERT(renderpass_handle, "Recieved null renderpass handle!");
+        m_swapchain_framebuffers.resize(m_swapchain_image_views.size());
 
+        for (int i = 0; i < m_swapchain_framebuffers.size(); ++i)
+        {
+            VkFramebufferCreateInfo create_info{};
+            const VkImageView attachments[] = {m_swapchain_image_views[i]};
+
+            create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            create_info.renderPass = static_cast<VkRenderPass>(renderpass_handle);
+            create_info.attachmentCount = 1;
+            create_info.pAttachments = attachments;
+            create_info.width = m_width;
+            create_info.height = m_height;
+            create_info.layers = 1;
+
+            const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_framebuffers[i]);
+            NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create swapchain framebuffer!");
+        }
     }
 
-    void VulkanSwapchainFramebuffer::attachTo(void* renderpass_handle)
-    {
-
-    }
-
-    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffer::getFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffers::getFramebufferTemplate() const
     {
         NB_CORE_ASSERT(false, "VulkanSwapchainFramebuffer has no FramebufferTemplate!");
         throw std::exception();

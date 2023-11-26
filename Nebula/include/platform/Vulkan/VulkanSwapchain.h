@@ -34,7 +34,7 @@ namespace nebula::rendering {
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 
-        Scope<VulkanSwapchainFramebuffer> m_framebuffers = nullptr;
+        Scope<VulkanSwapchainFramebuffers> m_framebuffers = nullptr;
 
         VkExtent2D m_extent{};
         VkPresentModeKHR m_present_mode{};

@@ -83,7 +83,7 @@ namespace nebula::rendering {
 
     void VulkanSwapchain::createFramebuffers()
     {
-        m_framebuffers = createScope<VulkanSwapchainFramebuffer>(m_swapchain, m_surface_format);
+        m_framebuffers = createScope<VulkanSwapchainFramebuffers>(m_swapchain, m_surface_format, m_extent.width, m_extent.height);
     }
 
     bool VulkanSwapchain::checkVSync() const

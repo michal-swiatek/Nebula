@@ -26,9 +26,11 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLContext.cpp
         src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
+        src/platform/Vulkan/VulkanAPI.cpp
         src/platform/Vulkan/VulkanContext.cpp
         src/platform/Vulkan/VulkanFramebuffer.cpp
         src/platform/Vulkan/VulkanRendererAPI.cpp
+        src/platform/Vulkan/VulkanSwapchain.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp

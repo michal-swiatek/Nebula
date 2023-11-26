@@ -6,32 +6,15 @@
 #ifndef VULKANCONTEXT_H
 #define VULKANCONTEXT_H
 
-#include <optional>
-#include <vulkan/vulkan.h>
-
 #include "renderer/RenderContext.h"
 
 struct GLFWwindow;
+struct VkSurfaceKHR_T;
 
 namespace nebula::rendering {
 
-    struct QueueFamilyIndices
-    {
-        std::optional<uint32_t> graphics_family;
-        std::optional<uint32_t> presentation_family;
-
-        [[nodiscard]] bool checkMinimalSupport() const
-        {
-            return graphics_family && presentation_family;
-        }
-    };
-
-    struct SwapchainSupportDetails
-    {
-        VkSurfaceCapabilitiesKHR capabilities;
-        std::vector<VkSurfaceFormatKHR> formats;
-        std::vector<VkPresentModeKHR> present_modes;
-    };
+    struct VulkanAPI;
+    struct VulkanSwapchain;
 
     class VulkanContext final : public RenderContext
     {
@@ -47,48 +30,12 @@ namespace nebula::rendering {
 
         void swapBuffers() override;
 
-        static VkInstance getInstance();
-        static VkDevice getDevice();
-        static VkPhysicalDevice getPhysicalDevice();
-
     private:
         GLFWwindow* m_window;
-        VkSurfaceKHR m_surface = VK_NULL_HANDLE;
-        VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+        VkSurfaceKHR_T* m_surface = nullptr;
 
-        bool m_vsync = true;
-        VkExtent2D m_extent{};
-        VkPresentModeKHR m_present_mode{};
-        VkSurfaceFormatKHR m_surface_format{};
-
-        std::vector<VkImage> m_swapchain_images{};
-        std::vector<VkImageView> m_swapchain_image_views{};
-        std::vector<const char*> m_device_extensions{};
-
-        VkQueue m_graphics_queue = VK_NULL_HANDLE;
-        VkQueue m_presentation_queue = VK_NULL_HANDLE;
-
-        QueueFamilyIndices m_queue_family_indices{};
-        SwapchainSupportDetails m_swapchain_details{};
-
-        void createVulkanInstance();
-        void createSurface();
-        void createPhysicalDevice();
-        void createLogicalDevice();
-        void createSwapchain();
-        void createImageViews();
-
-        [[nodiscard]] VkSurfaceFormatKHR chooseSwapSurfaceFormat() const;
-        [[nodiscard]] VkPresentModeKHR chooseSwapPresentMode() const;
-        [[nodiscard]] VkExtent2D chooseSwapExtent() const;
-
-        #ifdef NB_DEBUG_BUILD
-        VkDebugUtilsMessengerEXT m_debug_messenger{};
-        #endif
-
-        static VkInstance s_instance;
-        static VkDevice s_device;
-        static VkPhysicalDevice s_physical_device;
+        Scope<VulkanAPI> m_vulkan_api;
+        Scope<VulkanSwapchain> m_swapchain;
     };
 
 }

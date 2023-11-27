@@ -12,31 +12,15 @@ namespace nebula::rendering {
 
     class RendererApi;
 
-    enum RenderCommandCategory : uint8_t
+    struct NEBULA_API RenderCommand
     {
-        cClear = 1,
-        cDraw = 2,
-        cConfigure = 4,
-        cUnknown = 8
-    };
-
-    class NEBULA_API RenderCommand
-    {
-    public:
-        RenderCommand() = default;
         virtual ~RenderCommand() = default;
 
-        virtual void execute() = 0;
-        [[nodiscard]] virtual RenderCommandCategory getCategory() const = 0;
+        virtual void execute(void* command_buffer_handle) = 0;
 
     protected:
         static View<RendererApi> s_renderer_api;
-
-        friend class Renderer;
     };
-
-    #define RENDER_COMMAND_CLASS_CATEGORY(category) static RenderCommandCategory getStaticCategory() { return (category); }\
-    [[nodiscard]] RenderCommandCategory getCategory() const override { return category; }
 
 }
 

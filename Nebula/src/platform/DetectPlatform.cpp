@@ -5,7 +5,8 @@
 
 #include "platform/DetectPlatform.h"
 
-#include <core/Application.h>
+#include "core/Config.h"
+#include "core/Application.h"
 
 #include "memory/MemoryManager.h"
 
@@ -17,6 +18,7 @@
 #include "renderer/RendererAPI.h"
 
 #include "platform/Vulkan/VulkanContext.h"
+#include "platform/Vulkan/VulkanCommandPool.h"
 #include "platform/Vulkan/VulkanRendererAPI.h"
 #include "platform/OpenGL/OpenGLContext.h"
 #include "platform/OpenGL/OpenGLRendererAPI.h"
@@ -60,6 +62,19 @@ namespace nebula {
                 case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
                 case API::cVulkan:    return createScope<VulkanContext>(static_cast<GLFWwindow*>(window_handle));
                 default:                      NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+        }
+
+        Scope<RenderCommandPool> RenderCommandPool::create()
+        {
+            auto& config = Config::getEngineConfig();
+            const auto command_buffer_size = config["memory"]["event_queue_size"].as<size_t>();
+
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cOpenGL:    return createScope<RenderCommandPool>(command_buffer_size);
+                case API::cVulkan:    return createScope<VulkanCommandPool>(command_buffer_size);
+                default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
         }
 

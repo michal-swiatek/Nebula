@@ -67,14 +67,15 @@ namespace nebula::rendering {
         explicit RenderPassTemplate(const ClearColor& clear_color = {}, const Reference<FramebufferTemplate>& framebuffer_template = nullptr);
         virtual ~RenderPassTemplate() = default;
 
-        [[nodiscard]] ClearColor getClearColor() const;
-        [[nodiscard]] const std::vector<RenderStage>& viewRenderStages() const;
-        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
+        [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }
+        [[nodiscard]] const std::vector<RenderStage>& viewRenderStages() const { return m_render_stages; }
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const { return m_framebuffer_template; }
 
     protected:
         void addStage(const RenderStage& render_stage);
-        void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template);
-        void setClearColor(const ClearColor& clear_color);
+        void addStage(const GraphicsPipelineState& graphics_pipeline_state, const std::vector<AttachmentReference>& attachment_references);
+        void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template) { m_framebuffer_template = framebuffer_template; }
+        void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }
 
         void preserveAttachments();
 

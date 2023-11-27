@@ -84,6 +84,8 @@ namespace nebula {
 
         Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template)
         {
+            NB_CORE_ASSERT(renderpass_template->viewFramebufferTemplate(), "Cannot create RenderPass without FramebufferTemplate!");
+            NB_CORE_ASSERT(!renderpass_template->viewRenderStages().empty(), "RenderPass has to have at least one RenderStage!");
             switch (Application::get().getRenderingAPI())
             {
                 case API::cOpenGL:    return createScope<RenderPass>(renderpass_template);

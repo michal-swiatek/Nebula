@@ -47,4 +47,30 @@ namespace nebula::rendering {
         return m_renderpass_template->viewFramebufferTemplate();
     }
 
+    RenderPassTemplate::RenderPassTemplate(const ClearColor& clear_color, const Reference<FramebufferTemplate>& framebuffer_template)
+    {
+        m_clear_color = clear_color;
+        m_framebuffer_template = framebuffer_template;
+    }
+
+    void RenderPassTemplate::addStage(const RenderStage& render_stage)
+    {
+        addStage(render_stage.graphics_pipeline_state, render_stage.attachment_references);
+    }
+
+    void RenderPassTemplate::addStage(const GraphicsPipelineState& graphics_pipeline_state, const std::vector<AttachmentReference>& attachment_references)
+    {
+        NB_CORE_ASSERT(m_framebuffer_template, "Set FramebufferTemplate before adding RenderStages!");
+        const size_t attachment_count = m_framebuffer_template->getAttachmentCount();
+        for (const auto& attachment_reference : attachment_references)
+            NB_CORE_ASSERT(attachment_reference.index < attachment_count, "Attachment reference index out of bounds!");
+
+        m_render_stages.emplace_back(graphics_pipeline_state, attachment_references);
+    }
+
+    void RenderPassTemplate::preserveAttachments()
+    {
+
+    }
+
 }

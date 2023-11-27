@@ -45,6 +45,7 @@ namespace nebula::rendering {
         [[nodiscard]] uint32_t getWidth() const { return m_width; }
         [[nodiscard]] uint32_t getHeight() const { return m_height; }
         [[nodiscard]] uint32_t getLayers() const { return m_layers; }
+        [[nodiscard]] uint32_t getAttachmentCount() const { return m_texture_attachments.size() + (m_depth_stencil_attachment ? 1 : 0); }
 
     protected:
         void addTextureAttachment(const AttachmentDescription& attachment_description);

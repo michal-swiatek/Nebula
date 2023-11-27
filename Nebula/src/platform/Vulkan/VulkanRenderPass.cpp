@@ -95,9 +95,7 @@ namespace nebula::rendering {
         const auto& framebuffer_template = renderpass_template->viewFramebufferTemplate();
 
         const size_t n_subpasses = renderpass_template->viewRenderStages().size();
-        size_t n_attachments = framebuffer_template->viewTextureAttachmentsDescriptions().size();
-        if (framebuffer_template->viewDepthStencilAttachmentDescription())
-            n_attachments++;
+        const size_t n_attachments = framebuffer_template->getAttachmentCount();
 
         //  Attachment references have to be stored in scope because VkSubpassDescription references them by pointer
         std::vector<AttachmentReferences> attachment_references(n_subpasses);

@@ -19,8 +19,11 @@
 
 #include "platform/Vulkan/VulkanContext.h"
 #include "platform/Vulkan/VulkanCommandPool.h"
+#include "platform/Vulkan/VulkanFramebuffer.h"
 #include "platform/Vulkan/VulkanRendererAPI.h"
+
 #include "platform/OpenGL/OpenGLContext.h"
+#include "platform/OpenGL/OpenGLFramebuffer.h"
 #include "platform/OpenGL/OpenGLRendererAPI.h"
 
 #ifdef NB_PLATFORM_WINDOWS
@@ -76,6 +79,18 @@ namespace nebula {
                 case API::cVulkan:    return createScope<VulkanCommandPool>(command_buffer_size);
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
+        }
+
+        Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)
+        {
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cVulkan:  return createReference<VulkanFramebuffer>(framebuffer_template);
+                case API::cOpenGL:  return createReference<OpenGlFramebuffer>(framebuffer_template);
+                default:    NB_CORE_ASSERT(false, "Unknown rendering API!");
+            }
+
+            return nullptr;
         }
 
         View<RendererApi> RendererApi::create(const API api)

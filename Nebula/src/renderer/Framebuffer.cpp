@@ -5,25 +5,9 @@
 
 #include "renderer/Framebuffer.h"
 
-#include "core/Assert.h"
 #include "core/Application.h"
 
-#include "platform/Vulkan/VulkanFramebuffer.h"
-#include "platform/OpenGL/OpenGLFramebuffer.h"
-
 namespace nebula::rendering {
-
-    Reference<Framebuffer> Framebuffer::createFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template)
-    {
-        switch (Application::get().getRenderingAPI())
-        {
-            case API::cVulkan:  return createReference<VulkanFramebuffer>(framebuffer_template);
-            case API::cOpenGL:  return createReference<OpenGlFramebuffer>(framebuffer_template);
-            default:    NB_CORE_ASSERT(false, "Unknown rendering API!");
-        }
-
-        return nullptr;
-    }
 
     FramebufferTemplate::FramebufferTemplate(const uint32_t width, const uint32_t height, const uint32_t layers)
         : m_width(width), m_height(height), m_layers(layers) {}

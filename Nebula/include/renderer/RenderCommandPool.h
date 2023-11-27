@@ -13,7 +13,6 @@
 namespace nebula::rendering {
 
     class Renderer;
-    class RenderCommandBuffer;
 
     //  TODO: Implement memory pool
     class RenderCommandPool

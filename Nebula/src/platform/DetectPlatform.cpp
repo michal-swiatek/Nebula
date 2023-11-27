@@ -18,6 +18,7 @@
 #include "renderer/RendererAPI.h"
 
 #include "platform/Vulkan/VulkanContext.h"
+#include "platform/Vulkan/VulkanRenderPass.h"
 #include "platform/Vulkan/VulkanCommandPool.h"
 #include "platform/Vulkan/VulkanFramebuffer.h"
 #include "platform/Vulkan/VulkanRendererAPI.h"
@@ -77,6 +78,16 @@ namespace nebula {
             {
                 case API::cOpenGL:    return createScope<RenderCommandPool>(command_buffer_size);
                 case API::cVulkan:    return createScope<VulkanCommandPool>(command_buffer_size);
+                default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+        }
+
+        Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template)
+        {
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cOpenGL:    return createScope<RenderPass>(renderpass_template);
+                case API::cVulkan:    return createScope<VulkanRenderPass>(renderpass_template);
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
         }

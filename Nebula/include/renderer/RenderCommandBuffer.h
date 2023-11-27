@@ -45,6 +45,13 @@ namespace nebula::rendering {
             m_commands.push_back(m_allocator.create<RenderCommand>(std::forward<Args>(args)...));
         }
 
+        template <typename RenderCommand, typename... Args>
+        void replace(const int index, Args&&... args)
+        {
+            RenderCommand* new_command = m_allocator.create<RenderCommand>(std::forward<Args>(args)...);
+            m_commands[index] = new_command;
+        }
+
         void reset()
         {
             m_allocator.clear();

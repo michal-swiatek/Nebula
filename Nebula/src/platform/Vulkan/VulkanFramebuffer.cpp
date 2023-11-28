@@ -29,6 +29,9 @@ namespace nebula::rendering {
 
         for (const auto& image : m_images)
             vkDestroyImage(VulkanAPI::getDevice(), image, nullptr);
+
+        if (m_framebuffer)
+            vkDestroyFramebuffer(VulkanAPI::getDevice(), m_framebuffer, nullptr);
     }
 
     void VulkanFramebuffer::bind()
@@ -70,8 +73,12 @@ namespace nebula::rendering {
 
     void VulkanFramebuffer::createAttachment(const AttachmentDescription& attachment_description, const bool depth_stencil)
     {
-        VkImageCreateInfo image_create_info{};
+        VkImage image;
+        VkImageView image_view;
+        VkResult result;
 
+        VkImageCreateInfo image_create_info{};
+        image_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         image_create_info.imageType = VK_IMAGE_TYPE_2D;
         image_create_info.format = getVulkanTextureFormat(attachment_description.format);
         image_create_info.extent.width = m_framebuffer_template->getWidth();
@@ -86,8 +93,12 @@ namespace nebula::rendering {
         else
             image_create_info.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
-        VkImageViewCreateInfo image_view_create_info{};
+        result = vkCreateImage(VulkanAPI::getDevice(), &image_create_info, nullptr, &image);
+        NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create Vulkan framebuffer image!");
 
+        VkImageViewCreateInfo image_view_create_info{};
+        image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        image_view_create_info.image = image;
         image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
         image_view_create_info.format = getVulkanTextureFormat(attachment_description.format);
         image_view_create_info.flags = 0;
@@ -106,13 +117,6 @@ namespace nebula::rendering {
         }
         else
             image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-
-        VkImage image;
-        VkImageView image_view;
-        VkResult result;
-
-        result = vkCreateImage(VulkanAPI::getDevice(), &image_create_info, nullptr, &image);
-        NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create Vulkan framebuffer image!");
 
         //  TODO: Allocate memory for image and pass it to GPU
 

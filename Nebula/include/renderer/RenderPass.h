@@ -24,6 +24,9 @@ namespace nebula::rendering {
     {
         glm::vec4 color = {};
         std::optional<glm::vec4> depth_stencil = std::nullopt;
+
+        ClearColor() : color(), depth_stencil(std::nullopt) {}
+        ClearColor(float r, float g, float b, float a) : color(r, g, b, a) {}
     };
 
     struct RenderStage

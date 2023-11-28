@@ -59,8 +59,8 @@ namespace nebula::rendering {
     struct NEBULA_API AttachmentReference
     {
         uint32_t index;
-        AttachmentLayout layout;
-        AttachmentReferenceType type;
+        AttachmentLayout layout = AttachmentLayout::cColorOptimal;
+        AttachmentReferenceType type = AttachmentReferenceType::cColor;
     };
 
 }

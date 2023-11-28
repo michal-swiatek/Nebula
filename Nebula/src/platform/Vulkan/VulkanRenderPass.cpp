@@ -98,9 +98,13 @@ namespace nebula::rendering {
         const size_t n_attachments = framebuffer_template->getAttachmentCount();
 
         //  Attachment references have to be stored in scope because VkSubpassDescription references them by pointer
-        std::vector<AttachmentReferences> attachment_references(n_subpasses);
-        std::vector<VkSubpassDescription> subpass_descriptions(n_subpasses);
-        std::vector<VkAttachmentDescription> attachment_descriptions(n_attachments);
+        std::vector<AttachmentReferences> attachment_references{};
+        std::vector<VkSubpassDescription> subpass_descriptions{};
+        std::vector<VkAttachmentDescription> attachment_descriptions{};
+
+        attachment_references.reserve(n_subpasses);
+        subpass_descriptions.reserve(n_subpasses);
+        attachment_descriptions.reserve(n_attachments);
 
         for (const auto& render_stage : renderpass_template->viewRenderStages())
             attachment_references.emplace_back(createAttachmentReferences(render_stage));
@@ -110,7 +114,7 @@ namespace nebula::rendering {
 
         for (const auto& attachment_description : framebuffer_template->viewTextureAttachmentsDescriptions())
             attachment_descriptions.emplace_back(createAttachmentDescription(attachment_description));
-        if (framebuffer_template->viewDepthStencilAttachmentDescription())
+        if (framebuffer_template->viewDepthStencilAttachmentDescription().has_value())
             attachment_descriptions.emplace_back(createAttachmentDescription(*framebuffer_template->viewDepthStencilAttachmentDescription()));
 
         VkRenderPassCreateInfo create_info{};

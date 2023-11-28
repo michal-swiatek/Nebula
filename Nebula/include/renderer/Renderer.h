@@ -23,13 +23,19 @@ namespace nebula::rendering {
         explicit Renderer(RendererBackendType renderer_backend);
         virtual ~Renderer() = default;
 
-        View<RenderPass> getRenderPass();
+        [[nodiscard]] View<RenderPass> getRenderPass() const { return m_renderpass.get(); }
         void setRenderPass(Scope<RenderPass>&& renderpass);
-        void setRenderPass(const Reference<RenderPassTemplate>& renderpass);
+        void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
 
         void beginRenderPass();
         void endRenderPass();
         void nextRenderStage();
+
+        template <typename RendererType>
+        static Scope<Renderer> create(RendererBackendType renderer_backend)
+        {
+            return createScope<RendererType>(renderer_backend);
+        }
 
     private:
         Scope<RendererBackend> m_renderer_backend = nullptr;

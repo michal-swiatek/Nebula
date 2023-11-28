@@ -8,39 +8,57 @@
 #include <vector>
 
 using namespace nebula;
+using namespace nebula::rendering;
 using namespace nebula::literals;
 using namespace std::chrono_literals;
 
-auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, rendering::API::cVulkan);
+auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, API::cVulkan);
 auto window_properties = WindowProperties("Sandbox", 1600, 900);
 
-struct Temp
+class TestFramebuffer final : public FramebufferTemplate
 {
-    int number;
-    char string[100];
+public:
+    TestFramebuffer() : FramebufferTemplate(100, 100)
+    {
+        AttachmentDescription attachment;
+        attachment.format = TextureFormat::cFormat_R8G8B8A8_SRGB;
 
-    explicit Temp(int number) : number(number), string{"Hello world!"} {}
+        addTextureAttachment(attachment);
+    }
 };
 
-struct Temp2 : public Temp
+class TestRenderPass final : public RenderPassTemplate
 {
-    explicit Temp2(int number) : Temp(number) {}
-    ~Temp2() { NB_TRACE("Temp2 {} deleted!", number); }
+public:
+    TestRenderPass() : RenderPassTemplate(ClearColor(0, 0, 0, 0), createReference<TestFramebuffer>())
+    {
+        AttachmentReference attachment_reference = {0};
+        addStage(GraphicsPipelineState(), {attachment_reference});
+        addStage(GraphicsPipelineState(), {attachment_reference});
+    }
 };
 
 class ExampleLayer : public Layer
 {
 public:
-    ExampleLayer() :
-        Layer("Example Layer"),
-        m_allocator(memory::MemoryManager::requestMemory(3224), 3224),
-        m_vector(m_allocator)
-    {}
+    ExampleLayer() : Layer("Example Layer")
+    {
+        setup();
+    }
+
+    void setup()
+    {
+        m_renderer->setRenderPass(createReference<TestRenderPass>());
+    }
 
     void onUpdate(Timestep delta_time) override
     {
         if (Input::isKeyPressed(Keycode::Space))
             NB_INFO("Space is being pressed!");
+
+        m_renderer->beginRenderPass();
+        m_renderer->nextRenderStage();
+        m_renderer->endRenderPass();
     }
 
     void onFixedUpdate(Timestep delta_time) override
@@ -79,8 +97,7 @@ public:
     }
 
 private:
-    memory::LinearAllocator m_allocator;
-    std::vector<Temp, memory::STLAdapter<Temp, memory::LinearAllocator>> m_vector;
+    Scope<Renderer> m_renderer = Renderer::create<Renderer>(RendererBackendType::cForward);
 };
 
 class Sandbox : public Application

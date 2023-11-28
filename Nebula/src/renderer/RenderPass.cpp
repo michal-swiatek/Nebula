@@ -27,17 +27,19 @@ namespace nebula::rendering {
     void RenderPass::startPass()
     {
         NB_CORE_ASSERT(m_current_render_stage >= 0, "Iterate over all Render stages before starting new RenderPass!");
+        if (!m_framebuffer->attached())
+            m_framebuffer->attachTo(getRenderPassHandle());
         m_current_render_stage = -1;
     }
 
     void RenderPass::finishPass() const
     {
-        NB_CORE_ASSERT(m_current_render_stage == m_renderpass_template->viewRenderStages().size(), "Iterate over all Render stages before finishing RenderPass!");
+        NB_CORE_ASSERT(m_current_render_stage == m_renderpass_template->viewRenderStages().size() - 1, "Iterate over all Render stages before finishing RenderPass!");
     }
 
     const GraphicsPipelineState& RenderPass::nextStage()
     {
-        NB_CORE_ASSERT(m_current_render_stage < m_renderpass_template->viewRenderStages().size() - 1, "RenderStage index out of range!");
+        NB_CORE_ASSERT(m_current_render_stage < static_cast<int>(m_renderpass_template->viewRenderStages().size() - 1), "RenderStage index out of range!");
         const auto& render_stages = m_renderpass_template->viewRenderStages();
         return render_stages[++m_current_render_stage].graphics_pipeline_state;
     }
@@ -70,7 +72,7 @@ namespace nebula::rendering {
 
     void RenderPassTemplate::preserveAttachments()
     {
-
+        //  TODO: Implement
     }
 
 }

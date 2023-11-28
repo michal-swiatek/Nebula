@@ -46,11 +46,13 @@ namespace nebula::rendering {
     VkInstance VulkanAPI::s_instance = VK_NULL_HANDLE;
     VkDevice VulkanAPI::s_device = VK_NULL_HANDLE;
     VkPhysicalDevice VulkanAPI::s_physical_device = VK_NULL_HANDLE;
+    VmaAllocator VulkanAPI::s_vma_allocator = VK_NULL_HANDLE;
     QueuesInfo VulkanAPI::s_queues_info;
 
     VkInstance VulkanAPI::getInstance() { return s_instance; }
     VkDevice VulkanAPI::getDevice() { return s_device; }
     VkPhysicalDevice VulkanAPI::getPhysicalDevice() { return s_physical_device; }
+    VmaAllocator VulkanAPI::getVmaAllocator() { return s_vma_allocator; }
 
     Scope<VulkanAPI> VulkanAPI::create(GLFWwindow* window)
     {
@@ -67,6 +69,7 @@ namespace nebula::rendering {
         createSurface(window);
         createPhysicalDevice();
         createLogicalDevice();
+        createVmaAllocator();
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 2)
         {
@@ -82,7 +85,9 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(s_instance, "No Vulkan instance!");
         NB_CORE_ASSERT(s_device, "No Vulkan device!");
         NB_CORE_ASSERT(s_physical_device, "No Vulkan physical device!");
+        NB_CORE_ASSERT(s_vma_allocator, "No VMA Allocator!");
 
+        vmaDestroyAllocator(s_vma_allocator);
         vkDestroyDevice(s_device, nullptr);
         vkDestroySurfaceKHR(s_instance, m_surface, nullptr);
 
@@ -191,6 +196,18 @@ namespace nebula::rendering {
 
         vkGetDeviceQueue(s_device, *presentation_family, 0, &s_queues_info.presentation_queue);
         NB_CORE_ASSERT(s_queues_info.presentation_queue != VK_NULL_HANDLE, "Unable to retrive Vulkan presentation queue handle!");
+    }
+
+    void VulkanAPI::createVmaAllocator()
+    {
+        VmaAllocatorCreateInfo create_info{};
+
+        create_info.vulkanApiVersion = VK_MAKE_API_VERSION(0, VULKAN_MAJOR_VERSION, VULKAN_MINOR_VERSION, VULKAN_PATCH_VERSION);
+        create_info.instance = getInstance();
+        create_info.physicalDevice = getPhysicalDevice();
+        create_info.device = getDevice();
+
+        vmaCreateAllocator(&create_info, &s_vma_allocator);
     }
 
     void VulkanAPI::createSurface(GLFWwindow* window)

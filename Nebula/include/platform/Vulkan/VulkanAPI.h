@@ -7,6 +7,7 @@
 #define VULKANAPI_H
 
 #include <vulkan/vulkan.h>
+#include <vk_mem_alloc.h>
 
 #include <string>
 #include <optional>
@@ -21,10 +22,10 @@ namespace nebula::rendering {
 
     struct PhysicalDeviceInfo
     {
-        std::string vendor;
-        std::string renderer;
-        std::string driver_version;
-        std::string api_version;
+        std::string vendor{};
+        std::string renderer{};
+        std::string driver_version{};
+        std::string api_version{};
     };
 
     struct QueuesInfo
@@ -36,6 +37,18 @@ namespace nebula::rendering {
         uint32_t presentation_family_index;
     };
 
+    struct VkApiAllocatedImage
+    {
+        VkImage image = VK_NULL_HANDLE;
+        VmaAllocation allocation{};
+    };
+
+    struct VkApiAllocatedBuffer
+    {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VmaAllocation allocation{};
+    };
+
     class VulkanAPI
     {
     public:
@@ -45,6 +58,7 @@ namespace nebula::rendering {
         static VkInstance getInstance();
         static VkDevice getDevice();
         static VkPhysicalDevice getPhysicalDevice();
+        static VmaAllocator getVmaAllocator();
 
         static QueuesInfo getQueuesInfo();
         static PhysicalDeviceInfo getPhysicalDeviceInfo();
@@ -69,6 +83,7 @@ namespace nebula::rendering {
         void createVulkanInstance();
         void createPhysicalDevice();
         void createLogicalDevice();
+        void createVmaAllocator();
         void createSurface(GLFWwindow* window);
 
         bool isDeviceSuitable(VkPhysicalDevice device) const;
@@ -77,6 +92,7 @@ namespace nebula::rendering {
         static VkInstance s_instance;
         static VkDevice s_device;
         static VkPhysicalDevice s_physical_device;
+        static VmaAllocator s_vma_allocator;
         static QueuesInfo s_queues_info;
 
         friend class nebula::rendering::VulkanContext;

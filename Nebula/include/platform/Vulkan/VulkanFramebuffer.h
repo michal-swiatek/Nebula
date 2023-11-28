@@ -8,7 +8,7 @@
 
 #include "renderer/Framebuffer.h"
 
-#include <vulkan/vulkan.h>
+#include "platform/Vulkan/VulkanAPI.h"
 #include "core/Types.h"
 
 namespace nebula::rendering {
@@ -31,8 +31,8 @@ namespace nebula::rendering {
         VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
         Reference<FramebufferTemplate> m_framebuffer_template = nullptr;
 
-        std::vector<VkImage> m_images{};
         std::vector<VkImageView> m_image_views{};
+        std::vector<VkApiAllocatedImage> m_image_buffers{};
 
         void createAttachment(const AttachmentDescription& attachment_description, bool depth_stencil);
     };

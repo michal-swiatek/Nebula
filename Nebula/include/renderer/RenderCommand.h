@@ -20,6 +20,7 @@ namespace nebula::rendering {
 
     protected:
         static View<RendererApi> s_renderer_api;
+        friend class nebula::rendering::RendererApi;
     };
 
 }

@@ -49,7 +49,7 @@ namespace nebula {
     {
     public:
         explicit Application(ApplicationSpecification specification, const std::optional<WindowProperties>& window_properties = {});
-        virtual ~Application() = default;
+        virtual ~Application();
 
         void close();
         void minimize(bool minimized);

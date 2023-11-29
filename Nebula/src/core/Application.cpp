@@ -10,6 +10,8 @@
 #include "core/Config.h"
 #include "core/Logging.h"
 
+#include "renderer/RendererAPI.h"
+
 namespace nebula {
 
     Application* Application::s_instance = nullptr;
@@ -39,7 +41,14 @@ namespace nebula {
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
 
+        rendering::RendererApi::create(m_specification.api);
+
         m_render_context = rendering::RenderContext::create(m_window->getWindowHandle());
+    }
+
+    Application::~Application()
+    {
+        rendering::RendererApi::destroy();
     }
 
     void Application::run()

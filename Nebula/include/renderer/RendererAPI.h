@@ -6,21 +6,14 @@
 #ifndef RENDERERAPI_H
 #define RENDERERAPI_H
 
-#include <glm/glm.hpp>
-
 #include "core/Types.h"
 #include "platform/PlatformAPI.h"
 
+#include "renderer/PipelineState.h"
+
+namespace nebula { class Application; }
+
 namespace nebula::rendering {
-
-    enum ClearBufferType : uint8_t
-    {
-        cColorBuffer = 1,
-        cDepthBuffer = 2,
-        cStencilBuffer = 4
-    };
-
-    class Renderer;
 
     class RendererApi
     {
@@ -30,16 +23,18 @@ namespace nebula::rendering {
         virtual void init() = 0;
         virtual void shutdown() = 0;
 
-        virtual void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+        virtual void compilePipeline(const GraphicsPipelineState& graphics_pipeline_state, void* renderpass_handle) = 0;
 
-        virtual void setClearColor(const glm::vec4& color) = 0;
-        virtual void clear(ClearBufferType flags) = 0;
+        static View<RendererApi> get();
 
     private:
-        static View<RendererApi> create(API api);
-        static void destroy(RendererApi* api);
+        static Scope<RendererApi> s_renderer_api;
 
-        friend class nebula::rendering::Renderer;
+        static void create(API api);
+        static void destroy();
+
+        //  TODO: Friend MainRenderThread instead
+        friend class nebula::Application;
     };
 
 }

@@ -16,10 +16,7 @@ namespace nebula::rendering {
         void init() override;
         void shutdown() override;
 
-        void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
-
-        void setClearColor(const glm::vec4& color) override;
-        void clear(ClearBufferType flags) override;
+        void compilePipeline(const GraphicsPipelineState& graphics_pipeline_state, void* renderpass_handle) override;
     };
 
 }

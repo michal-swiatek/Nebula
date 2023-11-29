@@ -16,7 +16,7 @@
 
 #include "Framebuffer.h"
 #include "AttachmentInfo.h"
-#include "GraphicsPipelineState.h"
+#include "PipelineState.h"
 
 namespace nebula::rendering {
 
@@ -47,9 +47,10 @@ namespace nebula::rendering {
 
         void startPass();
         void finishPass() const;
-        void attachFramebuffer(const Reference<Framebuffer>& framebuffer);
+        void attachFramebuffer(const Reference<Framebuffer>& framebuffer = nullptr);
         [[nodiscard]] const GraphicsPipelineState& nextStage();
 
+        [[nodiscard]] const Reference<RenderPassTemplate>& getRenderPassTemplate() const;
         [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const;
         [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }
         void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }

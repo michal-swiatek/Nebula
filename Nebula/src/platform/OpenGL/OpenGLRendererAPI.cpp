@@ -32,17 +32,6 @@ namespace nebula::rendering {
         }
     }
 
-    GLbitfield convertClearFlags(ClearBufferType flags)
-    {
-        GLbitfield gl_flags = 0;
-
-        gl_flags |= flags & ClearBufferType::cColorBuffer ? GL_COLOR_BUFFER_BIT : 0;
-        gl_flags |= flags & ClearBufferType::cDepthBuffer ? GL_DEPTH_BUFFER_BIT : 0;
-        gl_flags |= flags & ClearBufferType::cStencilBuffer ? GL_STENCIL_BUFFER_BIT : 0;
-
-        return gl_flags;
-    }
-
     void OpenGlRendererApi::init()
     {
         #ifdef NB_DEBUG_BUILD
@@ -52,12 +41,6 @@ namespace nebula::rendering {
         glDebugMessageCallback(OpenGLMessageCallback, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
         #endif
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_LINE_SMOOTH);
     }
 
     void OpenGlRendererApi::shutdown()
@@ -65,19 +48,9 @@ namespace nebula::rendering {
 
     }
 
-    void OpenGlRendererApi::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    void OpenGlRendererApi::compilePipeline(const GraphicsPipelineState& graphics_pipeline_state, void* renderpass_handle)
     {
-        glViewport(x, y, width, height);
-    }
 
-    void OpenGlRendererApi::setClearColor(const glm::vec4& color)
-    {
-        glClearColor(color.r, color.g, color.b, color.a);
-    }
-
-    void OpenGlRendererApi::clear(ClearBufferType flags)
-    {
-        glClear(convertClearFlags(flags));
     }
 
 }

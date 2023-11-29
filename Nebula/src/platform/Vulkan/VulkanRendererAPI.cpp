@@ -5,6 +5,8 @@
 
 #include "platform/Vulkan/VulkanRendererAPI.h"
 
+#include "platform/Vulkan/VulkanPipeline.h"
+
 namespace nebula::rendering {
 
     void VulkanRendererApi::init()
@@ -17,19 +19,9 @@ namespace nebula::rendering {
 
     }
 
-    void VulkanRendererApi::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    void VulkanRendererApi::compilePipeline(const GraphicsPipelineState& graphics_pipeline_state, void* renderpass_handle)
     {
-
-    }
-
-    void VulkanRendererApi::setClearColor(const glm::vec4& color)
-    {
-
-    }
-
-    void VulkanRendererApi::clear(ClearBufferType flags)
-    {
-
+        auto create_info = getGraphicsPipelineCreateInfo(graphics_pipeline_state, static_cast<VkRenderPass>(renderpass_handle));
     }
 
 }

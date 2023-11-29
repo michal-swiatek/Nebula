@@ -6,6 +6,7 @@
 #include "renderer/RenderPass.h"
 
 #include "core/Assert.h"
+#include "renderer/RendererAPI.h"
 
 namespace nebula::rendering {
 
@@ -19,6 +20,7 @@ namespace nebula::rendering {
 
     void RenderPass::attachFramebuffer(const Reference<Framebuffer>& framebuffer)
     {
+        //  TODO: Implement framebuffer comparison
         NB_CORE_ASSERT(framebuffer->getFramebufferTemplate() == m_renderpass_template->viewFramebufferTemplate(), "Incompatible Framebuffer!");
         m_framebuffer = framebuffer;
         m_framebuffer->attachTo(getRenderPassHandle());
@@ -26,9 +28,10 @@ namespace nebula::rendering {
 
     void RenderPass::startPass()
     {
+        NB_CORE_ASSERT(m_framebuffer, "Attach framebuffer before starting RenderPass!");
         NB_CORE_ASSERT(m_current_render_stage >= 0, "Iterate over all Render stages before starting new RenderPass!");
         if (!m_framebuffer->attached())
-            m_framebuffer->attachTo(getRenderPassHandle());
+            attachFramebuffer(m_framebuffer);
         m_current_render_stage = -1;
     }
 
@@ -42,6 +45,11 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_current_render_stage < static_cast<int>(m_renderpass_template->viewRenderStages().size() - 1), "RenderStage index out of range!");
         const auto& render_stages = m_renderpass_template->viewRenderStages();
         return render_stages[++m_current_render_stage].graphics_pipeline_state;
+    }
+
+    const Reference<RenderPassTemplate>& RenderPass::getRenderPassTemplate() const
+    {
+        return m_renderpass_template;
     }
 
     const Reference<FramebufferTemplate>& RenderPass::getFramebufferTemplate() const

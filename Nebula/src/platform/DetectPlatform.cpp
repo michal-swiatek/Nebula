@@ -8,8 +8,6 @@
 #include "core/Config.h"
 #include "core/Application.h"
 
-#include "memory/MemoryManager.h"
-
 #include "core/Window.h"
 #include "core/Input.h"
 #include "core/Timer.h"
@@ -21,11 +19,9 @@
 #include "platform/Vulkan/VulkanRenderPass.h"
 #include "platform/Vulkan/VulkanCommandPool.h"
 #include "platform/Vulkan/VulkanFramebuffer.h"
-#include "platform/Vulkan/VulkanRendererAPI.h"
 
 #include "platform/OpenGL/OpenGLContext.h"
 #include "platform/OpenGL/OpenGLFramebuffer.h"
-#include "platform/OpenGL/OpenGLRendererAPI.h"
 
 #ifdef NB_PLATFORM_WINDOWS
     #include <Windows.h>
@@ -86,12 +82,19 @@ namespace nebula {
         {
             NB_CORE_ASSERT(renderpass_template->viewFramebufferTemplate(), "Cannot create RenderPass without FramebufferTemplate!");
             NB_CORE_ASSERT(!renderpass_template->viewRenderStages().empty(), "RenderPass has to have at least one RenderStage!");
+
+            Scope<RenderPass> renderpass = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cOpenGL:    return createScope<RenderPass>(renderpass_template);
-                case API::cVulkan:    return createScope<VulkanRenderPass>(renderpass_template);
+                case API::cOpenGL:    renderpass = createScope<RenderPass>(renderpass_template);        break;
+                case API::cVulkan:    renderpass = createScope<VulkanRenderPass>(renderpass_template);  break;
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
+
+            for (const auto& [graphics_pipeline_state, _] : renderpass->getRenderPassTemplate()->viewRenderStages())
+                RendererApi::get()->compilePipeline(graphics_pipeline_state, renderpass->getRenderPassHandle());
+
+            return renderpass;
         }
 
         Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)
@@ -104,21 +107,6 @@ namespace nebula {
             }
 
             return nullptr;
-        }
-
-        View<RendererApi> RendererApi::create(const API api)
-        {
-            switch (api)
-            {
-                case API::cOpenGL:    return memory::MemoryManager::create<OpenGlRendererApi>();
-                case API::cVulkan:    return memory::MemoryManager::create<VulkanRendererApi>();
-                default:     NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
-            }
-        }
-
-        void RendererApi::destroy(RendererApi* api)
-        {
-            memory::MemoryManager::destroy(api);
         }
 
     }

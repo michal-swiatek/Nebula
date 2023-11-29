@@ -22,6 +22,7 @@ set(NEBULA_SOURCE_FILES
         src/debug/ImGuiLayer.cpp
         src/renderer/Renderer.cpp
         src/renderer/RenderPass.cpp
+        src/renderer/RendererAPI.cpp
         src/platform/DetectPlatform.cpp
         src/platform/Windows/WindowsInput.cpp
         src/platform/Windows/WindowsWindow.cpp
@@ -29,6 +30,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
         src/platform/Vulkan/VulkanAPI.cpp
+        src/platform/Vulkan/VulkanPipeline.cpp
         src/platform/Vulkan/VulkanContext.cpp
         src/platform/Vulkan/VulkanFramebuffer.cpp
         src/platform/Vulkan/VulkanRendererAPI.cpp

@@ -6,7 +6,7 @@
 #ifndef VULKANCONTEXT_H
 #define VULKANCONTEXT_H
 
-#include "renderer/RenderContext.h"
+#include "rendering/RenderContext.h"
 
 struct GLFWwindow;
 struct VkSurfaceKHR_T;

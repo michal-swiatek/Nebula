@@ -6,7 +6,7 @@
 #ifndef VULKANFRAMEBUFFER_H
 #define VULKANFRAMEBUFFER_H
 
-#include "renderer/Framebuffer.h"
+#include "rendering/Framebuffer.h"
 
 #include "platform/Vulkan/VulkanAPI.h"
 #include "core/Types.h"

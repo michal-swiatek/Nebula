@@ -6,8 +6,6 @@
 #ifndef RENDERCOMMANDVISITOR_H
 #define RENDERCOMMANDVISITOR_H
 
-#include "core/Core.h"
-
 namespace nebula::rendering {
 
     class RenderCommandVisitor

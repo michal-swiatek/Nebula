@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "renderer/Framebuffer.h"
+#include "rendering/Framebuffer.h"
 
 #include "core/Application.h"
 

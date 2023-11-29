@@ -6,7 +6,7 @@
 #ifndef VULKANRENDERPASS_H
 #define VULKANRENDERPASS_H
 
-#include "renderer/RenderPass.h"
+#include "rendering/RenderPass.h"
 
 #include <vulkan/vulkan.h>
 

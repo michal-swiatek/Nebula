@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "renderer/commands/RenderCommandBuffer.h"
+#include "rendering/commands/RenderCommandBuffer.h"
 
 #include "core/Config.h"
 #include "memory/MemoryManager.h"

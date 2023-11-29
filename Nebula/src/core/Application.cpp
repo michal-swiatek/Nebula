@@ -10,7 +10,7 @@
 #include "core/Config.h"
 #include "core/Logging.h"
 
-#include "renderer/RendererAPI.h"
+#include "rendering/renderer/RendererAPI.h"
 
 namespace nebula {
 

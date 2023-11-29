@@ -10,10 +10,10 @@
 
 #include "core/Core.h"
 #include "memory/Allocators.h"
+#include "RenderCommand.h"
 
 namespace nebula::rendering {
 
-    struct RenderCommand;
 
     class NEBULA_API RenderCommandBuffer
     {

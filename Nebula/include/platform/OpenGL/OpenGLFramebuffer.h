@@ -6,7 +6,7 @@
 #ifndef OPENGLFRAMEBUFFER_H
 #define OPENGLFRAMEBUFFER_H
 
-#include "renderer/Framebuffer.h"
+#include "rendering/Framebuffer.h"
 
 #include "core/Types.h"
 

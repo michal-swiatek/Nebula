@@ -19,7 +19,7 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
-#include "renderer/RenderContext.h"
+#include "rendering/RenderContext.h"
 
 int main(int argc, char** argv);
 

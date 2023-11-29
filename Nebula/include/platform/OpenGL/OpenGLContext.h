@@ -6,7 +6,7 @@
 #ifndef OPENGLCONTEXT_H
 #define OPENGLCONTEXT_H
 
-#include "renderer/RenderContext.h"
+#include "rendering/RenderContext.h"
 
 struct GLFWwindow;
 

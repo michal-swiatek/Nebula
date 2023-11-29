@@ -3,10 +3,9 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "renderer/RenderPass.h"
+#include "rendering/RenderPass.h"
 
 #include "core/Assert.h"
-#include "renderer/RendererAPI.h"
 
 namespace nebula::rendering {
 

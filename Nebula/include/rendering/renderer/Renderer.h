@@ -9,8 +9,8 @@
 #include "core/Core.h"
 
 #include "RendererBackend.h"
-#include "RenderPass.h"
-#include "commands/RenderCommandBuffer.h"
+#include "rendering/RenderPass.h"
+#include "rendering/commands/RenderCommandBuffer.h"
 
 namespace nebula::rendering {
 

@@ -8,7 +8,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "renderer/AttachmentInfo.h"
+#include "rendering/AttachmentInfo.h"
 
 namespace nebula::rendering {
 

@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "renderer/Renderer.h"
+#include "rendering/renderer/Renderer.h"
 
 namespace nebula::rendering {
 

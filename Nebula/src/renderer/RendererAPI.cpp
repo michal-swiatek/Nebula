@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "renderer/RendererAPI.h"
+#include "rendering/renderer/RendererAPI.h"
 
 #include "core/Types.h"
 #include "core/Assert.h"

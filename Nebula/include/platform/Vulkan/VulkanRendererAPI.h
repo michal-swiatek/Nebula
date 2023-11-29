@@ -6,7 +6,7 @@
 #ifndef VULKANRENDERERAPI_H
 #define VULKANRENDERERAPI_H
 
-#include "renderer/RendererAPI.h"
+#include "rendering/renderer/RendererAPI.h"
 
 namespace nebula::rendering {
 

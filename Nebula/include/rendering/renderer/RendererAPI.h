@@ -9,7 +9,7 @@
 #include "core/Types.h"
 #include "platform/PlatformAPI.h"
 
-#include "renderer/RenderPass.h"
+#include "rendering/RenderPass.h"
 
 namespace nebula { class Application; }
 

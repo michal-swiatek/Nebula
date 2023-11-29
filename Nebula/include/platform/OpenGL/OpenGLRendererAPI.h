@@ -6,7 +6,7 @@
 #ifndef OPENGLRENDERERAPI_H
 #define OPENGLRENDERERAPI_H
 
-#include "renderer/RendererAPI.h"
+#include "rendering/renderer/RendererAPI.h"
 
 namespace nebula::rendering {
 

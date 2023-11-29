@@ -6,7 +6,7 @@
 #ifndef VULKANTEXTUREFORMATS_H
 #define VULKANTEXTUREFORMATS_H
 
-#include "renderer/TextureFormats.h"
+#include "rendering/TextureFormats.h"
 
 #include <vulkan/vulkan.h>
 

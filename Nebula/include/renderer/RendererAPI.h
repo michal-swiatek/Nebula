@@ -9,7 +9,7 @@
 #include "core/Types.h"
 #include "platform/PlatformAPI.h"
 
-#include "renderer/PipelineState.h"
+#include "renderer/RenderPass.h"
 
 namespace nebula { class Application; }
 
@@ -23,7 +23,7 @@ namespace nebula::rendering {
         virtual void init() = 0;
         virtual void shutdown() = 0;
 
-        virtual void compilePipeline(const GraphicsPipelineState& graphics_pipeline_state, void* renderpass_handle) = 0;
+        virtual void compilePipelines(View<RenderPass> renderpass) = 0;
 
         static View<RendererApi> get();
 

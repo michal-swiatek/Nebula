@@ -91,8 +91,7 @@ namespace nebula {
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
 
-            for (const auto& [graphics_pipeline_state, _] : renderpass->getRenderPassTemplate()->viewRenderStages())
-                RendererApi::get()->compilePipeline(graphics_pipeline_state, renderpass->getRenderPassHandle());
+            RendererApi::get()->compilePipelines(renderpass.get());
 
             return renderpass;
         }

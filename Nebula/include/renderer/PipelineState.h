@@ -27,7 +27,8 @@ namespace nebula::rendering {
         cLineList,
         cLineStrip,
         cTriangleList,
-        cTriangleStrip
+        cTriangleStrip,
+        cTriangleFan
     };
 
     enum class PolygonMode : uint8_t
@@ -88,7 +89,7 @@ namespace nebula::rendering {
     struct NEBULA_API MultisamplingState
     {
         bool enabled = false;
-        bool alpha_to_one = false;
+        bool alpha_to_one_enable = false;
         bool alpha_to_coverage_enable = false;
 
         uint32_t sample_mask = 0;
@@ -115,7 +116,7 @@ namespace nebula::rendering {
         DepthStencilState depth_stencil{};
         ColorBlendingState color_blending{};
 
-        uint8_t dynamic_state_mask = cViewport | cScissor | cLineWidth;
+        DynamicState dynamic_state_flags = static_cast<DynamicState>(cViewport | cScissor | cLineWidth);
     };
 
 }

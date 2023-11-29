@@ -33,7 +33,7 @@ namespace nebula::rendering {
         auto& config = Config::getEngineConfig();
         const auto command_buffer_size = config["memory"]["event_queue_size"].as<size_t>();
 
-        return createScope<RenderCommandBuffer>(command_buffer_size);
+        return createScopeFromPointer(new RenderCommandBuffer(command_buffer_size));
     }
 
 }

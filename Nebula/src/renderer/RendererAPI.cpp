@@ -20,12 +20,15 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(!s_renderer_api, "RendererAPI is already initialized!");
         NB_CORE_INFO("Initializing {} RendererAPI!", api == API::cVulkan ? "Vulkan" : "OpenGL");
 
+        RendererApi* renderer_api = nullptr;
         switch (api)
         {
-            case API::cVulkan:  s_renderer_api = createScope<VulkanRendererApi>();    break;
-            case API::cOpenGL:  s_renderer_api = createScope<OpenGlRendererApi>();    break;
+            case API::cVulkan:  renderer_api = new VulkanRendererApi();    break;
+            case API::cOpenGL:  renderer_api = new OpenGlRendererApi();    break;
             default:            NB_CORE_ASSERT(false, "Undefined Rendering API!");
         }
+
+        s_renderer_api = createScopeFromPointer(renderer_api);
     }
 
     void RendererApi::destroy()

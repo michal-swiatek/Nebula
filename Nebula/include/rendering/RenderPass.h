@@ -40,7 +40,6 @@ namespace nebula::rendering {
     class RenderPass
     {
     public:
-        explicit RenderPass(const Reference<RenderPassTemplate>& renderpass_template);
         virtual ~RenderPass() = default;
 
         [[nodiscard]] virtual void* getRenderPassHandle() { return this; }
@@ -56,6 +55,9 @@ namespace nebula::rendering {
         void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }
 
         [[nodiscard]] static Scope<RenderPass> create(const Reference<RenderPassTemplate>& renderpass_template);
+
+    protected:
+        explicit RenderPass(const Reference<RenderPassTemplate>& renderpass_template);
 
     private:
         ClearColor m_clear_color{};

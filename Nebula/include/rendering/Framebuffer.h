@@ -31,6 +31,9 @@ namespace nebula::rendering {
 
         [[nodiscard]] virtual const Reference<FramebufferTemplate>& getFramebufferTemplate() const = 0;
         [[nodiscard]] static Reference<Framebuffer> create(const Reference<FramebufferTemplate>& framebuffer_template);
+
+    protected:
+        Framebuffer() = default;
     };
 
     class NEBULA_API FramebufferTemplate

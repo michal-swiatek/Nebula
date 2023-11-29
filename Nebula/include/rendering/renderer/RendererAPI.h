@@ -27,6 +27,9 @@ namespace nebula::rendering {
 
         static View<RendererApi> get();
 
+    protected:
+        RendererApi() = default;
+
     private:
         static Scope<RendererApi> s_renderer_api;
 

@@ -56,12 +56,15 @@ namespace nebula {
 
         Scope<RenderContext> RenderContext::create(void* window_handle)
         {
+            RenderContext* render_context = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cOpenGL:    return createScope<OpenGLContext>(static_cast<GLFWwindow*>(window_handle));
-                case API::cVulkan:    return createScope<VulkanContext>(static_cast<GLFWwindow*>(window_handle));
+                case API::cOpenGL:    render_context = new OpenGLContext(static_cast<GLFWwindow*>(window_handle));  break;
+                case API::cVulkan:    render_context = new VulkanContext(static_cast<GLFWwindow*>(window_handle));  break;
                 default:                      NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
+
+            return createScopeFromPointer(render_context);
         }
 
         Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template)
@@ -69,31 +72,31 @@ namespace nebula {
             NB_CORE_ASSERT(renderpass_template->viewFramebufferTemplate(), "Cannot create RenderPass without FramebufferTemplate!");
             NB_CORE_ASSERT(!renderpass_template->viewRenderStages().empty(), "RenderPass has to have at least one RenderStage!");
 
-            Scope<RenderPass> renderpass = nullptr;
+            RenderPass* renderpass = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cOpenGL:    renderpass = createScope<RenderPass>(renderpass_template);        break;
-                case API::cVulkan:    renderpass = createScope<VulkanRenderPass>(renderpass_template);  break;
+                case API::cOpenGL:    renderpass = new RenderPass(renderpass_template);        break;
+                case API::cVulkan:    renderpass = new VulkanRenderPass(renderpass_template);  break;
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
 
-            RendererApi::get()->compilePipelines(renderpass.get());
+            RendererApi::get()->compilePipelines(renderpass);
 
-            return renderpass;
+            return createScopeFromPointer(renderpass);
         }
 
         Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)
         {
+            Framebuffer* framebuffer = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cVulkan:  return createReference<VulkanFramebuffer>(framebuffer_template);
-                case API::cOpenGL:  return createReference<OpenGlFramebuffer>(framebuffer_template);
+                case API::cVulkan:  framebuffer = new VulkanFramebuffer(framebuffer_template);  break;
+                case API::cOpenGL:  framebuffer = new OpenGlFramebuffer(framebuffer_template);  break;
                 default:    NB_CORE_ASSERT(false, "Unknown rendering API!");
             }
 
-            return nullptr;
+            return createReferenceFromPointer(framebuffer);
         }
-
     }
 
     void system_sleep(double seconds)

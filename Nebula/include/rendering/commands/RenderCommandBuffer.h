@@ -18,7 +18,6 @@ namespace nebula::rendering {
     class NEBULA_API RenderCommandBuffer
     {
     public:
-        explicit RenderCommandBuffer(size_t buffer_size);
         ~RenderCommandBuffer();
 
         void reset();
@@ -39,6 +38,8 @@ namespace nebula::rendering {
         static Scope<RenderCommandBuffer> create();
 
     private:
+        explicit RenderCommandBuffer(size_t buffer_size);
+
         memory::LinearAllocator m_allocator{};
         std::vector<RenderCommand*> m_commands{};
     };

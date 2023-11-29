@@ -27,6 +27,9 @@ namespace nebula {
 
             virtual void swapBuffers() = 0;
 
+        protected:
+            RenderContext() = default;
+
         private:
             friend class nebula::Application;
             static Scope<RenderContext> create(void* window_handle);

@@ -28,6 +28,11 @@ namespace nebula::rendering {
         m_commands.clear();
     }
 
+    std::vector<RenderCommand*>& RenderCommandBuffer::getCommands()
+    {
+        return m_commands;
+    }
+
     Scope<RenderCommandBuffer> RenderCommandBuffer::create()
     {
         auto& config = Config::getEngineConfig();

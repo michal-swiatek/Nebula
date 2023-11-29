@@ -14,13 +14,13 @@
 
 namespace nebula::rendering {
 
-
     class NEBULA_API RenderCommandBuffer
     {
     public:
         ~RenderCommandBuffer();
 
         void reset();
+        std::vector<RenderCommand*>& getCommands();
 
         template <typename RenderCommand, typename... Args>
         void submit(Args&&... args)
@@ -42,6 +42,23 @@ namespace nebula::rendering {
 
         memory::LinearAllocator m_allocator{};
         std::vector<RenderCommand*> m_commands{};
+    };
+
+    class VulkanRecordedBuffer;
+    class OpenGLRecordedBuffer;
+
+    class NEBULA_API RecordedCommandBuffer
+    {
+    public:
+        virtual ~RecordedCommandBuffer() = default;
+
+        virtual void* getBufferHandle() = 0;
+
+    private:
+        RecordedCommandBuffer() = default;
+
+        friend class nebula::rendering::VulkanRecordedBuffer;
+        friend class nebula::rendering::OpenGLRecordedBuffer;
     };
 
 }

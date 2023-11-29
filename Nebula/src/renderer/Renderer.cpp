@@ -25,7 +25,7 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_command_buffer, "Start renderpass first!");
 
         m_renderpass->finishPass();
-        m_command_buffer.reset();   //  TODO: Pass to RendererBackend
+        m_renderer_backend->processRenderCommands(std::move(m_command_buffer));
     }
 
     void Renderer::nextRenderStage()
@@ -33,6 +33,11 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_command_buffer, "Start renderpass first!");
 
         auto graphics_pipeline_state = m_renderpass->nextStage();
+    }
+
+    Scope<RenderPass> Renderer::releaseRenderPass()
+    {
+        return createScopeFromPointer(m_renderpass.release());
     }
 
     View<RenderPass> Renderer::getRenderPass() const

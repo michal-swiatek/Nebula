@@ -7,10 +7,12 @@
 #define RENDERER_H
 
 #include "core/Core.h"
+#include "core/Assert.h"
 
-#include "RendererBackend.h"
 #include "rendering/RenderPass.h"
 #include "rendering/commands/RenderCommandBuffer.h"
+
+#include "ForwardRendererBackend.h"
 
 namespace nebula::rendering {
 
@@ -20,6 +22,7 @@ namespace nebula::rendering {
         virtual ~Renderer() = default;
 
         [[nodiscard]] View<RenderPass> getRenderPass() const;
+        [[nodiscard]] Scope<RenderPass> releaseRenderPass();
         void setRenderPass(Scope<RenderPass>&& renderpass);
         void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
 
@@ -27,7 +30,14 @@ namespace nebula::rendering {
         void endRenderPass();
         void nextRenderStage();
 
-        template <typename RendererType, typename RendererBackendType = RendererBackend>
+        template <typename RenderCommandType, typename... Args>
+        void submitCommand(Args&&... args)
+        {
+            NB_CORE_ASSERT(m_command_buffer, "Begin RenderPass before submitting RenderCommands!");
+            m_command_buffer->submit<RenderCommandType>(std::forward<Args>(args)...);
+        }
+
+        template <typename RendererType, typename RendererBackendType = ForwardRendererBackend>
         static Scope<Renderer> create()
         {
             Scope<RendererBackend> renderer_backend = createScope<RendererBackendType>();

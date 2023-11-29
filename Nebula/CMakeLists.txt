@@ -21,6 +21,8 @@ set(NEBULA_SOURCE_FILES
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp
         src/renderer/Renderer.cpp
+        src/renderer/RendererBackend.cpp
+        src/renderer/ForwardRendererBackend.cpp
         src/renderer/RenderPass.cpp
         src/renderer/RendererAPI.cpp
         src/renderer/RenderCommandBuffer.cpp
@@ -30,6 +32,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLContext.cpp
         src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
+        src/platform/OpenGL/OpenGLCommandsVisitor.cpp
         src/platform/Vulkan/VulkanAPI.cpp
         src/platform/Vulkan/VulkanPipeline.cpp
         src/platform/Vulkan/VulkanContext.cpp
@@ -37,6 +40,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/Vulkan/VulkanRendererAPI.cpp
         src/platform/Vulkan/VulkanRenderPass.cpp
         src/platform/Vulkan/VulkanSwapchain.cpp
+        src/platform/Vulkan/VulkanCommandsVisitor.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp

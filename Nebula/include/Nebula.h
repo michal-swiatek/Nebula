@@ -24,7 +24,6 @@
 #include "renderer/Renderer.h"
 #include "renderer/RenderPass.h"
 #include "renderer/Framebuffer.h"
-#include "renderer/RenderCommand.h"
 
 //  Entry point
 #include "core/EntryPoint.h"

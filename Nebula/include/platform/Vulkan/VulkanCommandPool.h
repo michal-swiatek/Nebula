@@ -9,8 +9,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "renderer/RenderCommandPool.h"
-#include "renderer/RenderCommandBuffer.h"
+#include "renderer/commands/RenderCommandBuffer.h"
 
 namespace nebula::rendering {
 

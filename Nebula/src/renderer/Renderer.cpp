@@ -9,7 +9,7 @@ namespace nebula::rendering {
 
     Renderer::Renderer(RendererBackendType renderer_backend)
     {
-        m_command_pool = RenderCommandPool::create();
+
     }
 
     void Renderer::beginRenderPass()
@@ -17,7 +17,7 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_renderpass, "No RenderPass set!");
         NB_CORE_ASSERT(!m_command_buffer, "Finish previous renderpass before starting new one!");
 
-        m_command_buffer = m_command_pool->createBuffer();
+        m_command_buffer = RenderCommandBuffer::create();
 
         m_renderpass->startPass();
         nextRenderStage();
@@ -36,6 +36,11 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_command_buffer, "Start renderpass first!");
 
         auto graphics_pipeline_state = m_renderpass->nextStage();
+    }
+
+    View<RenderPass> Renderer::getRenderPass() const
+    {
+        return m_renderpass.get();
     }
 
     void Renderer::setRenderPass(Scope<RenderPass>&& renderpass)

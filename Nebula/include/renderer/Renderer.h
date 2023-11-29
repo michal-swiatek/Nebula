@@ -9,13 +9,14 @@
 #include "core/Core.h"
 
 #include "RendererBackend.h"
-#include "RenderCommandPool.h"
-
-#include "renderer/RenderPass.h"
-#include "renderer/RenderCommandPool.h"
-#include "renderer/RenderCommandBuffer.h"
+#include "RenderPass.h"
+#include "commands/RenderCommandBuffer.h"
 
 namespace nebula::rendering {
+
+    class RenderPass;
+    class RenderPassTemplate;
+    class RenderCommandBuffer;
 
     class NEBULA_API Renderer
     {
@@ -23,7 +24,7 @@ namespace nebula::rendering {
         explicit Renderer(RendererBackendType renderer_backend);
         virtual ~Renderer() = default;
 
-        [[nodiscard]] View<RenderPass> getRenderPass() const { return m_renderpass.get(); }
+        [[nodiscard]] View<RenderPass> getRenderPass() const;
         void setRenderPass(Scope<RenderPass>&& renderpass);
         void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
 
@@ -39,7 +40,6 @@ namespace nebula::rendering {
 
     private:
         Scope<RendererBackend> m_renderer_backend = nullptr;
-        Scope<RenderCommandPool> m_command_pool = nullptr;
 
         Scope<RenderPass> m_renderpass = nullptr;
         Scope<RenderCommandBuffer> m_command_buffer = nullptr;

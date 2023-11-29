@@ -6,21 +6,17 @@
 #ifndef RENDERCOMMAND_H
 #define RENDERCOMMAND_H
 
-#include "core/Types.h"
+#include "core/Core.h"
 
 namespace nebula::rendering {
 
-    class RendererApi;
+    class RenderCommandVisitor;
 
     struct NEBULA_API RenderCommand
     {
         virtual ~RenderCommand() = default;
 
-        virtual void execute(void* command_buffer_handle) = 0;
-
-    protected:
-        static View<RendererApi> s_renderer_api;
-        friend class nebula::rendering::RendererApi;
+        virtual void accept(RenderCommandVisitor& command_visitor) = 0;
     };
 
 }

@@ -8,14 +8,12 @@
 #include "core/Types.h"
 #include "core/Assert.h"
 
-#include "renderer/RenderCommand.h"
 #include "platform/Vulkan/VulkanRendererAPI.h"
 #include "platform/OpenGL/OpenGLRendererAPI.h"
 
 namespace nebula::rendering {
 
     Scope<RendererApi> RendererApi::s_renderer_api = nullptr;
-    View<RendererApi> RenderCommand::s_renderer_api = nullptr;
 
     void RendererApi::create(const API api)
     {
@@ -28,8 +26,6 @@ namespace nebula::rendering {
             case API::cOpenGL:  s_renderer_api = createScope<OpenGlRendererApi>();    break;
             default:            NB_CORE_ASSERT(false, "Undefined Rendering API!");
         }
-
-        RenderCommand::s_renderer_api = get();
     }
 
     void RendererApi::destroy()
@@ -38,7 +34,6 @@ namespace nebula::rendering {
         NB_CORE_INFO("Destroing RendererAPI!");
 
         s_renderer_api.reset(nullptr);
-        RenderCommand::s_renderer_api = nullptr;
     }
 
     View<RendererApi> RendererApi::get()

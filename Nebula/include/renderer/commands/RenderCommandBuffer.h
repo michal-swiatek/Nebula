@@ -8,36 +8,20 @@
 
 #include <vector>
 
+#include "core/Core.h"
 #include "memory/Allocators.h"
-#include "memory/MemoryManager.h"
-
-#include "renderer/RenderCommand.h"
 
 namespace nebula::rendering {
 
-    class RenderCommandBuffer
+    struct RenderCommand;
+
+    class NEBULA_API RenderCommandBuffer
     {
     public:
-        explicit RenderCommandBuffer(const size_t buffer_size)
-        {
-            void* memory_chunk = memory::MemoryManager::requestMemory(buffer_size);
-            m_allocator = memory::LinearAllocator(memory_chunk, buffer_size);
-        }
+        explicit RenderCommandBuffer(size_t buffer_size);
+        ~RenderCommandBuffer();
 
-        virtual ~RenderCommandBuffer()
-        {
-            reset();
-            memory::MemoryManager::freeMemory(m_allocator.getMemoryPointer());
-        }
-
-        virtual void* getBufferHandle() { return this; }
-
-        void dispatch()
-        {
-            for (RenderCommand* command : m_commands)
-                command->execute(getBufferHandle());
-            reset();
-        }
+        void reset();
 
         template <typename RenderCommand, typename... Args>
         void submit(Args&&... args)
@@ -52,11 +36,7 @@ namespace nebula::rendering {
             m_commands[index] = new_command;
         }
 
-        void reset()
-        {
-            m_allocator.clear();
-            m_commands.clear();
-        }
+        static Scope<RenderCommandBuffer> create();
 
     private:
         memory::LinearAllocator m_allocator{};

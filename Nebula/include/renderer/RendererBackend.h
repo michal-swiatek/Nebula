@@ -8,15 +8,10 @@
 
 namespace nebula::rendering {
 
-    enum class RendererBackendType
-    {
-        cForward,
-        cBatched
-    };
-
     class RendererBackend
     {
-
+    public:
+        virtual ~RendererBackend() = default;
     };
 
 }

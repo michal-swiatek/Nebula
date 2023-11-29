@@ -97,7 +97,7 @@ public:
     }
 
 private:
-    Scope<Renderer> m_renderer = Renderer::create<Renderer>(RendererBackendType::cForward);
+    Scope<Renderer> m_renderer = Renderer::create<Renderer>();
 };
 
 class Sandbox : public Application

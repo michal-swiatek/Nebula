@@ -7,10 +7,7 @@
 
 namespace nebula::rendering {
 
-    Renderer::Renderer(RendererBackendType renderer_backend)
-    {
-
-    }
+    Renderer::Renderer(Scope<RendererBackend>&& renderer_backend) : m_renderer_backend(std::move(renderer_backend)) {}
 
     void Renderer::beginRenderPass()
     {

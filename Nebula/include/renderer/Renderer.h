@@ -14,14 +14,10 @@
 
 namespace nebula::rendering {
 
-    class RenderPass;
-    class RenderPassTemplate;
-    class RenderCommandBuffer;
-
     class NEBULA_API Renderer
     {
     public:
-        explicit Renderer(RendererBackendType renderer_backend);
+        explicit Renderer(Scope<RendererBackend>&& renderer_backend);
         virtual ~Renderer() = default;
 
         [[nodiscard]] View<RenderPass> getRenderPass() const;
@@ -32,10 +28,11 @@ namespace nebula::rendering {
         void endRenderPass();
         void nextRenderStage();
 
-        template <typename RendererType>
-        static Scope<Renderer> create(RendererBackendType renderer_backend)
+        template <typename RendererType, typename RendererBackendType = RendererBackend>
+        static Scope<Renderer> create()
         {
-            return createScope<RendererType>(renderer_backend);
+            auto renderer_backend = createScope<RendererBackendType>();
+            return createScope<RendererType>(std::move(renderer_backend));
         }
 
     private:

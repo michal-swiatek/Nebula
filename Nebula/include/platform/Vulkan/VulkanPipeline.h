@@ -17,6 +17,7 @@ namespace nebula::rendering {
     {
     public:
         explicit VulkanGraphicsPipelineInfo(const GraphicsPipelineState& graphics_pipeline_state);
+        ~VulkanGraphicsPipelineInfo();
 
         VkGraphicsPipelineCreateInfo buildPipelineCreateInfo(VkRenderPass renderpass, uint32_t subpass) const;
 

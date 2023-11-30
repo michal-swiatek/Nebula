@@ -161,6 +161,14 @@ namespace nebula::rendering {
         m_pipeline_layout_create_info.pSetLayouts = nullptr; // Optional
         m_pipeline_layout_create_info.pushConstantRangeCount = 0; // Optional
         m_pipeline_layout_create_info.pPushConstantRanges = nullptr; // Optional
+
+        const auto result = vkCreatePipelineLayout(VulkanAPI::getDevice(), &m_pipeline_layout_create_info, nullptr, &m_pipeline_layout);
+        NB_CORE_ASSERT(result == VK_SUCCESS, "Failed to create Vulkan PipelineLayout!");
+    }
+
+    VulkanGraphicsPipelineInfo::~VulkanGraphicsPipelineInfo()
+    {
+        vkDestroyPipelineLayout(VulkanAPI::getDevice(), m_pipeline_layout, nullptr);
     }
 
     VkGraphicsPipelineCreateInfo VulkanGraphicsPipelineInfo::buildPipelineCreateInfo(VkRenderPass renderpass, const uint32_t subpass) const

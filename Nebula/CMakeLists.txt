@@ -20,12 +20,13 @@ set(NEBULA_SOURCE_FILES
         src/core/Timer.cpp
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp
-        src/renderer/Renderer.cpp
-        src/renderer/RendererBackend.cpp
-        src/renderer/ForwardRendererBackend.cpp
-        src/renderer/RenderPass.cpp
-        src/renderer/RendererAPI.cpp
-        src/renderer/RenderCommandBuffer.cpp
+        src/rendering/Renderer.cpp
+        src/rendering/RendererBackend.cpp
+        src/rendering/ForwardRendererBackend.cpp
+        src/rendering/RenderPass.cpp
+        src/rendering/RendererAPI.cpp
+        src/rendering/RenderCommandBuffer.cpp
+        src/rendering/Framebuffer.cpp
         src/platform/DetectPlatform.cpp
         src/platform/Windows/WindowsInput.cpp
         src/platform/Windows/WindowsWindow.cpp
@@ -44,7 +45,6 @@ set(NEBULA_SOURCE_FILES
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp
-        src/renderer/Framebuffer.cpp
 )
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES} ${VMA_SOURCE_FILES})

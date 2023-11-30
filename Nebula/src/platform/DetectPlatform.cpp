@@ -15,10 +15,12 @@
 
 #include "rendering/renderer/RendererAPI.h"
 
+#include "platform/Vulkan/VulkanShader.h"
 #include "platform/Vulkan/VulkanContext.h"
 #include "platform/Vulkan/VulkanRenderPass.h"
 #include "platform/Vulkan/VulkanFramebuffer.h"
 
+#include "platform/OpenGL/OpenGLShader.h"
 #include "platform/OpenGL/OpenGLContext.h"
 #include "platform/OpenGL/OpenGLFramebuffer.h"
 
@@ -65,6 +67,19 @@ namespace nebula {
             }
 
             return createScopeFromPointer(render_context);
+        }
+
+        Reference<Shader> Shader::create(const std::string& name, const ShaderTemplate& shader_template)
+        {
+            Shader* shader = nullptr;
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cOpenGL:    shader = new OpenGLShader(name, shader_template);  break;
+                case API::cVulkan:    shader = new VulkanShader(name, shader_template);  break;
+                default:              NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+
+            return createReferenceFromPointer(shader);
         }
 
         Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template)

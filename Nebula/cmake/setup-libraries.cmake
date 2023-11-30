@@ -1,3 +1,5 @@
+cmake_policy(SET CMP0140 NEW)
+
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party)
 
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
@@ -27,6 +29,28 @@ set(OPENGL_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glad/src/glad.cpp)
 
 # Vulkan
 find_package(Vulkan REQUIRED)
+
+function(compile_shaders TARGET SOURCE_DIRECTORY TARGET_DIRECTORY)
+    find_program(GLSL_VALIDATOR glslangValidator HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
+    file(GLOB_RECURSE GLSL_SOURCE_FILES
+            "${SOURCE_DIRECTORY}/*.frag"
+            "${SOURCE_DIRECTORY}/*.vert"
+            "${SOURCE_DIRECTORY}/*.comp"
+    )
+
+    message(STATUS "SAVING TO ${TARGET_DIRECTORY}/shaders")
+    foreach(GLSL ${GLSL_SOURCE_FILES})
+        message(STATUS "COMPILING SHADER ${GLSL}")
+        get_filename_component(FILE_NAME ${GLSL} NAME)
+        set(SPIRV "${TARGET_DIRECTORY}/shaders/vulkan/${FILE_NAME}.spv")
+        add_custom_command(OUTPUT ${SPIRV} COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV} DEPENDS ${GLSL})
+        list(APPEND TARGET_FILES ${SPIRV})
+    endforeach(GLSL)
+
+    add_custom_target(${TARGET} DEPENDS ${TARGET_FILES})
+
+    return(PROPAGATE ${TARGET})
+endfunction()
 
 # Vulkan Memory Allocator
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/vma)

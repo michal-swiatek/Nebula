@@ -7,6 +7,7 @@
 #define GRAPHICSPIPELINESTATE_H
 
 #include "core/Core.h"
+#include "core/Assert.h"
 #include "rendering/Shader.h"
 #include "rendering/TextureFormats.h"
 
@@ -45,11 +46,6 @@ namespace nebula::rendering {
         cBack,
         cFront,
         cBackAndFront
-    };
-
-    struct NEBULA_API ShaderLayout
-    {
-        //  TODO: Implement!!!
     };
 
     struct NEBULA_API VertexLayout
@@ -106,7 +102,7 @@ namespace nebula::rendering {
 
     struct NEBULA_API GraphicsPipelineState
     {
-        ShaderLayout shader_layout{};
+        Reference<Shader> shader;
         VertexLayout vertex_layout{};
         PipelineLayout pipeline_layout{};
 
@@ -118,6 +114,11 @@ namespace nebula::rendering {
         ColorBlendingState color_blending{};
 
         DynamicState dynamic_state_flags = static_cast<DynamicState>(cViewport | cScissor | cLineWidth);
+
+        explicit GraphicsPipelineState(const Reference<Shader>& shader) : shader(shader)
+        {
+            NB_CORE_ASSERT(shader, "GraphicsPipelineState requires shader!");
+        }
     };
 
 }

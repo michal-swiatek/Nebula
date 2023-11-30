@@ -150,6 +150,11 @@ namespace nebula::rendering {
         m_color_blend_create_info.blendConstants[2] = 0.0f; // Optional
         m_color_blend_create_info.blendConstants[3] = 0.0f; // Optional
 
+        //  Shader
+        const auto& shader_template = graphics_pipeline_state.shader->getTemplate();
+        if (std::holds_alternative<VertexShader>(shader_template))
+            loadVertexShader(graphics_pipeline_state.shader, std::get<VertexShader>(shader_template));
+
         //  PipelineLayout  TODO: Implement!!!
         m_pipeline_layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         m_pipeline_layout_create_info.setLayoutCount = 0; // Optional
@@ -174,8 +179,8 @@ namespace nebula::rendering {
 
         //  Shaders
         pipeline_create_info.layout = m_pipeline_layout;
-        pipeline_create_info.stageCount = 0;
-        pipeline_create_info.pStages = nullptr;
+        pipeline_create_info.stageCount = m_shader_stages.size();
+        pipeline_create_info.pStages = m_shader_stages.data();
 
         pipeline_create_info.renderPass = renderpass;
         pipeline_create_info.subpass = subpass;
@@ -185,6 +190,27 @@ namespace nebula::rendering {
         pipeline_create_info.basePipelineIndex = -1; // Optional
 
         return pipeline_create_info;
+    }
+
+    void VulkanGraphicsPipelineInfo::loadVertexShader(const Reference<Shader>& shader, const VertexShader& shader_template)
+    {
+        VkPipelineShaderStageCreateInfo vertex_stage_info = {};
+        vertex_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertex_stage_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertex_stage_info.module = static_cast<VkShaderModule>(shader->getStageHandle(ShaderStage::cVertex));
+        vertex_stage_info.pName = "main";
+        vertex_stage_info.pSpecializationInfo = nullptr;
+
+        m_shader_stages.emplace_back(vertex_stage_info);
+
+        VkPipelineShaderStageCreateInfo fragment_stage_info = {};
+        fragment_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragment_stage_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragment_stage_info.module = static_cast<VkShaderModule>(shader->getStageHandle(ShaderStage::cFragment));
+        fragment_stage_info.pName = "main";
+        fragment_stage_info.pSpecializationInfo = nullptr;
+
+        m_shader_stages.emplace_back(fragment_stage_info);
     }
 
 }

@@ -25,7 +25,7 @@ namespace nebula::rendering {
 
     std::vector<char> Shader::loadFile(const std::string& path)
     {
-        if (path.ends_with(".bin"))
+        if (checkIfFileIsBinary(path))
             return loadBinaryFile(path);
         return loadSourceFile(path);
     }
@@ -40,9 +40,21 @@ namespace nebula::rendering {
         return readFile(path, false);
     }
 
+    std::string Shader::shaderStageToString(const ShaderStage stage)
+    {
+        switch (stage)
+        {
+            case ShaderStage::cVertex:          return "VERTEX";
+            case ShaderStage::cFragment:        return "FRAGMENT";
+            case ShaderStage::cShaderProgram:   return "PROGRAM";
+        }
+
+        throw std::runtime_error(std::format("Unknown shader stage: {}", static_cast<int>(stage)));
+    }
+
     bool Shader::checkIfFileIsBinary(const std::string& filename)
     {
-        return filename.ends_with(".bin");
+        return filename.ends_with(".bin") || filename.ends_with(".spv");
     }
 
     std::vector<char> Shader::readFile(const std::string& path, bool binary)

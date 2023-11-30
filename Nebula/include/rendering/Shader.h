@@ -18,7 +18,8 @@ namespace nebula::rendering {
     enum class ShaderStage
     {
         cVertex,
-        cFragment
+        cFragment,
+        cShaderProgram
     };
 
     struct NEBULA_API VertexShader
@@ -36,10 +37,12 @@ namespace nebula::rendering {
 
         virtual void bind() = 0;
         virtual void unbind() = 0;
+        virtual void* getStageHandle(ShaderStage stage) = 0;
 
         [[nodiscard]] const std::string& getName() const { return m_name; }
         [[nodiscard]] const ShaderTemplate& getTemplate() const { return m_template; }
 
+        static std::string shaderStageToString(ShaderStage stage);
         static bool checkIfFileIsBinary(const std::string& filename);
         static ShaderStage getShaderStageFromFilename(const std::string& filename);
         static std::vector<char> readFile(const std::string& path, bool binary);

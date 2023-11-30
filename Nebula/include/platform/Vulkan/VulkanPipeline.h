@@ -31,9 +31,13 @@ namespace nebula::rendering {
         VkPipelineColorBlendStateCreateInfo m_color_blend_create_info = {};
         VkPipelineLayoutCreateInfo m_pipeline_layout_create_info = {};
 
-        std::vector<VkDynamicState> m_dynamic_states = {};
-        VkPipelineLayout m_pipeline_layout = {};
         uint32_t m_multisampling_mask = 0;
+        VkPipelineLayout m_pipeline_layout = {};
+
+        std::vector<VkDynamicState> m_dynamic_states = {};
+        std::vector<VkPipelineShaderStageCreateInfo> m_shader_stages = {};
+
+        void loadVertexShader(const Reference<Shader>& shader, const VertexShader& shader_template);
     };
 
     VkGraphicsPipelineCreateInfo getGraphicsPipelineCreateInfo(const GraphicsPipelineState& graphics_pipeline_state, VkRenderPass renderpass_handle, uint32_t subpass);

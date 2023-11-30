@@ -20,6 +20,7 @@ set(NEBULA_SOURCE_FILES
         src/core/Timer.cpp
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp
+        src/rendering/Shader.cpp
         src/rendering/Renderer.cpp
         src/rendering/RendererBackend.cpp
         src/rendering/ForwardRendererBackend.cpp

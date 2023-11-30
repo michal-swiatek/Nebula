@@ -7,6 +7,7 @@
 #define GRAPHICSPIPELINESTATE_H
 
 #include "core/Core.h"
+#include "rendering/Shader.h"
 #include "rendering/TextureFormats.h"
 
 namespace nebula::rendering {

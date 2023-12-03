@@ -54,6 +54,8 @@ namespace nebula::rendering {
 
         AttachmentOp stencil_load_op = AttachmentOp::cDontCare;
         AttachmentOp stencil_store_op = AttachmentOp::cDontCare;
+
+        auto operator <=> (const AttachmentDescription&) const = default;
     };
 
     struct NEBULA_API AttachmentReference

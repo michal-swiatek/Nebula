@@ -16,7 +16,7 @@ namespace nebula::rendering {
     class NEBULA_API VulkanFramebuffer final : public Framebuffer
     {
     public:
-        explicit VulkanFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template);
+        explicit VulkanFramebuffer(View<FramebufferTemplate> framebuffer_template);
         ~VulkanFramebuffer() override;
 
         void bind() override;
@@ -25,11 +25,11 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const override;
+        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
 
     private:
         VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
-        Reference<FramebufferTemplate> m_framebuffer_template = nullptr;
+        Scope<FramebufferTemplate> m_framebuffer_template = nullptr;
 
         std::vector<VkImageView> m_image_views{};
         std::vector<VkApiAllocatedImage> m_image_buffers{};
@@ -49,7 +49,7 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const override;
+        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
 
     private:
         uint32_t m_width;

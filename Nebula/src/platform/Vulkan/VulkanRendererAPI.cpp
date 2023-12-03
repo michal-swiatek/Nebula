@@ -21,7 +21,7 @@ namespace nebula::rendering {
 
     void VulkanRendererApi::compilePipelines(View<RenderPass> renderpass)
     {
-        const auto& render_stages = renderpass->getRenderPassTemplate()->viewRenderStages();
+        const auto& render_stages = renderpass->viewRenderPassTemplate()->viewRenderStages();
 
         std::vector<VulkanGraphicsPipelineInfo> pipeline_infos{};
         std::vector<VkGraphicsPipelineCreateInfo> pipeline_create_infos{};

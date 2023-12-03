@@ -15,7 +15,7 @@ namespace nebula::rendering {
     class NEBULA_API OpenGlFramebuffer final : public Framebuffer
     {
     public:
-        explicit OpenGlFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template);
+        explicit OpenGlFramebuffer(View<FramebufferTemplate> framebuffer_template);
         ~OpenGlFramebuffer() override;
 
         void bind() override;
@@ -24,7 +24,7 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const override;
+        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
 
     private:
         bool m_attached = false;

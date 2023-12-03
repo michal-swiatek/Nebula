@@ -49,8 +49,8 @@ namespace nebula::rendering {
         void attachFramebuffer(const Reference<Framebuffer>& framebuffer = nullptr);
         [[nodiscard]] const GraphicsPipelineState& nextStage();
 
-        [[nodiscard]] const Reference<RenderPassTemplate>& getRenderPassTemplate() const;
-        [[nodiscard]] const Reference<FramebufferTemplate>& getFramebufferTemplate() const;
+        [[nodiscard]] View<RenderPassTemplate> viewRenderPassTemplate() const;
+        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const;
         [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }
         void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }
 
@@ -64,23 +64,25 @@ namespace nebula::rendering {
         int m_current_render_stage = 0;
         Reference<Framebuffer> m_framebuffer = nullptr;
 
-        Reference<RenderPassTemplate> m_renderpass_template = nullptr;
+        Scope<RenderPassTemplate> m_renderpass_template;
     };
 
     class NEBULA_API RenderPassTemplate
     {
     public:
         explicit RenderPassTemplate(const ClearColor& clear_color = {}, const Reference<FramebufferTemplate>& framebuffer_template = nullptr);
+        RenderPassTemplate(const RenderPassTemplate& rhs);
         virtual ~RenderPassTemplate() = default;
 
         [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }
         [[nodiscard]] const std::vector<RenderStage>& viewRenderStages() const { return m_render_stages; }
-        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const { return m_framebuffer_template; }
+        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const { return m_framebuffer_template.get(); }
+
+        [[nodiscard]] Scope<RenderPassTemplate> clone() const;
 
     protected:
-        void addStage(const RenderStage& render_stage);
         void addStage(const GraphicsPipelineState& graphics_pipeline_state, const std::vector<AttachmentReference>& attachment_references);
-        void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template) { m_framebuffer_template = framebuffer_template; }
+        void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template) { m_framebuffer_template = framebuffer_template->clone(); }
         void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }
 
         void preserveAttachments();
@@ -88,7 +90,7 @@ namespace nebula::rendering {
     private:
         ClearColor m_clear_color{};
         std::vector<RenderStage> m_render_stages{};
-        Reference<FramebufferTemplate> m_framebuffer_template = nullptr;
+        Scope<FramebufferTemplate> m_framebuffer_template = nullptr;
     };
 
 }

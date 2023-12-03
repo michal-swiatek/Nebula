@@ -11,16 +11,15 @@ namespace nebula::rendering {
 
     RenderPass::RenderPass(const Reference<RenderPassTemplate>& renderpass_template)
     {
-        m_renderpass_template = renderpass_template;
+        m_renderpass_template = renderpass_template->clone();
 
         m_clear_color = renderpass_template->getClearColor();
-        m_framebuffer = Framebuffer::create(renderpass_template->viewFramebufferTemplate());
+        m_framebuffer = Framebuffer::create(m_renderpass_template->viewFramebufferTemplate());
     }
 
     void RenderPass::attachFramebuffer(const Reference<Framebuffer>& framebuffer)
     {
-        //  TODO: Implement framebuffer comparison
-        NB_CORE_ASSERT(framebuffer->getFramebufferTemplate() == m_renderpass_template->viewFramebufferTemplate(), "Incompatible Framebuffer!");
+        NB_CORE_ASSERT(*framebuffer->viewFramebufferTemplate() == *m_renderpass_template->viewFramebufferTemplate(), "Incompatible Framebuffer!");
         m_framebuffer = framebuffer;
         m_framebuffer->attachTo(getRenderPassHandle());
     }
@@ -46,12 +45,12 @@ namespace nebula::rendering {
         return render_stages[++m_current_render_stage].graphics_pipeline_state;
     }
 
-    const Reference<RenderPassTemplate>& RenderPass::getRenderPassTemplate() const
+    View<RenderPassTemplate> RenderPass::viewRenderPassTemplate() const
     {
-        return m_renderpass_template;
+        return m_renderpass_template.get();
     }
 
-    const Reference<FramebufferTemplate>& RenderPass::getFramebufferTemplate() const
+    View<FramebufferTemplate> RenderPass::viewFramebufferTemplate() const
     {
         return m_renderpass_template->viewFramebufferTemplate();
     }
@@ -59,12 +58,14 @@ namespace nebula::rendering {
     RenderPassTemplate::RenderPassTemplate(const ClearColor& clear_color, const Reference<FramebufferTemplate>& framebuffer_template)
     {
         m_clear_color = clear_color;
-        m_framebuffer_template = framebuffer_template;
+        m_framebuffer_template = framebuffer_template->clone();
     }
 
-    void RenderPassTemplate::addStage(const RenderStage& render_stage)
+    RenderPassTemplate::RenderPassTemplate(const RenderPassTemplate& rhs)
     {
-        addStage(render_stage.graphics_pipeline_state, render_stage.attachment_references);
+        m_clear_color = rhs.m_clear_color;
+        m_render_stages = rhs.m_render_stages;
+        m_framebuffer_template = rhs.m_framebuffer_template->clone();
     }
 
     void RenderPassTemplate::addStage(const GraphicsPipelineState& graphics_pipeline_state, const std::vector<AttachmentReference>& attachment_references)
@@ -80,6 +81,11 @@ namespace nebula::rendering {
     void RenderPassTemplate::preserveAttachments()
     {
         //  TODO: Implement
+    }
+
+    Scope<RenderPassTemplate> RenderPassTemplate::clone() const
+    {
+        return createScope<RenderPassTemplate>(*this);
     }
 
 }

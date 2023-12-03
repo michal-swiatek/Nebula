@@ -7,8 +7,8 @@
 
 namespace nebula::rendering {
 
-    OpenGlFramebuffer::OpenGlFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template) :
-            m_framebuffer_template(framebuffer_template)
+    OpenGlFramebuffer::OpenGlFramebuffer(const View<FramebufferTemplate> framebuffer_template) :
+            m_framebuffer_template(framebuffer_template->clone())
     {
 
     }
@@ -39,9 +39,9 @@ namespace nebula::rendering {
         m_attached = true;
     }
 
-    const Reference<FramebufferTemplate>& OpenGlFramebuffer::getFramebufferTemplate() const
+    View<FramebufferTemplate> OpenGlFramebuffer::viewFramebufferTemplate() const
     {
-        return m_framebuffer_template;
+        return m_framebuffer_template.get();
     }
 
 }

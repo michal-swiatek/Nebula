@@ -11,8 +11,8 @@ VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surfa
 
 namespace nebula::rendering {
 
-    VulkanFramebuffer::VulkanFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template) :
-            m_framebuffer_template(framebuffer_template)
+    VulkanFramebuffer::VulkanFramebuffer(const View<FramebufferTemplate> framebuffer_template) :
+            m_framebuffer_template(framebuffer_template->clone())
     {
         for (const auto& attachment_description : framebuffer_template->viewTextureAttachmentsDescriptions())
             createAttachment(attachment_description, false);
@@ -65,9 +65,9 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer!");
     }
 
-    const Reference<FramebufferTemplate>& VulkanFramebuffer::getFramebufferTemplate() const
+    View<FramebufferTemplate> VulkanFramebuffer::viewFramebufferTemplate() const
     {
-        return m_framebuffer_template;
+        return m_framebuffer_template.get();
     }
 
     void VulkanFramebuffer::createAttachment(const AttachmentDescription& attachment_description, const bool depth_stencil)
@@ -204,10 +204,9 @@ namespace nebula::rendering {
         }
     }
 
-    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffers::getFramebufferTemplate() const
+    View<FramebufferTemplate> VulkanSwapchainFramebuffers::viewFramebufferTemplate() const
     {
-        NB_CORE_ASSERT(false, "VulkanSwapchainFramebuffer has no FramebufferTemplate!");
-        throw std::exception();
+        throw std::runtime_error("VulkanSwapchainFramebuffer has no FramebufferTemplate!");
     }
 
 }

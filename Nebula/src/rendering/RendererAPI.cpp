@@ -39,10 +39,10 @@ namespace nebula::rendering {
         s_renderer_api.reset(nullptr);
     }
 
-    View<RendererApi> RendererApi::get()
+    RendererApi& RendererApi::get()
     {
         NB_CORE_ASSERT(s_renderer_api, "RendererAPI is not initialized!");
-        return s_renderer_api.get();
+        return *s_renderer_api;
     }
 
 }

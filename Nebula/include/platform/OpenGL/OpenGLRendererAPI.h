@@ -16,7 +16,7 @@ namespace nebula::rendering {
         void init() override;
         void shutdown() override;
 
-        void compilePipelines(View<RenderPass> renderpass) override;
+        void compilePipelines(RenderPass* renderpass) override;
     };
 
 }

@@ -40,7 +40,7 @@ namespace nebula {
             int32_t width;
             int32_t height;
 
-            View<EventManager> event_manager;
+            EventManager* event_manager;
 
             explicit operator WindowProperties() const
             {

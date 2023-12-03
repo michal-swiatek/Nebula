@@ -19,7 +19,7 @@ namespace nebula::rendering {
 
     }
 
-    void VulkanRendererApi::compilePipelines(View<RenderPass> renderpass)
+    void VulkanRendererApi::compilePipelines(RenderPass* renderpass)
     {
         const auto& render_stages = renderpass->viewRenderPassTemplate()->viewRenderStages();
 

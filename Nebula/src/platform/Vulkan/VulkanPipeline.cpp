@@ -171,7 +171,7 @@ namespace nebula::rendering {
         vkDestroyPipelineLayout(VulkanAPI::getDevice(), m_pipeline_layout, nullptr);
     }
 
-    VkGraphicsPipelineCreateInfo VulkanGraphicsPipelineInfo::buildPipelineCreateInfo(VkRenderPass renderpass, const uint32_t subpass) const
+    VkGraphicsPipelineCreateInfo VulkanGraphicsPipelineInfo::buildPipelineCreateInfo(VkRenderPass renderpass, const uint32_t subpass)
     {
         VkGraphicsPipelineCreateInfo pipeline_create_info = {};
         pipeline_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;

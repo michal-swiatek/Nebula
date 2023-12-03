@@ -41,13 +41,27 @@ namespace nebula {
     }
 
     template <typename T>
+    class View
+    {
+    public:
+        View(T* object = nullptr) : m_object(object) {}
+        ~View() = default;
+
+        const T* operator -> () const { return m_object; }
+        const T& operator * () const { return *m_object; }
+
+        operator bool() const { return m_object != nullptr; }
+        bool operator ! () const { return !static_cast<bool>(*this); }
+
+    private:
+        T* m_object;
+    };
+
+    template <typename T>
     using Scope = std::unique_ptr<T>;
 
     template <typename T>
     using Reference = std::shared_ptr<T>;
-
-    template <typename T>
-    using View = T*;
 
     template <typename T, typename... Args>
     constexpr Scope<T> createScope(Args&&... args)

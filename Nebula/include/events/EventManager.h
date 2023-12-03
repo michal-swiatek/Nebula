@@ -41,7 +41,7 @@ namespace nebula {
 
         LayerStack& m_layer_stack;
         EventCallback m_application_callback;
-        std::vector<View<Event>> m_events{};
+        std::vector<Event*> m_events{};
         memory::LinearAllocator m_allocator;
     };
 

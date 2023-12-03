@@ -48,7 +48,7 @@ namespace nebula::rendering {
 
     }
 
-    void OpenGlRendererApi::compilePipelines(View<RenderPass> renderpass)
+    void OpenGlRendererApi::compilePipelines(RenderPass* renderpass)
     {
 
     }

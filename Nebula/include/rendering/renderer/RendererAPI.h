@@ -23,9 +23,9 @@ namespace nebula::rendering {
         virtual void init() = 0;
         virtual void shutdown() = 0;
 
-        virtual void compilePipelines(View<RenderPass> renderpass) = 0;
+        virtual void compilePipelines(RenderPass* renderpass) = 0;
 
-        static View<RendererApi> get();
+        static RendererApi& get();
 
     protected:
         RendererApi() = default;

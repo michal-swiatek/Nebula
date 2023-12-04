@@ -24,7 +24,7 @@ set(NEBULA_SOURCE_FILES
         src/rendering/Renderer.cpp
         src/rendering/RendererBackend.cpp
         src/rendering/ForwardRendererBackend.cpp
-        src/rendering/PipelineStateCache.cpp
+        src/rendering/PipelineState.cpp
         src/rendering/RenderPass.cpp
         src/rendering/RendererAPI.cpp
         src/rendering/RenderCommandBuffer.cpp

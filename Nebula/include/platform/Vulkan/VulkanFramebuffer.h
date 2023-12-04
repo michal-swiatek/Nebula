@@ -16,7 +16,7 @@ namespace nebula::rendering {
     class NEBULA_API VulkanFramebuffer final : public Framebuffer
     {
     public:
-        explicit VulkanFramebuffer(View<FramebufferTemplate> framebuffer_template);
+        explicit VulkanFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template);
         ~VulkanFramebuffer() override;
 
         void bind() override;
@@ -29,7 +29,7 @@ namespace nebula::rendering {
 
     private:
         VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
-        Scope<FramebufferTemplate> m_framebuffer_template = nullptr;
+        Reference<FramebufferTemplate> m_framebuffer_template = nullptr;
 
         std::vector<VkImageView> m_image_views{};
         std::vector<VkApiAllocatedImage> m_image_buffers{};

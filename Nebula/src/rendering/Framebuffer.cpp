@@ -32,9 +32,4 @@ namespace nebula::rendering {
         return m_depth_stencil_attachment;
     }
 
-    Scope<FramebufferTemplate> FramebufferTemplate::clone() const
-    {
-        return createScope<FramebufferTemplate>(*this);
-    }
-
 }

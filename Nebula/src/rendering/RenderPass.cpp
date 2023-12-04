@@ -11,7 +11,7 @@ namespace nebula::rendering {
 
     RenderPass::RenderPass(const Reference<RenderPassTemplate>& renderpass_template)
     {
-        m_renderpass_template = renderpass_template->clone();
+        m_renderpass_template = renderpass_template;
 
         m_clear_color = renderpass_template->getClearColor();
         m_framebuffer = Framebuffer::create(m_renderpass_template->viewFramebufferTemplate());
@@ -42,16 +42,15 @@ namespace nebula::rendering {
     {
         NB_CORE_ASSERT(m_current_render_stage < static_cast<int>(m_renderpass_template->viewRenderStages().size() - 1), "RenderStage index out of range!");
         const auto& render_stages = m_renderpass_template->viewRenderStages();
-        const auto pipeline_handle = render_stages[++m_current_render_stage].graphics_pipeline_handle;
-        return PipelineStateCache::getPipelineState(pipeline_handle);
+        return render_stages[++m_current_render_stage].graphics_pipeline_state;
     }
 
-    View<RenderPassTemplate> RenderPass::viewRenderPassTemplate() const
+    const Reference<RenderPassTemplate>& RenderPass::viewRenderPassTemplate() const
     {
-        return m_renderpass_template.get();
+        return m_renderpass_template;
     }
 
-    View<FramebufferTemplate> RenderPass::viewFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& RenderPass::viewFramebufferTemplate() const
     {
         return m_renderpass_template->viewFramebufferTemplate();
     }
@@ -59,14 +58,7 @@ namespace nebula::rendering {
     RenderPassTemplate::RenderPassTemplate(const ClearColor& clear_color, const Reference<FramebufferTemplate>& framebuffer_template)
     {
         m_clear_color = clear_color;
-        m_framebuffer_template = framebuffer_template->clone();
-    }
-
-    RenderPassTemplate::RenderPassTemplate(const RenderPassTemplate& rhs)
-    {
-        m_clear_color = rhs.m_clear_color;
-        m_render_stages = rhs.m_render_stages;
-        m_framebuffer_template = rhs.m_framebuffer_template->clone();
+        m_framebuffer_template = framebuffer_template;
     }
 
     void RenderPassTemplate::addStage(const GraphicsPipelineState& graphics_pipeline_state, const std::vector<AttachmentReference>& attachment_references)
@@ -76,18 +68,13 @@ namespace nebula::rendering {
         for (const auto& attachment_reference : attachment_references)
             NB_CORE_ASSERT(attachment_reference.index < attachment_count, "Attachment reference index out of bounds!");
 
-        const auto pipeline_handle = PipelineStateCache::getPipelineHandle(graphics_pipeline_state);
-        m_render_stages.emplace_back(pipeline_handle, attachment_references);
+        // const auto pipeline_handle = PipelineStateCache::getPipelineHandle(graphics_pipeline_state);
+        m_render_stages.emplace_back(graphics_pipeline_state, attachment_references);
     }
 
     void RenderPassTemplate::preserveAttachments()
     {
         //  TODO: Implement
-    }
-
-    Scope<RenderPassTemplate> RenderPassTemplate::clone() const
-    {
-        return createScope<RenderPassTemplate>(*this);
     }
 
 }

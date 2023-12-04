@@ -15,7 +15,7 @@ namespace nebula::rendering {
     class NEBULA_API OpenGlFramebuffer final : public Framebuffer
     {
     public:
-        explicit OpenGlFramebuffer(View<FramebufferTemplate> framebuffer_template);
+        explicit OpenGlFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template);
         ~OpenGlFramebuffer() override;
 
         void bind() override;

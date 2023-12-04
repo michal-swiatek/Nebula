@@ -11,8 +11,8 @@ VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surfa
 
 namespace nebula::rendering {
 
-    VulkanFramebuffer::VulkanFramebuffer(const View<FramebufferTemplate> framebuffer_template) :
-            m_framebuffer_template(framebuffer_template->clone())
+    VulkanFramebuffer::VulkanFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template) :
+            m_framebuffer_template(framebuffer_template)
     {
         for (const auto& attachment_description : framebuffer_template->viewTextureAttachmentsDescriptions())
             createAttachment(attachment_description, false);

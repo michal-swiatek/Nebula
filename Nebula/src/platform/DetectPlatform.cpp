@@ -90,8 +90,8 @@ namespace nebula {
             RenderPass* renderpass = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cOpenGL:    renderpass = new RenderPass(renderpass_template->clone());        break;
-                case API::cVulkan:    renderpass = new VulkanRenderPass(renderpass_template->clone());  break;
+                case API::cOpenGL:    renderpass = new RenderPass(renderpass_template);        break;
+                case API::cVulkan:    renderpass = new VulkanRenderPass(renderpass_template);  break;
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
 
@@ -100,7 +100,7 @@ namespace nebula {
             return createScopeFromPointer(renderpass);
         }
 
-        Reference<Framebuffer> Framebuffer::create(const View<FramebufferTemplate> framebuffer_template)
+        Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)
         {
             Framebuffer* framebuffer = nullptr;
             switch (Application::get().getRenderingAPI())
@@ -111,11 +111,6 @@ namespace nebula {
             }
 
             return createReferenceFromPointer(framebuffer);
-        }
-
-        Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)
-        {
-            return Framebuffer::create(framebuffer_template.get());
         }
     }
 

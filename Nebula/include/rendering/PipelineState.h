@@ -2,8 +2,6 @@
 // Created by michal-swiatek on 27.11.2023.
 // Github: https://github.com/michal-swiatek
 //
-// Specific comparison operators are implemented in src/rendering/CachedPipelineState.cpp
-//
 
 #ifndef GRAPHICSPIPELINESTATE_H
 #define GRAPHICSPIPELINESTATE_H
@@ -135,6 +133,14 @@ namespace nebula::rendering {
 
         friend bool operator == (const GraphicsPipelineState&, const GraphicsPipelineState&);
     };
+
+    //  Hash functors
+    struct InputAssemblyHash    { std::size_t operator() (const InputAssemblyState&) const; };
+    struct RasterizationHash    { std::size_t operator() (const RasterizationState&) const; };
+    struct DepthStencilHash     { std::size_t operator() (const DepthStencilState&) const; };
+    struct MultisamplingHash    { std::size_t operator() (const MultisamplingState&) const; };
+    struct ColorBlendingHash    { std::size_t operator() (const ColorBlendingState&) const; };
+    struct GraphicsPipelineHash { std::size_t operator() (const GraphicsPipelineState&) const; };
 
 }
 

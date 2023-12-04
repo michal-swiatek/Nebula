@@ -7,7 +7,7 @@
 #define CACHEDPIPELINESTATE_H
 
 #include "core/Types.h"
-#include "utility/Handle.h"
+#include "utility/ObjectCacheManager.h"
 #include "rendering/PipelineState.h"
 
 namespace nebula::rendering {
@@ -21,7 +21,7 @@ namespace nebula::rendering {
     struct GraphicsPipelineHash { std::size_t operator() (const GraphicsPipelineState&) const; };
 
     //  Typedefs
-    using GraphicsPipelineMapper = HandleMapper<GraphicsPipelineState, GraphicsPipelineHash>;
+    using GraphicsPipelineMapper = ObjectCacheManager<GraphicsPipelineState, GraphicsPipelineHash>;
     using GraphicsPipelineHandle = GraphicsPipelineMapper::HandleType;
     static constexpr GraphicsPipelineHandle NULL_GRAPHICS_PIPELINE = GraphicsPipelineMapper::NULL_HANDLE;
 

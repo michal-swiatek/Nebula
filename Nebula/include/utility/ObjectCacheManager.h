@@ -19,7 +19,7 @@ namespace nebula { // NOLINT(*-dcl58-cpp)
         typename HashFunctor = boost::hash<ObjectType>,
         typename EqualKey = std::equal_to<ObjectType>
     >
-    class HandleMapper
+    class ObjectCacheManager
     {
     public:
         using HandleType = uint32_t;

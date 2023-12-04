@@ -43,7 +43,7 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_current_render_stage < static_cast<int>(m_renderpass_template->viewRenderStages().size() - 1), "RenderStage index out of range!");
         const auto& render_stages = m_renderpass_template->viewRenderStages();
         const auto pipeline_handle = render_stages[++m_current_render_stage].graphics_pipeline_handle;
-        return CachedPipelineState::getPipelineState(pipeline_handle);
+        return PipelineStateCache::getPipelineState(pipeline_handle);
     }
 
     View<RenderPassTemplate> RenderPass::viewRenderPassTemplate() const
@@ -76,7 +76,7 @@ namespace nebula::rendering {
         for (const auto& attachment_reference : attachment_references)
             NB_CORE_ASSERT(attachment_reference.index < attachment_count, "Attachment reference index out of bounds!");
 
-        const auto pipeline_handle = CachedPipelineState::getPipelineHandle(graphics_pipeline_state);
+        const auto pipeline_handle = PipelineStateCache::getPipelineHandle(graphics_pipeline_state);
         m_render_stages.emplace_back(pipeline_handle, attachment_references);
     }
 

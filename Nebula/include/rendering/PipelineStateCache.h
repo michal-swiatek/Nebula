@@ -25,7 +25,7 @@ namespace nebula::rendering {
     using GraphicsPipelineHandle = GraphicsPipelineMapper::HandleType;
     static constexpr GraphicsPipelineHandle NULL_GRAPHICS_PIPELINE = GraphicsPipelineMapper::NULL_HANDLE;
 
-    class CachedPipelineState
+    class PipelineStateCache
     {
     public:
         static GraphicsPipelineHandle getPipelineHandle(const GraphicsPipelineState& pipeline_state);

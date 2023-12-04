@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "rendering/CachedPipelineState.h"
+#include "rendering/PipelineStateCache.h"
 
 #include <boost/functional/hash.hpp>
 
@@ -12,25 +12,25 @@
 
 namespace nebula::rendering {
 
-    Scope<GraphicsPipelineMapper> CachedPipelineState::s_graphics_pipeline_handle_mapper = nullptr;
+    Scope<GraphicsPipelineMapper> PipelineStateCache::s_graphics_pipeline_handle_mapper = nullptr;
 
-    GraphicsPipelineHandle CachedPipelineState::getPipelineHandle(const GraphicsPipelineState& pipeline_state)
+    GraphicsPipelineHandle PipelineStateCache::getPipelineHandle(const GraphicsPipelineState& pipeline_state)
     {
         return s_graphics_pipeline_handle_mapper->getHandle(pipeline_state);
     }
 
-    const GraphicsPipelineState& CachedPipelineState::getPipelineState(GraphicsPipelineHandle pipeline_handle)
+    const GraphicsPipelineState& PipelineStateCache::getPipelineState(GraphicsPipelineHandle pipeline_handle)
     {
         return s_graphics_pipeline_handle_mapper->getObject(pipeline_handle);
     }
 
-    void CachedPipelineState::init()
+    void PipelineStateCache::init()
     {
         NB_CORE_ASSERT(!s_graphics_pipeline_handle_mapper, "CachedPipelineState is already initialized!");
         s_graphics_pipeline_handle_mapper = createScope<GraphicsPipelineMapper>();
     }
 
-    void CachedPipelineState::shutdown()
+    void PipelineStateCache::shutdown()
     {
         NB_CORE_ASSERT(s_graphics_pipeline_handle_mapper, "CachedPipelineState was not initialized!");
         s_graphics_pipeline_handle_mapper.reset();

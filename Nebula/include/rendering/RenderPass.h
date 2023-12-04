@@ -17,7 +17,7 @@
 #include "Framebuffer.h"
 #include "AttachmentInfo.h"
 #include "PipelineState.h"
-#include "CachedPipelineState.h"
+#include "PipelineStateCache.h"
 
 namespace nebula::rendering {
 

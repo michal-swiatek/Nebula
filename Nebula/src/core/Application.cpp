@@ -5,10 +5,9 @@
 
 #include "core/Application.h"
 
-#include <filesystem>
-
 #include "core/Config.h"
 #include "core/Logging.h"
+#include "utility/Filesystem.h"
 
 #include "rendering/renderer/RendererAPI.h"
 
@@ -31,7 +30,7 @@ namespace nebula {
         s_instance = this;
 
         if (!m_specification.working_directory.empty())
-            std::filesystem::current_path(m_specification.working_directory);
+            filesystem::setCurrentWorkingDirectory(m_specification.working_directory);
 
         logging::initClient(m_specification.logger_name);
 

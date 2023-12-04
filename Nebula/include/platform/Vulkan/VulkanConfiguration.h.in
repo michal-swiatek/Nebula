@@ -11,5 +11,6 @@ static const int VULKAN_MINOR_VERSION = @VULKAN_MINOR_VERSION@;
 static const int VULKAN_PATCH_VERSION = @VULKAN_PATCH_VERSION@;
 
 static const std::string GLSL_VERSION_STRING = "#version @GLSL_MAJOR_VERSION@@GLSL_MINOR_VERSION@@GLSL_PATCH_VERSION@";
+static const std::string VULKAN_PIPELINE_CACHE_FILE = "vulkan_pipeline_cache.bin";
 
 #endif //NEBULA_VULKANCONFIGURATION_H

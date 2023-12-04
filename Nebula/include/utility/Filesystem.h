@@ -22,6 +22,12 @@ namespace nebula::filesystem {
         [[nodiscard]] bool mkdir(bool parents = true, bool exist_ok = true) const;
     };
 
+    template <typename... Strings>
+    Path createPath(const Path& path, Strings&&... strings)
+    {
+        return path / (strings / ...);
+    }
+
     Path getCurrentWorkingDirectory();
     void setCurrentWorkingDirectory(const Path& path);
 

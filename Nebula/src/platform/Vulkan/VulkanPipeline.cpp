@@ -5,6 +5,10 @@
 
 #include "platform/Vulkan/VulkanPipeline.h"
 
+#include "core/Logging.h"
+#include "utility/Filesystem.h"
+#include "platform/EngineConfiguration.h"
+#include "platform/Vulkan/VulkanConfiguration.h"
 #include "platform/Vulkan/VulkanTextureFormats.h"
 
 namespace nebula::rendering {
@@ -221,10 +225,19 @@ namespace nebula::rendering {
         m_shader_stages.emplace_back(fragment_stage_info);
     }
 
-    VulkanPipelineCache::VulkanPipelineCache(const std::string& cache_path)
+    VulkanPipelineCache::VulkanPipelineCache(const std::string& cache_root) :
+            m_cache_path(filesystem::createPath(cache_root, VULKAN_PIPELINE_CACHE_FILE).string())
     {
+        std::vector<std::byte> pipeline_cache_data;
+        if (filesystem::checkFile(m_cache_path))
+            pipeline_cache_data = filesystem::readBinaryFile(m_cache_path);
+        else if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
+            NB_CORE_WARN("Unable to load Vulkan pipeline cache from \"{}\"", m_cache_path);
+
         VkPipelineCacheCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+        create_info.initialDataSize = pipeline_cache_data.size();
+        create_info.pInitialData = pipeline_cache_data.data();
 
         vkCreatePipelineCache(VulkanAPI::getDevice(), &create_info, nullptr, &m_pipeline_cache);
     }
@@ -237,8 +250,11 @@ namespace nebula::rendering {
         std::size_t cache_size;
         vkGetPipelineCacheData(VulkanAPI::getDevice(), m_pipeline_cache, &cache_size, nullptr);
 
-        std::vector<uint8_t> data(cache_size);
+        std::vector<std::byte> data(cache_size);
         vkGetPipelineCacheData(VulkanAPI::getDevice(), m_pipeline_cache, &cache_size, data.data());
+
+        if (!m_cache_path.empty())
+            filesystem::saveBinaryFile(m_cache_path, data);
 
         vkDestroyPipelineCache(VulkanAPI::getDevice(), m_pipeline_cache, nullptr);
     }

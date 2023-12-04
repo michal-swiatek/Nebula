@@ -5,13 +5,19 @@
 
 #include "platform/Vulkan/VulkanRendererAPI.h"
 
+#include "core/Config.h"
+#include "utility/Filesystem.h"
 #include "platform/Vulkan/VulkanPipeline.h"
 
 namespace nebula::rendering {
 
     VulkanRendererApi::VulkanRendererApi()
     {
-        m_pipeline_cache = createScope<VulkanPipelineCache>("");
+        auto& engine_config = Config::getEngineConfig();
+        const auto rendering_cache_path = engine_config["rendering"]["rendering_cache_path"].as<std::string>();
+
+        auto pipeline_cache_path = filesystem::getCurrentWorkingDirectory() / rendering_cache_path;
+        m_pipeline_cache = createScope<VulkanPipelineCache>(pipeline_cache_path.make_preferred().string());
     }
 
     void VulkanRendererApi::compilePipelines(RenderPass* renderpass)

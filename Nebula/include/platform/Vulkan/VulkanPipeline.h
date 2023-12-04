@@ -64,7 +64,7 @@ namespace nebula::rendering {
     class VulkanPipelineCache
     {
     public:
-        explicit VulkanPipelineCache(const std::string& cache_path);
+        explicit VulkanPipelineCache(const std::string& cache_root);
         ~VulkanPipelineCache();
 
         void addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines);
@@ -75,6 +75,7 @@ namespace nebula::rendering {
 
         std::unordered_map<RenderPassID, VkPipeline, hash_pair> m_handle_map{};
         VkPipelineCache m_pipeline_cache = VK_NULL_HANDLE;
+        std::string m_cache_path;
     };
 
 }

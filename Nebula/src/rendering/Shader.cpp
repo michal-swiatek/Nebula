@@ -7,6 +7,9 @@
 
 #include <fstream>
 
+#include "core/Application.h"
+#include "utility/Filesystem.h"
+
 namespace nebula::rendering {
 
     Shader::Shader(std::string name, ShaderTemplate shader_template) :
@@ -57,9 +60,15 @@ namespace nebula::rendering {
         return filename.ends_with(".bin") || filename.ends_with(".spv");
     }
 
-    std::vector<char> Shader::readFile(const std::string& path, bool binary)
+    std::vector<char> Shader::readFile(const std::string& path, const bool binary)
     {
-        std::ifstream file(path, std::ios::ate | (binary ? std::ios::binary : 0));
+        const filesystem::Path shader_directory = Application::getResourcesPath() / "shaders";
+
+        std::string shader_path = path;
+        if (!shader_path.starts_with(shader_directory.string()))
+            shader_path = (shader_directory / shader_path).string();
+
+        std::ifstream file(shader_path, std::ios::ate | (binary ? std::ios::binary : 0));
         if (!file.is_open())
             throw std::runtime_error(std::format("Unable to open file at {}", path));
 

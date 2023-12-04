@@ -19,6 +19,7 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
+#include "utility/Filesystem.h"
 #include "rendering/RenderContext.h"
 
 int main(int argc, char** argv);
@@ -88,6 +89,7 @@ namespace nebula {
         static Application& get() { return *s_instance; }
 
         static void reloadEngineConfig(const std::string& path = "");
+        static filesystem::Path getResourcesPath(bool absolute = false);
 
     private:
         void run();

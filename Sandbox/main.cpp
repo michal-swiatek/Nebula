@@ -33,7 +33,7 @@ public:
     TestRenderPass() : RenderPassTemplate(ClearColor(0, 0, 0, 0), createReference<TestFramebuffer>())
     {
         AttachmentReference attachment_reference = {0};
-        auto shader = Shader::create("triangle", VertexShader("shaders/vulkan/triangle_shader.vert.spv", "shaders/vulkan/triangle_shader.frag.spv"));
+        auto shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
 
         addStage(GraphicsPipelineState(shader), {attachment_reference});
         addStage(GraphicsPipelineState(shader), {attachment_reference});

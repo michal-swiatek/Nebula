@@ -38,11 +38,11 @@ function(compile_shaders TARGET SOURCE_DIRECTORY TARGET_DIRECTORY)
             "${SOURCE_DIRECTORY}/*.comp"
     )
 
-    message(STATUS "SAVING TO ${TARGET_DIRECTORY}/shaders")
+    message(STATUS "SAVING TO ${TARGET_DIRECTORY}/${NEBULA_RESOURCES_DIRECTORY}/shaders")
     foreach(GLSL ${GLSL_SOURCE_FILES})
         message(STATUS "COMPILING SHADER ${GLSL}")
         get_filename_component(FILE_NAME ${GLSL} NAME)
-        set(SPIRV "${TARGET_DIRECTORY}/shaders/vulkan/${FILE_NAME}.spv")
+        set(SPIRV "${TARGET_DIRECTORY}/${NEBULA_RESOURCES_DIRECTORY}/shaders/vulkan/${FILE_NAME}.spv")
         add_custom_command(OUTPUT ${SPIRV} COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV} DEPENDS ${GLSL})
         list(APPEND TARGET_FILES ${SPIRV})
     endforeach(GLSL)

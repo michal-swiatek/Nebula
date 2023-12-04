@@ -7,7 +7,6 @@
 
 #include "core/Config.h"
 #include "core/Logging.h"
-#include "utility/Filesystem.h"
 
 #include "rendering/renderer/RendererAPI.h"
 
@@ -136,6 +135,14 @@ namespace nebula {
     {
         Config::reloadEngineConfig(path);
         NB_CORE_INFO("Reloaded engine config.");
+    }
+
+    filesystem::Path Application::getResourcesPath(const bool absolute)
+    {
+        auto resources_dir = Config::getEngineConfig()["resources"]["resources_directory"].as<std::string>();
+        if (absolute)
+            return filesystem::getCurrentWorkingDirectory() / resources_dir;
+        return resources_dir;
     }
 
 }

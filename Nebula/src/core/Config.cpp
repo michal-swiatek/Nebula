@@ -10,6 +10,7 @@
 
 #include "memory/Types.h"
 #include "core/Assert.h"
+#include "platform/EngineConfiguration.h"
 
 using namespace nebula::literals;
 
@@ -67,10 +68,14 @@ namespace nebula {
         memory_section["render_command_buffer_size"] = 100_Kb;
 
         auto rendering_section = YAML::Node();
-        rendering_section["rendering_cache_path"] = "data/cache/rendering";
+        rendering_section["cache_path"] = "cache/rendering";
+
+        auto resources_section = YAML::Node();
+        resources_section["resources_directory"] = NEBULA_RESOURCES_DIRECTORY;
 
         node["memory"] = memory_section;
         node["rendering"] = rendering_section;
+        node["resources"] = resources_section;
 
         return node;
     }

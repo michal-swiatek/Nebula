@@ -14,12 +14,15 @@ int main(int argc, char** argv);
 
 namespace nebula {
 
+    class Application;
+
     class NEBULA_API Config
     {
     public:
         explicit Config(const std::string& path);
 
         void save(const std::string& path) const;
+        void reload(const std::string& path);
         bool isEmpty() const { return m_config.Type() == YAML::NodeType::Null; }
 
         YAML::Node& getConfig() { return m_config; }
@@ -29,9 +32,11 @@ namespace nebula {
         YAML::Node m_config;
 
         static void setEngineConfig(Config& config);
+        static void reloadEngineConfig(const std::string& path);
         static YAML::Node defaultEngineConfig();
 
         static Config* s_instance;
+        friend class nebula::Application;
         friend int ::main(int argc, char** argv);
     };
 

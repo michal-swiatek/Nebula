@@ -25,7 +25,27 @@ namespace nebula {
         s_instance = &config;
     }
 
+    void Config::reloadEngineConfig(const std::string& path)
+    {
+        NB_CORE_ASSERT(s_instance, "Set engine config first!");
+        if (path.empty())
+            s_instance->getConfig() = defaultEngineConfig();
+        else
+            s_instance->reload(path);
+    }
+
     Config::Config(const std::string& path)
+    {
+        reload(path);
+    }
+
+    void Config::save(const std::string& path) const
+    {
+        std::ofstream file(path);
+        file << m_config;
+    }
+
+    void Config::reload(const std::string& path)
     {
         std::ifstream file(path);
         if (file.good())
@@ -38,12 +58,6 @@ namespace nebula {
             m_config = YAML::Node();
     }
 
-    void Config::save(const std::string& path) const
-    {
-        std::ofstream file(path);
-        file << m_config;
-    }
-
     YAML::Node Config::defaultEngineConfig()
     {
         YAML::Node node;
@@ -52,7 +66,11 @@ namespace nebula {
         memory_section["event_queue_size"] = 1_Mb;
         memory_section["render_command_buffer_size"] = 100_Kb;
 
+        auto rendering_section = YAML::Node();
+        rendering_section["rendering_cache_path"] = "data/cache/rendering";
+
         node["memory"] = memory_section;
+        node["rendering"] = rendering_section;
 
         return node;
     }

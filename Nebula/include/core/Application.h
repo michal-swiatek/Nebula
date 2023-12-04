@@ -73,19 +73,21 @@ namespace nebula {
         Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
         Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
 
-        [[nodiscard]] int getRenderFps() { return m_specification.render_fps; }
-        [[nodiscard]] double getUpdateTimestep() { return m_specification.update_timestep; }
+        [[nodiscard]] int getRenderFps() const { return m_specification.render_fps; }
+        [[nodiscard]] double getUpdateTimestep() const { return m_specification.update_timestep; }
         [[nodiscard]] double getTime() { return m_application_timer.elapsedSeconds(); }
-        [[nodiscard]] std::string getName() { return m_specification.name; }
+        [[nodiscard]] std::string getName() const { return m_specification.name; }
 
-        void setRenderFps(int fps) { m_specification.render_fps = fps; }
-        void setUpdateTimestep(double timestep) { m_specification.update_timestep = timestep; }
+        void setRenderFps(const int fps) { m_specification.render_fps = fps; }
+        void setUpdateTimestep(const double timestep) { m_specification.update_timestep = timestep; }
 
-        rendering::API getRenderingAPI() const;
+        [[nodiscard]] rendering::API getRenderingAPI() const;
 
         [[nodiscard]] ApplicationVersion getVersion() const { return m_specification.version; }
         [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }
+
+        static void reloadEngineConfig(const std::string& path = "");
 
     private:
         void run();

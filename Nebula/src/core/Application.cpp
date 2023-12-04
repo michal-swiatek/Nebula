@@ -133,4 +133,10 @@ namespace nebula {
         return false;
     }
 
+    void Application::reloadEngineConfig(const std::string& path)
+    {
+        Config::reloadEngineConfig(path);
+        NB_CORE_INFO("Reloaded engine config.");
+    }
+
 }

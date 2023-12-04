@@ -94,6 +94,8 @@ public:
     {
         if (event.getKeycode() == Keycode::Escape)
             Application::get().close();
+        if (event.getKeycode() == Keycode::R)
+            Application::get().reloadEngineConfig();
 
         return true;
     }

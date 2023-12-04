@@ -2,6 +2,8 @@
 // Created by michal-swiatek on 27.11.2023.
 // Github: https://github.com/michal-swiatek
 //
+// Specific comparison operators are implemented in src/rendering/CachedPipelineState.cpp
+//
 
 #ifndef GRAPHICSPIPELINESTATE_H
 #define GRAPHICSPIPELINESTATE_H
@@ -62,6 +64,8 @@ namespace nebula::rendering {
     {
         GeometryTopology topology = GeometryTopology::cTriangleList;
         bool strip_restart = false;
+
+        friend bool operator == (const InputAssemblyState&, const InputAssemblyState&) = default;
     };
 
     struct NEBULA_API RasterizationState
@@ -71,16 +75,21 @@ namespace nebula::rendering {
 
         CullMode cull_mode = CullMode::cBack;
         PolygonMode polygon_mode = PolygonMode::cFill;
+
+        friend bool operator == (const RasterizationState&, const RasterizationState&) = default;
     };
 
     struct NEBULA_API DepthStencilState
     {
+        bool enabled = true;
         bool depth_clamp = false;
 
         bool depth_bias_enabled = false;
         float depth_bias_constant = 0.0f;
         float depth_bias_clamp = 0.0f;
         float depth_bias_slope = 0.0f;
+
+        friend bool operator == (const DepthStencilState&, const DepthStencilState&);
     };
 
     struct NEBULA_API MultisamplingState
@@ -92,17 +101,21 @@ namespace nebula::rendering {
         uint32_t sample_mask = 0;
         float min_sample_shading = 1.0f;
         TextureSampling samples = TextureSampling::cTexture1Sample;
+
+        friend bool operator == (const MultisamplingState&, const MultisamplingState&);
     };
 
     struct NEBULA_API ColorBlendingState
     {
         bool enabled = false;
         //  TODO: Implement
+
+        friend bool operator == (const ColorBlendingState&, const ColorBlendingState&) = default;
     };
 
     struct NEBULA_API GraphicsPipelineState
     {
-        Reference<Shader> shader;
+        Reference<Shader> shader = nullptr;
         VertexLayout vertex_layout{};
         PipelineLayout pipeline_layout{};
 
@@ -117,8 +130,10 @@ namespace nebula::rendering {
 
         explicit GraphicsPipelineState(const Reference<Shader>& shader) : shader(shader)
         {
-            NB_CORE_ASSERT(shader, "GraphicsPipelineState requires shader!");
+            NB_CORE_ASSERT(this->shader, "GraphicsPipelineState requires shader!");
         }
+
+        friend bool operator == (const GraphicsPipelineState&, const GraphicsPipelineState&);
     };
 
 }

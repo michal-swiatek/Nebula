@@ -17,6 +17,7 @@
 #include "Framebuffer.h"
 #include "AttachmentInfo.h"
 #include "PipelineState.h"
+#include "CachedPipelineState.h"
 
 namespace nebula::rendering {
 
@@ -31,8 +32,8 @@ namespace nebula::rendering {
 
     struct RenderStage
     {
-        GraphicsPipelineState graphics_pipeline_state;
-        std::vector<AttachmentReference> attachment_references;
+        GraphicsPipelineHandle graphics_pipeline_handle = NULL_GRAPHICS_PIPELINE;
+        std::vector<AttachmentReference> attachment_references{};
     };
 
     class RenderPassTemplate;

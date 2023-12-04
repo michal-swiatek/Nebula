@@ -24,7 +24,7 @@ set(NEBULA_SOURCE_FILES
         src/rendering/Renderer.cpp
         src/rendering/RendererBackend.cpp
         src/rendering/ForwardRendererBackend.cpp
-        src/rendering/PipelineState.cpp
+        src/rendering/CachedPipelineState.cpp
         src/rendering/RenderPass.cpp
         src/rendering/RendererAPI.cpp
         src/rendering/RenderCommandBuffer.cpp
@@ -55,6 +55,7 @@ compile_shaders(VULKAN_SHADERS ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/vul
 
 add_library(nebula SHARED ${OPENGL_SOURCE_FILES} ${NEBULA_SOURCE_FILES} ${IMGUI_SOURCE_FILES} ${VMA_SOURCE_FILES})
 target_link_libraries(nebula PUBLIC ${SPD_LOG} yaml-cpp glfw Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
+target_include_directories(nebula PUBLIC "F:/projects/boost/boost_1_82_0")
 target_precompile_headers(nebula PRIVATE include/nebula_pch.h)
 add_custom_command(TARGET nebula POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE}/libnebula.dll ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE})
 add_dependencies(nebula VULKAN_SHADERS)

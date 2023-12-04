@@ -41,14 +41,14 @@ namespace nebula {
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
 
-        rendering::RendererApi::create(m_specification.api);
-
         m_render_context = rendering::RenderContext::create(m_window->getWindowHandle());
+        rendering::RendererApi::create(m_specification.api);
     }
 
     Application::~Application()
     {
         rendering::RendererApi::destroy();
+        m_render_context.reset();
     }
 
     void Application::run()

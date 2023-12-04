@@ -7,7 +7,6 @@
 
 #include "core/Types.h"
 #include "core/Assert.h"
-#include "rendering/PipelineStateCache.h"
 
 #include "platform/Vulkan/VulkanRendererAPI.h"
 #include "platform/OpenGL/OpenGLRendererAPI.h"
@@ -30,7 +29,6 @@ namespace nebula::rendering {
         }
 
         s_renderer_api = createScopeFromPointer(renderer_api);
-        PipelineStateCache::init();
     }
 
     void RendererApi::destroy()
@@ -38,7 +36,6 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(s_renderer_api, "RendererAPI is not initialized!");
         NB_CORE_INFO("Destroing RendererAPI!");
 
-        PipelineStateCache::shutdown();
         s_renderer_api.reset(nullptr);
     }
 

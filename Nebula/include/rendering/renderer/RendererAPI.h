@@ -20,9 +20,6 @@ namespace nebula::rendering {
     public:
         virtual ~RendererApi() = default;
 
-        virtual void init() = 0;
-        virtual void shutdown() = 0;
-
         virtual void compilePipelines(RenderPass* renderpass) = 0;
 
         static RendererApi& get();

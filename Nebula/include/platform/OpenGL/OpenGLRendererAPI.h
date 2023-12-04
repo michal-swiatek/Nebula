@@ -13,8 +13,8 @@ namespace nebula::rendering {
     class OpenGlRendererApi final : public RendererApi
     {
     public:
-        void init() override;
-        void shutdown() override;
+        OpenGlRendererApi();
+        ~OpenGlRendererApi() override;
 
         void compilePipelines(RenderPass* renderpass) override;
     };

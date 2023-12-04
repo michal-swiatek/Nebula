@@ -7,18 +7,18 @@
 #define VULKANRENDERERAPI_H
 
 #include "rendering/renderer/RendererAPI.h"
+#include "platform/Vulkan/VulkanPipeline.h"
 
 namespace nebula::rendering {
-
-    struct GraphicsPipelineState;
 
     class VulkanRendererApi final : public RendererApi
     {
     public:
-        void init() override;
-        void shutdown() override;
-
+        VulkanRendererApi();
         void compilePipelines(RenderPass* renderpass) override;
+
+    private:
+        Scope<VulkanPipelineCache> m_pipeline_cache = nullptr;
     };
 
 }

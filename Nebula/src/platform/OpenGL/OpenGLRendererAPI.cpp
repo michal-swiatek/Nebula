@@ -32,7 +32,7 @@ namespace nebula::rendering {
         }
     }
 
-    void OpenGlRendererApi::init()
+    OpenGlRendererApi::OpenGlRendererApi()
     {
         #ifdef NB_DEBUG_BUILD
         glEnable(GL_DEBUG_OUTPUT);
@@ -43,7 +43,7 @@ namespace nebula::rendering {
         #endif
     }
 
-    void OpenGlRendererApi::shutdown()
+    OpenGlRendererApi::~OpenGlRendererApi()
     {
 
     }

@@ -7,8 +7,11 @@
 #define VULKANPIPELINE_H
 
 #include <vector>
+#include <utility>
+#include <unordered_map>
 
 #include "rendering/PipelineState.h"
+#include "rendering/PipelineStateCache.h"
 #include "platform/Vulkan/VulkanAPI.h"
 
 namespace nebula::rendering {
@@ -41,7 +44,38 @@ namespace nebula::rendering {
         void loadVertexShader(const Reference<Shader>& shader, const VertexShader& shader_template);
     };
 
-    VkGraphicsPipelineCreateInfo getGraphicsPipelineCreateInfo(const GraphicsPipelineState& graphics_pipeline_state, VkRenderPass renderpass_handle, uint32_t subpass);
+    struct hash_pair
+    {
+        template <class T1, class T2>
+        size_t operator()(const std::pair<T1, T2>& p) const
+        {
+            auto hash1 = std::hash<T1>{}(p.first);
+            auto hash2 = std::hash<T2>{}(p.second);
+
+            if (hash1 != hash2) {
+                return hash1 ^ hash2;
+            }
+
+            // If hash1 == hash2, their XOR is zero.
+            return hash1;
+        }
+    };
+
+    class VulkanPipelineCache
+    {
+    public:
+        explicit VulkanPipelineCache(const std::string& cache_path);
+        ~VulkanPipelineCache();
+
+        void addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines);
+        [[nodiscard]] VkPipelineCache getCache() const { return m_pipeline_cache; }
+
+    private:
+        using RenderPassID = std::pair<VkRenderPass, uint32_t>;
+
+        std::unordered_map<RenderPassID, VkPipeline, hash_pair> m_handle_map{};
+        VkPipelineCache m_pipeline_cache = VK_NULL_HANDLE;
+    };
 
 }
 

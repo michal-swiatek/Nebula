@@ -221,4 +221,36 @@ namespace nebula::rendering {
         m_shader_stages.emplace_back(fragment_stage_info);
     }
 
+    VulkanPipelineCache::VulkanPipelineCache(const std::string& cache_path)
+    {
+        VkPipelineCacheCreateInfo create_info = {};
+        create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+
+        vkCreatePipelineCache(VulkanAPI::getDevice(), &create_info, nullptr, &m_pipeline_cache);
+    }
+
+    VulkanPipelineCache::~VulkanPipelineCache()
+    {
+        for (auto& [_, pipeline] : m_handle_map)
+            vkDestroyPipeline(VulkanAPI::getDevice(), pipeline, nullptr);
+
+        std::size_t cache_size;
+        vkGetPipelineCacheData(VulkanAPI::getDevice(), m_pipeline_cache, &cache_size, nullptr);
+
+        std::vector<uint8_t> data(cache_size);
+        vkGetPipelineCacheData(VulkanAPI::getDevice(), m_pipeline_cache, &cache_size, data.data());
+
+        vkDestroyPipelineCache(VulkanAPI::getDevice(), m_pipeline_cache, nullptr);
+    }
+
+    void VulkanPipelineCache::addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines)
+    {
+        for (uint32_t i = 0; i < pipelines.size(); ++i)
+        {
+            const auto key = std::make_pair(renderpass, i);
+            if (!m_handle_map.contains(key))
+                m_handle_map.insert(std::make_pair(key, pipelines[i]));
+        }
+    }
+
 }

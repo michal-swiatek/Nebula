@@ -7,11 +7,9 @@
 #define VULKANPIPELINE_H
 
 #include <vector>
-#include <utility>
 #include <unordered_map>
 
 #include "rendering/PipelineState.h"
-#include "rendering/PipelineStateCache.h"
 #include "platform/Vulkan/VulkanAPI.h"
 
 namespace nebula::rendering {

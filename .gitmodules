@@ -16,3 +16,6 @@
 [submodule "Nebula/3rd-party/taskflow"]
 	path = Nebula/3rd-party/taskflow
 	url = https://github.com/taskflow/taskflow.git
+[submodule "Nebula/3rd-party/spirv-cross"]
+	path = Nebula/3rd-party/spirv-cross
+	url = https://github.com/michal-swiatek/SPIRV-Cross.git

@@ -61,6 +61,10 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/vma/vk_mem_all
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/glm)
 find_program(GLSL_VALIDATOR glslangValidator HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
 
+# SpirV-Cross
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/spirv-cross)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/spirv-cross/include)
+
 # imgui
 include_directories(3rd-party/imgui)
 set(IMGUI_SOURCE_FILES

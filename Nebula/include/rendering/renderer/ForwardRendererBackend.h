@@ -10,8 +10,10 @@
 
 namespace nebula::rendering {
 
-    class NEBULA_API ForwardRendererBackend : public RendererBackend
+    class NEBULA_API ForwardRendererBackend final : public RendererBackend
     {
+        using RendererBackend::RendererBackend;
+
     protected:
         Scope<RenderCommandBuffer> optimizeCommands(Scope<RenderCommandBuffer>&& render_commands) override;
     };

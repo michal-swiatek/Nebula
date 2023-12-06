@@ -13,7 +13,7 @@
 
 namespace nebula::rendering {
 
-    RendererBackend::RendererBackend()
+    RendererBackend::RendererBackend(const bool submit_commands) : m_submit_commands(submit_commands)
     {
         switch (Application::get().getRenderingAPI())
         {
@@ -29,8 +29,19 @@ namespace nebula::rendering {
         Scope<RenderCommandBuffer> optimized_commands = optimizeCommands(std::move(render_commands));
 
         //  Fixed pipeline
-        Scope<RecordedCommandBuffer> recorded_commands = m_record_command_visitor->recordCommands(std::move(optimized_commands));
-        submitRenderCommands(std::move(recorded_commands));
+        if (m_submit_commands)
+        {
+            Scope<RecordedCommandBuffer> recorded_commands = m_record_command_visitor->recordCommands(std::move(optimized_commands));
+            submitRenderCommands(std::move(recorded_commands));
+        }
+        else
+            m_optimized_commands = std::move(optimized_commands);
+    }
+
+    View<RenderCommandBuffer> RendererBackend::viewCommandBuffer() const
+    {
+        NB_CORE_ASSERT(!m_submit_commands, "Cannot view RenderCommands submitted to MainRenderThread!");
+        return m_optimized_commands.get();
     }
 
     void RendererBackend::submitRenderCommands(Scope<RecordedCommandBuffer>&& render_commands)

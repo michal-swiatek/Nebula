@@ -28,7 +28,9 @@ namespace nebula::rendering {
 
         void beginRenderPass();
         void endRenderPass();
-        void nextRenderStage();
+        void nextRenderStage() const;
+
+        [[nodiscard]] View<RenderCommandBuffer> viewCommandBuffer() const;
 
         template <typename RenderCommandType, typename... Args>
         void submitCommand(Args&&... args)
@@ -38,9 +40,9 @@ namespace nebula::rendering {
         }
 
         template <typename RendererType, typename RendererBackendType = ForwardRendererBackend>
-        static Scope<Renderer> create()
+        static Scope<Renderer> create(bool submit_commands = true)
         {
-            Scope<RendererBackend> renderer_backend = createScope<RendererBackendType>();
+            Scope<RendererBackend> renderer_backend = createScope<RendererBackendType>(submit_commands);
             return createScopeFromPointer(new RendererType(std::move(renderer_backend)));
         }
 
@@ -52,6 +54,15 @@ namespace nebula::rendering {
 
         Scope<RenderPass> m_renderpass = nullptr;
         Scope<RenderCommandBuffer> m_command_buffer = nullptr;
+
+        enum RenderPassState
+        {
+            cUndefined,
+            cStarted,
+            cFinished
+        };
+
+        RenderPassState m_renderpass_state = cUndefined;
     };
 
 }

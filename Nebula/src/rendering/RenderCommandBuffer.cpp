@@ -28,7 +28,7 @@ namespace nebula::rendering {
         m_commands.clear();
     }
 
-    std::vector<RenderCommand*>& RenderCommandBuffer::getCommands()
+    const std::vector<RenderCommand*>& RenderCommandBuffer::viewCommands() const
     {
         return m_commands;
     }

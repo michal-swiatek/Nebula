@@ -20,7 +20,7 @@ namespace nebula::rendering {
         ~RenderCommandBuffer();
 
         void reset();
-        std::vector<RenderCommand*>& getCommands();
+        [[nodiscard]] const std::vector<RenderCommand*>& viewCommands() const;
 
         template <typename RenderCommand, typename... Args>
         void submit(Args&&... args)

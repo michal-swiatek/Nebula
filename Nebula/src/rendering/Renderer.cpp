@@ -12,8 +12,9 @@ namespace nebula::rendering {
     void Renderer::beginRenderPass()
     {
         NB_CORE_ASSERT(m_renderpass, "No RenderPass set!");
-        NB_CORE_ASSERT(!m_command_buffer, "Finish previous renderpass before starting new one!");
+        NB_CORE_ASSERT(m_renderpass_state != cStarted, "Finish previous renderpass before starting new one!");
 
+        m_renderpass_state = cStarted;
         m_command_buffer = RenderCommandBuffer::create();
 
         m_renderpass->startPass();
@@ -22,17 +23,27 @@ namespace nebula::rendering {
 
     void Renderer::endRenderPass()
     {
-        NB_CORE_ASSERT(m_command_buffer, "Start renderpass first!");
+        NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start renderpass first!");
 
         m_renderpass->finishPass();
         m_renderer_backend->processRenderCommands(std::move(m_command_buffer));
+
+        m_renderpass_state = cFinished;
     }
 
-    void Renderer::nextRenderStage()
+    void Renderer::nextRenderStage() const
     {
-        NB_CORE_ASSERT(m_command_buffer, "Start renderpass first!");
+        NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start renderpass before moving to next RenderStage!");
 
         auto graphics_pipeline_state = m_renderpass->nextStage();
+    }
+
+    View<RenderCommandBuffer> Renderer::viewCommandBuffer() const
+    {
+        NB_CORE_ASSERT(m_renderpass_state == cFinished, "Finish RenderPass to view RenderCommands!");
+        if (m_renderpass_state == cFinished)
+            return m_renderer_backend->viewCommandBuffer();
+        return nullptr;
     }
 
     Scope<RenderPass> Renderer::releaseRenderPass()

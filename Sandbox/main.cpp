@@ -61,6 +61,9 @@ public:
         m_renderer->beginRenderPass();
         m_renderer->nextRenderStage();
         m_renderer->endRenderPass();
+
+        const auto render_commands = m_renderer->viewCommandBuffer()->viewCommands();
+        // NB_TRACE("Number of rendering commands in RenderCommandBuffer: {}", render_commands.size());
     }
 
     void onFixedUpdate(Timestep delta_time) override
@@ -101,7 +104,7 @@ public:
     }
 
 private:
-    Scope<Renderer> m_renderer = Renderer::create<Renderer>();
+    Scope<Renderer> m_renderer = Renderer::create<Renderer>(false);
 };
 
 class Sandbox : public Application

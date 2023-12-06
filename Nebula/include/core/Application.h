@@ -70,6 +70,7 @@ namespace nebula {
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
+            std::lock_guard lock{m_mutex};
             return m_layer_stack.pushLayer(layer);
         }
 
@@ -78,11 +79,12 @@ namespace nebula {
         {
             auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
             layer->onAttach();
+            std::lock_guard lock{m_mutex};
             return m_layer_stack.pushOverlay(layer);
         }
 
-        Scope<Layer> popLayer(const LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
-        Scope<Layer> popOverlay(const LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
+        Scope<Layer> popLayer(const LayerStack::LayerID layer_id) { std::lock_guard lock{m_mutex}; return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(const LayerStack::LayerID layer_id) { std::lock_guard lock{m_mutex}; return m_layer_stack.popOverlay(layer_id); }
 
         ///////////////////////////////////////////////////////////////////////////////////
         /////  Properties  ////////////////////////////////////////////////////////////////

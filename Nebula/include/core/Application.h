@@ -6,7 +6,9 @@
 #ifndef NEBULAENGINE_APPLICATION_H
 #define NEBULAENGINE_APPLICATION_H
 
+#include <mutex>
 #include <string>
+#include <vector>
 #include <optional>
 
 #include "Core.h"
@@ -19,12 +21,18 @@
 #include "events/EventManager.h"
 #include "events/ApplicationEvents.h"
 
+#include "threads/SecondaryThread.h"
 #include "utility/Filesystem.h"
-#include "rendering/RenderContext.h"
 
 int main(int argc, char** argv);
 
 namespace nebula {
+
+    namespace threads {
+
+        class MainRenderThread;
+
+    }
 
     struct ApplicationVersion
     {
@@ -53,7 +61,8 @@ namespace nebula {
         virtual ~Application();
 
         void close();
-        void minimize(bool minimized);
+        bool minimized() { std::lock_guard lock{m_mutex}; return m_minimized; }
+        void minimize(const bool minimized) { std::lock_guard lock{m_mutex}; m_minimized = minimized; }
 
         template <typename T, typename... Args>
         LayerStack::LayerID pushLayer(Args&&... args)
@@ -71,20 +80,23 @@ namespace nebula {
             return m_layer_stack.pushOverlay(layer);
         }
 
-        Scope<Layer> popLayer(LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
-        Scope<Layer> popOverlay(LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
+        Scope<Layer> popLayer(const LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(const LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
 
-        [[nodiscard]] int getRenderFps() const { return m_specification.render_fps; }
-        [[nodiscard]] double getUpdateTimestep() const { return m_specification.update_timestep; }
-        [[nodiscard]] double getTime() { return m_application_timer.elapsedSeconds(); }
-        [[nodiscard]] std::string getName() const { return m_specification.name; }
+        ///////////////////////////////////////////////////////////////////////////////////
+        /////  Properties  ////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////
 
-        void setRenderFps(const int fps) { m_specification.render_fps = fps; }
-        void setUpdateTimestep(const double timestep) { m_specification.update_timestep = timestep; }
-
-        [[nodiscard]] rendering::API getRenderingAPI() const;
-
+        [[nodiscard]] rendering::API getRenderingAPI() const { return m_specification.api; }
         [[nodiscard]] ApplicationVersion getVersion() const { return m_specification.version; }
+        [[nodiscard]] std::string getName() const { return m_specification.name; }
+        [[nodiscard]] double getTime() { return m_application_timer.elapsedSeconds(); }
+
+        [[nodiscard]] int getRenderFps() { std::lock_guard lock{m_mutex}; return m_specification.render_fps; }
+        [[nodiscard]] double getUpdateTimestep() { std::lock_guard lock{m_mutex}; return m_specification.update_timestep; }
+        void setRenderFps(const int fps) { std::lock_guard lock{m_mutex}; m_specification.render_fps = fps; }
+        void setUpdateTimestep(const double timestep) { std::lock_guard lock{m_mutex}; m_specification.update_timestep = timestep; }
+
         [[nodiscard]] Window& getWindow() const { return *m_window; }
         static Application& get() { return *s_instance; }
 
@@ -109,13 +121,20 @@ namespace nebula {
         LayerStack m_layer_stack;
         EventManager m_event_manager;
 
+        //  Threads
+        std::mutex m_mutex;
+        std::vector<Scope<threads::SecondaryThread>> m_threads;
+
+        void createThreads();
+        void cleanupThreads();
+        void spawnThreads() const;
+        void closeThreads() const;
+
+        friend class nebula::threads::MainRenderThread;
+
         //  Update
         Timer m_update_timer;
         double m_update_accumulator = 0.0;
-
-        //  Rendering
-        Timer m_render_timer;
-        Scope<rendering::RenderContext> m_render_context = nullptr;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

@@ -3,12 +3,10 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "core/Application.h"
-
 #include "core/Config.h"
 #include "core/Logging.h"
 
-#include "rendering/renderer/RendererAPI.h"
+#include "threads/MainRenderThread.h"
 
 namespace nebula {
 
@@ -39,25 +37,22 @@ namespace nebula {
         m_window->setEventManager(m_event_manager);
         m_input = Input::create(m_window.get());
 
-        m_render_context = rendering::RenderContext::create(m_window->getWindowHandle());
-        rendering::RendererApi::create(m_specification.api);
+        createThreads();
     }
 
     Application::~Application()
     {
-        rendering::RendererApi::destroy();
-        m_render_context.reset();
+        cleanupThreads();
     }
 
     void Application::run()
     {
+        for (const auto& thread : m_threads)
+            thread->run();
+
         while (m_running)
         {
-            int render_fps = getRenderFps();
-            double render_timestep = render_fps > 0 ? 1.0 / render_fps : 0.0;
             double update_timestep = getUpdateTimestep();
-
-            auto next_frame_time = getTime() + render_timestep;
             auto frame_time = m_update_timer.elapsedSeconds(true);
             m_update_accumulator += frame_time;
 
@@ -73,36 +68,48 @@ namespace nebula {
 
                     m_update_accumulator -= update_timestep;
                 }
-
-                for (const auto& layer : m_layer_stack)
-                    layer->onRender();
-
-                for (const auto& layer : m_layer_stack)
-                    layer->onImGuiRender();
             }
 
             //  Poll events
             m_event_manager.dispatchEvents();
-            m_render_context->swapBuffers();
             m_window->onUpdate();
-
-            Timer::sleepUntilPrecise(next_frame_time);
         }
+    }
+
+    void Application::createThreads()
+    {
+        m_threads.emplace_back(createScope<threads::MainRenderThread>());
+
+        spawnThreads();
+
+        for (const auto& thread : m_threads)
+            thread->waitReady();
+    }
+
+    void Application::cleanupThreads()
+    {
+        for (const auto& thread : m_threads)
+            thread->shutdown();
+
+        m_threads.clear();
+    }
+
+    void Application::spawnThreads() const
+    {
+        for (const auto& thread : m_threads)
+            thread->spawn();
+    }
+
+    void Application::closeThreads() const
+    {
+        for (const auto& thread : m_threads)
+            thread->close();
     }
 
     void Application::close()
     {
         m_running = false;
-    }
-
-    void Application::minimize(bool minimized)
-    {
-        m_minimized = minimized;
-    }
-
-    rendering::API Application::getRenderingAPI() const
-    {
-        return m_specification.api;
+        closeThreads();
     }
 
     void Application::onEvent(Event& event)

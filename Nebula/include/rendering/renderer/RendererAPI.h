@@ -11,31 +11,34 @@
 
 #include "rendering/RenderPass.h"
 
-namespace nebula { class Application; }
+namespace nebula {
 
-namespace nebula::rendering {
+    namespace threads { class MainRenderThread; }
 
-    class RendererApi
-    {
-    public:
-        virtual ~RendererApi() = default;
+    namespace rendering {
 
-        virtual void compilePipelines(RenderPass* renderpass) = 0;
+        class RendererApi
+        {
+        public:
+            virtual ~RendererApi() = default;
 
-        static RendererApi& get();
+            virtual void compilePipelines(RenderPass* renderpass) = 0;
 
-    protected:
-        RendererApi() = default;
+            static RendererApi& get();
 
-    private:
-        static Scope<RendererApi> s_renderer_api;
+        protected:
+            RendererApi() = default;
 
-        static void create(API api);
-        static void destroy();
+        private:
+            static Scope<RendererApi> s_renderer_api;
 
-        //  TODO: Friend MainRenderThread instead
-        friend class nebula::Application;
-    };
+            static void create(API api);
+            static void destroy();
+
+            friend class nebula::threads::MainRenderThread;
+        };
+
+    }
 
 }
 

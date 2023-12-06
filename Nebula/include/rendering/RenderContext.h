@@ -10,7 +10,7 @@
 
 namespace nebula {
 
-    class Application;
+    namespace threads { class MainRenderThread; }
 
     namespace rendering {
 
@@ -31,7 +31,7 @@ namespace nebula {
             RenderContext() = default;
 
         private:
-            friend class nebula::Application;
+            friend class nebula::threads::MainRenderThread;
             static Scope<RenderContext> create(void* window_handle);
         };
 

@@ -18,6 +18,8 @@ set(NEBULA_SOURCE_FILES
         src/core/LayerStack.cpp
         src/core/Config.cpp
         src/core/Timer.cpp
+        src/threads/SecondaryThread.cpp
+        src/threads/MainRenderThread.cpp
         src/utility/Filesystem.cpp
         src/events/EventManager.cpp
         src/debug/ImGuiLayer.cpp

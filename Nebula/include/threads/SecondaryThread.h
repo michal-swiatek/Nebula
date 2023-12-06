@@ -30,6 +30,8 @@ namespace nebula::threads {
         virtual void shutdown() = 0;
         virtual void mainLoopBody() = 0;
 
+        [[nodiscard]] const std::string& getName() const;
+
     private:
         std::string m_name;
         std::thread m_thread;

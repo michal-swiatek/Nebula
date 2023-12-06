@@ -140,8 +140,8 @@ namespace nebula {
 
     void WindowsWindow::onUpdate()
     {
-        // glfwWaitEvents();
-        glfwPollEvents();
+        glfwWaitEvents();
+        // glfwPollEvents();
     }
 
     void WindowsWindow::setProperties(const WindowProperties& window_properties)

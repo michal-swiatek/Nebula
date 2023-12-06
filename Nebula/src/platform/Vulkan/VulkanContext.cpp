@@ -26,7 +26,7 @@ namespace nebula::rendering {
         m_swapchain = createScope<VulkanSwapchain>(m_surface);
         setVSync(true);
 
-        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
         {
             const auto device_properties = VulkanAPI::getPhysicalDeviceInfo();
             NB_CORE_INFO("Vulkan Info:");

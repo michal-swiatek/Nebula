@@ -71,7 +71,7 @@ namespace nebula::rendering {
         createLogicalDevice();
         createVmaAllocator();
 
-        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 2)
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_HIGH)
         {
             auto supported_extensions = getSupportedExtensions();
             NB_CORE_INFO("Vulkan extensions:");
@@ -139,7 +139,7 @@ namespace nebula::rendering {
             createDebugUtilsMessengerEXT(s_instance, &debug_messenger_info, nullptr, &m_debug_messenger) == VK_SUCCESS,
             "Unable to set Vulkan debug callback!"
         );
-        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
             NB_CORE_INFO("Using Vulkan validation layers");
         #endif
     }
@@ -449,7 +449,7 @@ VkBool32 debugCallback(
     void* user_data
 )
 {
-    if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 2)
+    if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_MEDIUM)
         if (severity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
             return VK_FALSE;
 
@@ -469,7 +469,7 @@ VkDebugUtilsMessengerCreateInfoEXT createDebugUtilsMessengerInfo()
 {
     VkDebugUtilsMessengerCreateInfoEXT create_info{};
     create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 2)
+    if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_MEDIUM)
     {
         create_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
         create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT;

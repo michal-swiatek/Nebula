@@ -6,6 +6,7 @@
 #include "threads/SecondaryThread.h"
 
 #include "core/Logging.h"
+#include "platform/EngineConfiguration.h"
 
 namespace nebula::threads {
 
@@ -52,6 +53,9 @@ namespace nebula::threads {
     {
         logging::ThreadFormatterFlag::addThreadName(std::this_thread::get_id(), m_name);
 
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_MEDIUM)
+            NB_CORE_INFO("Initializing {}", getName());
+
         init();
 
         m_init_ready.test_and_set(std::memory_order_acquire);
@@ -63,10 +67,18 @@ namespace nebula::threads {
 
         m_cleanup.wait(false);
 
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_MEDIUM)
+            NB_CORE_INFO("Shutting down {}", getName());
+
         shutdown();
 
         m_shutdown_ready.test_and_set(std::memory_order_acquire);
         m_shutdown_ready.notify_all();
+    }
+
+    const std::string& SecondaryThread::getName() const
+    {
+        return m_name;
     }
 
 }

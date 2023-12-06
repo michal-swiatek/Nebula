@@ -6,6 +6,7 @@
 #include "core/Config.h"
 #include "core/Logging.h"
 
+#include "threads/MainUpdateThread.h"
 #include "threads/MainRenderThread.h"
 
 namespace nebula {
@@ -52,26 +53,6 @@ namespace nebula {
 
         while (m_running)
         {
-            double update_timestep = getUpdateTimestep();
-            auto frame_time = m_update_timer.elapsedSeconds(true);
-            m_update_accumulator += frame_time;
-
-            if (!m_minimized)
-            {
-                for (const auto& layer : m_layer_stack)
-                    layer->onUpdate(Timestep(frame_time));
-
-                while (m_update_accumulator > update_timestep)
-                {
-                    for (const auto& layer : m_layer_stack)
-                        layer->onFixedUpdate(Timestep(update_timestep));
-
-                    m_update_accumulator -= update_timestep;
-                }
-            }
-
-            //  Poll events
-            m_event_manager.dispatchEvents();
             m_window->onUpdate();
         }
     }
@@ -79,6 +60,7 @@ namespace nebula {
     void Application::createThreads()
     {
         m_threads.emplace_back(createScope<threads::MainRenderThread>());
+        m_threads.emplace_back(createScope<threads::MainUpdateThread>());
 
         for (const auto& thread : m_threads)
             thread->spawn();

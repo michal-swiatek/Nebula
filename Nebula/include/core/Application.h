@@ -30,6 +30,7 @@ namespace nebula {
 
     namespace threads {
 
+        class MainUpdateThread;
         class MainRenderThread;
 
     }
@@ -129,11 +130,8 @@ namespace nebula {
         void cleanupThreads();
         void closeThreads() const;
 
+        friend class nebula::threads::MainUpdateThread;
         friend class nebula::threads::MainRenderThread;
-
-        //  Update
-        Timer m_update_timer;
-        double m_update_accumulator = 0.0;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

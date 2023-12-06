@@ -21,9 +21,14 @@ namespace nebula::threads {
         m_thread = std::thread(&SecondaryThread::mainLoop, this);
     }
 
-    void SecondaryThread::waitReady() const
+    void SecondaryThread::waitInitReady() const
     {
-        m_ready.wait(false);
+        m_init_ready.wait(false);
+    }
+
+    void SecondaryThread::waitShutdownReady() const
+    {
+        m_shutdown_ready.wait(false);
     }
 
     void SecondaryThread::run()
@@ -37,18 +42,31 @@ namespace nebula::threads {
         m_running.clear(std::memory_order_release);
     }
 
+    void SecondaryThread::cleanup()
+    {
+        m_cleanup.test_and_set(std::memory_order_acquire);
+        m_cleanup.notify_all();
+    }
+
     void SecondaryThread::mainLoop()
     {
         logging::ThreadFormatterFlag::addThreadName(std::this_thread::get_id(), m_name);
 
         init();
 
-        m_ready.test_and_set(std::memory_order_acquire);
-        m_ready.notify_all();
+        m_init_ready.test_and_set(std::memory_order_acquire);
+        m_init_ready.notify_all();
 
         m_running.wait(false);
         while (m_running.test(std::memory_order_relaxed))
             mainLoopBody();
+
+        m_cleanup.wait(false);
+
+        shutdown();
+
+        m_shutdown_ready.test_and_set(std::memory_order_acquire);
+        m_shutdown_ready.notify_all();
     }
 
 }

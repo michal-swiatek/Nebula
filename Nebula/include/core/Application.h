@@ -127,7 +127,6 @@ namespace nebula {
 
         void createThreads();
         void cleanupThreads();
-        void spawnThreads() const;
         void closeThreads() const;
 
         friend class nebula::threads::MainRenderThread;

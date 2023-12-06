@@ -39,20 +39,18 @@ namespace nebula::threads {
 
     void MainRenderThread::init()
     {
-        NB_CORE_INFO("Initializing MainRenderThread...");
-
         const Application& application = Application::get();
         const Window& window = application.getWindow();
 
         m_render_context = RenderContext::create(window.getWindowHandle());
-        m_renderer = Renderer::create<Renderer, ForwardRendererBackend>();
-
         RendererApi::create(application.getRenderingAPI());
+
+        m_renderer = Renderer::create<Renderer, ForwardRendererBackend>();
     }
 
     void MainRenderThread::shutdown()
     {
-        NB_CORE_INFO("Shutting down MainRenderThread...");
+        m_renderer.reset();
 
         RendererApi::destroy();
         m_render_context.reset();

@@ -80,24 +80,22 @@ namespace nebula {
     {
         m_threads.emplace_back(createScope<threads::MainRenderThread>());
 
-        spawnThreads();
+        for (const auto& thread : m_threads)
+            thread->spawn();
 
         for (const auto& thread : m_threads)
-            thread->waitReady();
+            thread->waitInitReady();
     }
 
     void Application::cleanupThreads()
     {
         for (const auto& thread : m_threads)
-            thread->shutdown();
+            thread->cleanup();
+
+        for (const auto& thread : m_threads)
+            thread->waitShutdownReady();
 
         m_threads.clear();
-    }
-
-    void Application::spawnThreads() const
-    {
-        for (const auto& thread : m_threads)
-            thread->spawn();
     }
 
     void Application::closeThreads() const

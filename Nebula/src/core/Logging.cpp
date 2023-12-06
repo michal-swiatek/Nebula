@@ -44,10 +44,10 @@ namespace nebula::logging {
         ThreadFormatterFlag::addThreadName(std::this_thread::get_id(), "MainThread");
 
         auto formatter = std::make_unique<spdlog::pattern_formatter>();
-        formatter->add_flag<ThreadFormatterFlag>('t').set_pattern("%^[%T] |%=16!t| %n: %v%$");
+        formatter->add_flag<ThreadFormatterFlag>('t').set_pattern("%^[%T] |%=16!t| %8!n: %v%$");
         set_formatter(std::move(formatter));
 
-        core_logger = spdlog::stdout_color_mt("CORE");
+        core_logger = spdlog::stdout_color_mt("NEBULA");
         core_logger->set_level(spdlog::level::trace);
     }
 

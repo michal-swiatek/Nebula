@@ -14,6 +14,7 @@ namespace nebula::threads {
     class SecondaryThread
     {
     public:
+        explicit SecondaryThread(std::string name);
         virtual ~SecondaryThread();
 
         void spawn();
@@ -29,6 +30,7 @@ namespace nebula::threads {
         virtual void mainLoopBody() = 0;
 
     private:
+        std::string m_name;
         std::thread m_thread;
         std::atomic_flag m_ready = ATOMIC_FLAG_INIT;
         std::atomic_flag m_running = ATOMIC_FLAG_INIT;

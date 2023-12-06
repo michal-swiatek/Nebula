@@ -15,6 +15,8 @@ using namespace nebula::rendering;
 
 namespace nebula::threads {
 
+    MainRenderThread::MainRenderThread() : SecondaryThread("RenderThread"), m_application(Application::get()) {}
+
     void MainRenderThread::mainLoopBody()
     {
         const int render_fps = m_application.getRenderFps();

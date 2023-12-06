@@ -6,12 +6,31 @@
 #ifndef NEBULAENGINE_LOGGING_H
 #define NEBULAENGINE_LOGGING_H
 
+#include <thread>
+#include <unordered_map>
+
 #include <spdlog/spdlog.h>
+#include <spdlog/pattern_formatter.h>
 
 #include "Core.h"
 #include "Types.h"
 
 namespace nebula::logging {
+
+    class ThreadFormatterFlag final : public spdlog::custom_flag_formatter
+    {
+    public:
+        void format(const spdlog::details::log_msg& msg, const std::tm& tm_time, spdlog::memory_buf_t& dest) override;
+        [[nodiscard]] std::unique_ptr<custom_flag_formatter> clone() const override;
+
+        static void addThreadName(std::thread::id thread_id, const std::string& name);
+
+    private:
+        static std::unordered_map<std::thread::id, std::string> s_thread_names;
+
+        static constexpr std::size_t s_max_thread_name_width = 15;
+        static const std::string& getThreadName();
+    };
 
     NEBULA_API void initCore();
     NEBULA_API void initClient(const std::string& name);

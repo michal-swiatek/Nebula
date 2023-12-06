@@ -19,7 +19,7 @@ namespace nebula::threads {
     class MainRenderThread final : public SecondaryThread
     {
     public:
-        MainRenderThread() : m_application(Application::get()) {}
+        MainRenderThread();
 
     private:
         Application& m_application;

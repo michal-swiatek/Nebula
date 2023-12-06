@@ -5,7 +5,11 @@
 
 #include "threads/SecondaryThread.h"
 
+#include "core/Logging.h"
+
 namespace nebula::threads {
+
+    SecondaryThread::SecondaryThread(std::string name) : m_name(std::move(name)) {}
 
     SecondaryThread::~SecondaryThread()
     {
@@ -35,6 +39,8 @@ namespace nebula::threads {
 
     void SecondaryThread::mainLoop()
     {
+        logging::ThreadFormatterFlag::addThreadName(std::this_thread::get_id(), m_name);
+
         init();
 
         m_ready.test_and_set(std::memory_order_acquire);

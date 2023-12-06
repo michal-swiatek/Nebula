@@ -18,6 +18,8 @@ namespace nebula::threads {
         const double update_timestep = m_application.getUpdateTimestep();
         const double frame_time = m_update_timer.elapsedSeconds(true);
 
+        m_application.m_event_manager.dispatchEvents();
+
         if (!m_application.minimized())
         {
             m_update_accumulator += frame_time;
@@ -34,7 +36,6 @@ namespace nebula::threads {
             }
         }
 
-        m_application.m_event_manager.dispatchEvents();
         Timer::sleepUntilPrecise(next_frame_time);
     }
 

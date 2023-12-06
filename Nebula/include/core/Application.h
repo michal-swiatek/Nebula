@@ -65,27 +65,6 @@ namespace nebula {
         bool minimized() { std::lock_guard lock{m_mutex}; return m_minimized; }
         void minimize(const bool minimized) { std::lock_guard lock{m_mutex}; m_minimized = minimized; }
 
-        template <typename T, typename... Args>
-        LayerStack::LayerID pushLayer(Args&&... args)
-        {
-            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
-            layer->onAttach();
-            std::lock_guard lock{m_mutex};
-            return m_layer_stack.pushLayer(layer);
-        }
-
-        template <typename T, typename... Args>
-        LayerStack::LayerID pushOverlay(Args&&... args)
-        {
-            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
-            layer->onAttach();
-            std::lock_guard lock{m_mutex};
-            return m_layer_stack.pushOverlay(layer);
-        }
-
-        Scope<Layer> popLayer(const LayerStack::LayerID layer_id) { std::lock_guard lock{m_mutex}; return m_layer_stack.popLayer(layer_id); }
-        Scope<Layer> popOverlay(const LayerStack::LayerID layer_id) { std::lock_guard lock{m_mutex}; return m_layer_stack.popOverlay(layer_id); }
-
         ///////////////////////////////////////////////////////////////////////////////////
         /////  Properties  ////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////
@@ -106,8 +85,28 @@ namespace nebula {
         static void reloadEngineConfig(const std::string& path = "");
         static filesystem::Path getResourcesPath(bool absolute = false);
 
+    protected:
+        template <typename T, typename... Args>
+        LayerStack::LayerID pushLayer(Args&&... args)
+        {
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
+            layer->onAttach();
+            return m_layer_stack.pushLayer(layer);
+        }
+
+        template <typename T, typename... Args>
+        LayerStack::LayerID pushOverlay(Args&&... args)
+        {
+            auto layer = new T(std::forward<Args>(args)...); //  TODO: Replace with memory allocator
+            layer->onAttach();
+            return m_layer_stack.pushOverlay(layer);
+        }
+
+        Scope<Layer> popLayer(const LayerStack::LayerID layer_id) { return m_layer_stack.popLayer(layer_id); }
+        Scope<Layer> popOverlay(const LayerStack::LayerID layer_id) { return m_layer_stack.popOverlay(layer_id); }
+
     private:
-        void run();
+        void run() const;
 
         void onEvent(Event& event);
         bool onWindowClose(WindowCloseEvent& e);

@@ -46,7 +46,7 @@ namespace nebula {
         cleanupThreads();
     }
 
-    void Application::run()
+    void Application::run() const
     {
         for (const auto& thread : m_threads)
             thread->run();

@@ -98,7 +98,7 @@ namespace nebula {
         void setRenderFps(const int fps) { std::lock_guard lock{m_mutex}; m_specification.render_fps = fps; }
         void setUpdateTimestep(const double timestep) { std::lock_guard lock{m_mutex}; m_specification.update_timestep = timestep; }
 
-        [[nodiscard]] Window& getWindow() const { return *m_window; }
+        static Window& getWindow() { return *s_instance->m_window; }
         static Application& get() { return *s_instance; }
 
         static void reloadEngineConfig(const std::string& path = "");

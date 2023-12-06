@@ -45,8 +45,7 @@ namespace nebula {
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        auto& application = Application::get();
-        auto* window = static_cast<GLFWwindow*>(application.getWindow().getWindowHandle());
+        auto* window = static_cast<GLFWwindow*>(Application::getWindow().getWindowHandle());
 
         switch (Application::get().getRenderingAPI())
         {
@@ -101,8 +100,8 @@ namespace nebula {
     void ImGuiLayer::end()
     {
         ImGuiIO& io = ImGui::GetIO();
-        Application& app = Application::get();
-        io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
+        const Window& window = Application::getWindow();
+        io.DisplaySize = ImVec2(static_cast<float>(window.getWidth()), static_cast<float>(window.getHeight()));
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

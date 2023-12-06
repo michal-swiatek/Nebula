@@ -39,11 +39,10 @@ namespace nebula::threads {
 
     void MainRenderThread::init()
     {
-        const Application& application = Application::get();
-        const Window& window = application.getWindow();
+        const Window& window = Application::getWindow();
 
         m_render_context = RenderContext::create(window.getWindowHandle());
-        RendererApi::create(application.getRenderingAPI());
+        RendererApi::create(m_application.getRenderingAPI());
 
         m_renderer = Renderer::create<Renderer, ForwardRendererBackend>();
     }

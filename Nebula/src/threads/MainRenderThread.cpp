@@ -53,9 +53,11 @@ namespace nebula::threads {
     {
         const Window& window = Application::getWindow();
 
+        //  Init engine
         m_render_context = RenderContext::create(window.getWindowHandle());
         RendererApi::create(m_application.getRenderingAPI());
 
+        //  Init members
         const auto renderpass_template = createReference<FinalRenderPass>(m_render_context->viewFramebufferTemplate());
         auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
 

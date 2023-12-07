@@ -52,7 +52,7 @@ namespace nebula::rendering {
 
     Scope<RecordedCommandBuffer> RenderPassExecutor::getCommands()
     {
-        NB_CORE_ASSERT(m_recorded_command_buffer, "Execute before getting commands!");
+        NB_CORE_ASSERT(m_recorded_command_buffer, "Finish execution before getting commands!");
         return std::move(m_recorded_command_buffer);
     }
 
@@ -66,6 +66,12 @@ namespace nebula::rendering {
 
         m_renderer = std::move(renderer);
         m_renderer->setRenderPass(std::move(m_renderpass));
+    }
+
+    void RenderPassExecutor::setFramebuffer(const Reference<Framebuffer>& framebuffer) const
+    {
+        NB_CORE_ASSERT(framebuffer);
+        m_renderer->setFramebuffer(framebuffer);
     }
 
     void RenderPassExecutor::setRecordCommandVisitor(Scope<RecordCommandVisitor>&& render_command_visitor)

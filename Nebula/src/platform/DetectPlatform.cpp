@@ -82,7 +82,7 @@ namespace nebula {
             return createReferenceFromPointer(shader);
         }
 
-        Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template)
+        Scope<RenderPass> RenderPass::create(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer)
         {
             NB_CORE_ASSERT(renderpass_template->viewFramebufferTemplate(), "Cannot create RenderPass without FramebufferTemplate!");
             NB_CORE_ASSERT(!renderpass_template->viewRenderStages().empty(), "RenderPass has to have at least one RenderStage!");
@@ -90,8 +90,8 @@ namespace nebula {
             RenderPass* renderpass = nullptr;
             switch (Application::get().getRenderingAPI())
             {
-                case API::cOpenGL:    renderpass = new RenderPass(renderpass_template);        break;
-                case API::cVulkan:    renderpass = new VulkanRenderPass(renderpass_template);  break;
+                case API::cOpenGL:    renderpass = new RenderPass(renderpass_template, create_framebuffer);        break;
+                case API::cVulkan:    renderpass = new VulkanRenderPass(renderpass_template, create_framebuffer);  break;
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
 

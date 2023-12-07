@@ -89,8 +89,8 @@ namespace nebula::rendering {
         return vulkan_attachment_description;
     }
 
-    VulkanRenderPass::VulkanRenderPass(const Reference<RenderPassTemplate>& renderpass_template) :
-        RenderPass(renderpass_template)
+    VulkanRenderPass::VulkanRenderPass(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer) :
+        RenderPass(renderpass_template, create_framebuffer)
     {
         const auto& framebuffer_template = renderpass_template->viewFramebufferTemplate();
 

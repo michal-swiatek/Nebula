@@ -9,19 +9,21 @@
 
 namespace nebula::rendering {
 
-    RenderPass::RenderPass(const Reference<RenderPassTemplate>& renderpass_template)
+    RenderPass::RenderPass(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer)
     {
         m_renderpass_template = renderpass_template;
-
         m_clear_color = renderpass_template->getClearColor();
-        m_framebuffer = Framebuffer::create(m_renderpass_template->viewFramebufferTemplate());
+
+        if (create_framebuffer)
+            m_framebuffer = Framebuffer::create(m_renderpass_template->viewFramebufferTemplate());
     }
 
     void RenderPass::attachFramebuffer(const Reference<Framebuffer>& framebuffer)
     {
         NB_CORE_ASSERT(*framebuffer->viewFramebufferTemplate() == *m_renderpass_template->viewFramebufferTemplate(), "Incompatible Framebuffer!");
         m_framebuffer = framebuffer;
-        m_framebuffer->attachTo(getRenderPassHandle());
+        if (!framebuffer->attached())
+            m_framebuffer->attachTo(getRenderPassHandle());
     }
 
     void RenderPass::startPass()

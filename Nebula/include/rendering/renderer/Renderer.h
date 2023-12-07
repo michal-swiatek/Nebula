@@ -21,10 +21,12 @@ namespace nebula::rendering {
     public:
         ~Renderer() override = default;
 
+        void setRenderPass(Scope<RenderPass>&& renderpass);
+        void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template, bool create_framebuffer = false);
+        void setFramebuffer(const Reference<Framebuffer>& framebuffer) const;
+
         [[nodiscard]] View<RenderPass> viewRenderPass() const;
         [[nodiscard]] Scope<RenderPass> releaseRenderPass();
-        void setRenderPass(Scope<RenderPass>&& renderpass);
-        void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
 
         void beginRenderPass();
         void endRenderPass();

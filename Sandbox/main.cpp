@@ -50,7 +50,7 @@ public:
 
     void setup()
     {
-        m_renderer->setRenderPass(createReference<TestRenderPass>());
+        m_renderer->setRenderPass(createReference<TestRenderPass>(), true);
     }
 
     void onUpdate(Timestep delta_time) override

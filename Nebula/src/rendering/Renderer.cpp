@@ -46,6 +46,22 @@ namespace nebula::rendering {
         return nullptr;
     }
 
+    void Renderer::setRenderPass(Scope<RenderPass>&& renderpass)
+    {
+        m_renderpass = std::move(renderpass);
+    }
+
+    void Renderer::setRenderPass(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer)
+    {
+        m_renderpass = RenderPass::create(renderpass_template, create_framebuffer);
+    }
+
+    void Renderer::setFramebuffer(const Reference<Framebuffer>& framebuffer) const
+    {
+        NB_CORE_ASSERT(m_renderpass);
+        m_renderpass->attachFramebuffer(framebuffer);
+    }
+
     Scope<RenderPass> Renderer::releaseRenderPass()
     {
         return createScopeFromPointer(m_renderpass.release());
@@ -54,16 +70,6 @@ namespace nebula::rendering {
     View<RenderPass> Renderer::viewRenderPass() const
     {
         return m_renderpass.get();
-    }
-
-    void Renderer::setRenderPass(Scope<RenderPass>&& renderpass)
-    {
-        m_renderpass = std::move(renderpass);
-    }
-
-    void Renderer::setRenderPass(const Reference<RenderPassTemplate>& renderpass_template)
-    {
-        m_renderpass = RenderPass::create(renderpass_template);
     }
 
 }

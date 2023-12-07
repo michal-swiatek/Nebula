@@ -56,10 +56,10 @@ namespace nebula::rendering {
         [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }
         void setClearColor(const ClearColor& clear_color) { m_clear_color = clear_color; }
 
-        [[nodiscard]] static Scope<RenderPass> create(const Reference<RenderPassTemplate>& renderpass_template);
+        [[nodiscard]] static Scope<RenderPass> create(const Reference<RenderPassTemplate>& renderpass_templatebool, bool create_framebuffer = false);
 
     protected:
-        explicit RenderPass(const Reference<RenderPassTemplate>& renderpass_template);
+        explicit RenderPass(const Reference<RenderPassTemplate>& renderpass_template, bool create_framebuffer);
 
     private:
         ClearColor m_clear_color{};

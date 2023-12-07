@@ -25,6 +25,7 @@ namespace nebula::rendering {
         Scope<RecordedCommandBuffer> getCommands();
 
         void setRenderer(Scope<Renderer>&& renderer);
+        void setFramebuffer(const Reference<Framebuffer>& framebuffer) const;
         void setRecordCommandVisitor(Scope<RecordCommandVisitor>&& render_command_visitor);
 
     private:

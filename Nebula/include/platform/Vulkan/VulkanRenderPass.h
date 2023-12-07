@@ -15,7 +15,7 @@ namespace nebula::rendering {
     class VulkanRenderPass final : public RenderPass
     {
     public:
-        explicit VulkanRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
+        explicit VulkanRenderPass(const Reference<RenderPassTemplate>& renderpass_template, bool create_framebuffer);
         ~VulkanRenderPass() override;
 
         void* getRenderPassHandle() override;

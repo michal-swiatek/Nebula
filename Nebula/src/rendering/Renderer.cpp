@@ -38,11 +38,11 @@ namespace nebula::rendering {
         auto graphics_pipeline_state = m_renderpass->nextStage();
     }
 
-    View<RenderCommandBuffer> Renderer::viewCommandBuffer() const
+    Scope<RenderCommandBuffer> Renderer::getCommandBuffer() const
     {
-        NB_CORE_ASSERT(m_renderpass_state == cFinished, "Finish RenderPass to view RenderCommands!");
+        NB_CORE_ASSERT(m_renderpass_state == cFinished, "Finish RenderPass to retrieve RenderCommands!");
         if (m_renderpass_state == cFinished)
-            return m_renderer_backend->viewCommandBuffer();
+            return m_renderer_backend->getCommandBuffer();
         return nullptr;
     }
 
@@ -51,7 +51,7 @@ namespace nebula::rendering {
         return createScopeFromPointer(m_renderpass.release());
     }
 
-    View<RenderPass> Renderer::getRenderPass() const
+    View<RenderPass> Renderer::viewRenderPass() const
     {
         return m_renderpass.get();
     }

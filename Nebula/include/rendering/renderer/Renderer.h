@@ -21,7 +21,7 @@ namespace nebula::rendering {
     public:
         virtual ~Renderer() = default;
 
-        [[nodiscard]] View<RenderPass> getRenderPass() const;
+        [[nodiscard]] View<RenderPass> viewRenderPass() const;
         [[nodiscard]] Scope<RenderPass> releaseRenderPass();
         void setRenderPass(Scope<RenderPass>&& renderpass);
         void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template);
@@ -30,19 +30,19 @@ namespace nebula::rendering {
         void endRenderPass();
         void nextRenderStage() const;
 
-        [[nodiscard]] View<RenderCommandBuffer> viewCommandBuffer() const;
+        [[nodiscard]] Scope<RenderCommandBuffer> getCommandBuffer() const;
 
         template <typename RenderCommandType, typename... Args>
         void submitCommand(Args&&... args)
         {
-            NB_CORE_ASSERT(m_command_buffer, "Begin RenderPass before submitting RenderCommands!");
+            NB_CORE_ASSERT(m_command_buffer, "Command buffer not set! Start RenderPass to set new command buffer.");
             m_command_buffer->submit<RenderCommandType>(std::forward<Args>(args)...);
         }
 
         template <typename RendererType, typename RendererBackendType = ForwardRendererBackend>
-        static Scope<Renderer> create(bool submit_commands = true)
+        static Scope<Renderer> create()
         {
-            Scope<RendererBackend> renderer_backend = createScope<RendererBackendType>(submit_commands);
+            Scope<RendererBackend> renderer_backend = createScope<RendererBackendType>();
             return createScopeFromPointer(new RendererType(std::move(renderer_backend)));
         }
 

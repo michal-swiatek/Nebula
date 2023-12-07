@@ -7,28 +7,22 @@
 #define RENDERERBACKEND_H
 
 #include "rendering/commands/RenderCommandBuffer.h"
-#include "rendering/commands/RenderCommandVisitor.h"
 
 namespace nebula::rendering {
 
     class NEBULA_API RendererBackend
     {
     public:
-        explicit RendererBackend(bool submit_commands);
         virtual ~RendererBackend() = default;
 
         void processRenderCommands(Scope<RenderCommandBuffer>&& render_commands);
-        [[nodiscard]] View<RenderCommandBuffer> viewCommandBuffer() const;
+        [[nodiscard]] Scope<RenderCommandBuffer> getCommandBuffer();
 
     protected:
         virtual Scope<RenderCommandBuffer> optimizeCommands(Scope<RenderCommandBuffer>&& render_commands) = 0;
 
     private:
-        bool m_submit_commands;
         Scope<RenderCommandBuffer> m_optimized_commands = nullptr;
-        Scope<RecordCommandVisitor> m_record_command_visitor = nullptr;
-
-        void submitRenderCommands(Scope<RecordedCommandBuffer>&& render_commands);
     };
 
 }

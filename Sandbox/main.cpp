@@ -62,7 +62,7 @@ public:
         m_renderer->nextRenderStage();
         m_renderer->endRenderPass();
 
-        const auto render_commands = m_renderer->viewCommandBuffer()->viewCommands();
+        const auto render_commands = m_renderer->getCommandBuffer()->viewCommands();
         // NB_TRACE("Number of rendering commands in RenderCommandBuffer: {}", render_commands.size());
     }
 
@@ -104,7 +104,7 @@ public:
     }
 
 private:
-    Scope<Renderer> m_renderer = Renderer::create<Renderer>(false);
+    Scope<Renderer> m_renderer = Renderer::create<Renderer>();
 };
 
 class Sandbox : public Application

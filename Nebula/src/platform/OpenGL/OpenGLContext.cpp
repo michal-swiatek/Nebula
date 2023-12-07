@@ -69,4 +69,9 @@ namespace nebula::rendering {
         glfwSwapBuffers(m_window);
     }
 
+    const Reference<FramebufferTemplate>& OpenGLContext::viewFramebufferTemplate() const
+    {
+        return nullptr;
+    }
+
 }

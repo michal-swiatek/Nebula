@@ -29,7 +29,7 @@ namespace nebula::rendering {
         [[nodiscard]] virtual bool attached() const = 0;
         virtual void attachTo(void* renderpass_handle) = 0;
 
-        [[nodiscard]] virtual View<FramebufferTemplate> viewFramebufferTemplate() const = 0;
+        [[nodiscard]] virtual const Reference<FramebufferTemplate>& viewFramebufferTemplate() const = 0;
         [[nodiscard]] static Reference<Framebuffer> create(const Reference<FramebufferTemplate>& framebuffer_template);
 
     protected:

@@ -39,9 +39,9 @@ namespace nebula::rendering {
         m_attached = true;
     }
 
-    View<FramebufferTemplate> OpenGlFramebuffer::viewFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& OpenGlFramebuffer::viewFramebufferTemplate() const
     {
-        return m_framebuffer_template.get();
+        return m_framebuffer_template;
     }
 
 }

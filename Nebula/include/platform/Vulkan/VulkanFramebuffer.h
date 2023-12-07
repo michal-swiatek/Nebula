@@ -25,7 +25,7 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:
         VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
@@ -49,7 +49,7 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:
         uint32_t m_width;
@@ -59,6 +59,8 @@ namespace nebula::rendering {
         std::vector<VkImage> m_swapchain_images{};
         std::vector<VkImageView> m_swapchain_image_views{};
         std::vector<VkFramebuffer> m_swapchain_framebuffers{};
+
+        Reference<FramebufferTemplate> m_framebuffer_template;
     };
 
 }

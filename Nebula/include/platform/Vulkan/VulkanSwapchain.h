@@ -29,6 +29,7 @@ namespace nebula::rendering {
         void recreateSwapchain(uint32_t width, uint32_t height, bool vsync);
 
         [[nodiscard]] bool checkVSync() const;
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
 
     private:
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;

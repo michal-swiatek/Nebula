@@ -45,6 +45,11 @@ namespace nebula::rendering {
         return render_stages[++m_current_render_stage].graphics_pipeline_state;
     }
 
+    uint32_t RenderPass::getNumberOfStages() const
+    {
+        return m_renderpass_template->viewRenderStages().size();
+    }
+
     const Reference<RenderPassTemplate>& RenderPass::viewRenderPassTemplate() const
     {
         return m_renderpass_template;
@@ -68,7 +73,6 @@ namespace nebula::rendering {
         for (const auto& attachment_reference : attachment_references)
             NB_CORE_ASSERT(attachment_reference.index < attachment_count, "Attachment reference index out of bounds!");
 
-        // const auto pipeline_handle = PipelineStateCache::getPipelineHandle(graphics_pipeline_state);
         m_render_stages.emplace_back(graphics_pipeline_state, attachment_references);
     }
 

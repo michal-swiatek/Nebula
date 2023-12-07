@@ -27,6 +27,8 @@ set(NEBULA_SOURCE_FILES
         src/rendering/Shader.cpp
         src/rendering/Renderer.cpp
         src/rendering/RendererBackend.cpp
+        src/rendering/RenderPassObjects.cpp
+        src/rendering/RenderPassExecutor.cpp
         src/rendering/ForwardRendererBackend.cpp
         src/rendering/PipelineState.cpp
         src/rendering/RenderPass.cpp

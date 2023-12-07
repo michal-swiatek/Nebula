@@ -14,6 +14,8 @@ namespace nebula {
 
     namespace rendering {
 
+        class FramebufferTemplate;
+
         class RenderContext
         {
         public:
@@ -26,6 +28,7 @@ namespace nebula {
             virtual void setVSync(bool vsync) = 0;
 
             virtual void swapBuffers() = 0;
+            [[nodiscard]] virtual const Reference<FramebufferTemplate>& viewFramebufferTemplate() const = 0;
 
         protected:
             RenderContext() = default;

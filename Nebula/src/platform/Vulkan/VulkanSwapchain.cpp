@@ -91,6 +91,11 @@ namespace nebula::rendering {
         return m_present_mode == VK_PRESENT_MODE_FIFO_KHR;
     }
 
+    const Reference<FramebufferTemplate>& VulkanSwapchain::viewFramebufferTemplate() const
+    {
+        return m_framebuffers->viewFramebufferTemplate();
+    }
+
     //
     //  Utility functions
     //

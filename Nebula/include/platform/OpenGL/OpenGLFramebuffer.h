@@ -24,7 +24,7 @@ namespace nebula::rendering {
         [[nodiscard]] bool attached() const override;
         void attachTo(void* renderpass_handle) override;
 
-        [[nodiscard]] View<FramebufferTemplate> viewFramebufferTemplate() const override;
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:
         bool m_attached = false;

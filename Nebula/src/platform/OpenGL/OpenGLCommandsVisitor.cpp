@@ -5,13 +5,11 @@
 
 #include "platform/OpenGL/OpenGLCommandsVisitor.h"
 
-#include "platform/OpenGL/OpenGLRecordedBuffer.h"
-
 namespace nebula::rendering {
 
     Scope<RecordedCommandBuffer> OpenGlRecordCommandsVisitor::recordCommands(Scope<RenderCommandBuffer>&& commands)
     {
-        return createScope<OpenGLRecordedBuffer>(std::move(commands));
+        return std::move(commands);
     }
 
     void OpenGlExecuteCommandsVisitor::executeCommands(Scope<RecordedCommandBuffer>&& commands)

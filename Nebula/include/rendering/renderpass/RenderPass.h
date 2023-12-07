@@ -49,6 +49,8 @@ namespace nebula::rendering {
         void attachFramebuffer(const Reference<Framebuffer>& framebuffer = nullptr);
         [[nodiscard]] const GraphicsPipelineState& nextStage();
 
+        [[nodiscard]] uint32_t getNumberOfStages() const;
+
         [[nodiscard]] const Reference<RenderPassTemplate>& viewRenderPassTemplate() const;
         [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
         [[nodiscard]] ClearColor getClearColor() const { return m_clear_color; }

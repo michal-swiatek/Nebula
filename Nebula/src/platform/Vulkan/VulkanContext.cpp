@@ -54,6 +54,11 @@ namespace nebula::rendering {
 
     }
 
+    const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const
+    {
+        return m_swapchain->viewFramebufferTemplate();
+    }
+
     bool VulkanContext::checkVSync()
     {
         return m_swapchain->checkVSync();

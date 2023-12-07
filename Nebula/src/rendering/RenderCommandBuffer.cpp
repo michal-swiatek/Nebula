@@ -28,6 +28,11 @@ namespace nebula::rendering {
         m_commands.clear();
     }
 
+    void* RenderCommandBuffer::getBufferHandle()
+    {
+        return m_commands.data();
+    }
+
     const std::vector<RenderCommand*>& RenderCommandBuffer::viewCommands() const
     {
         return m_commands;

@@ -8,6 +8,8 @@
 
 #include "core/Core.h"
 
+#include "RenderCommandBuffer.h"
+
 namespace nebula::rendering {
 
     class NEBULA_API RenderCommandVisitor
@@ -17,9 +19,6 @@ namespace nebula::rendering {
 
     protected:
     };
-
-    class RenderCommandBuffer;
-    class RecordedCommandBuffer;
 
     class RecordCommandVisitor : public RenderCommandVisitor
     {

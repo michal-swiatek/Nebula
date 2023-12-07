@@ -7,9 +7,10 @@
 #define RENDERCOMMAND_H
 
 #include "core/Core.h"
-#include "RenderCommandVisitor.h"
 
 namespace nebula::rendering {
+
+    class RenderCommandVisitor;
 
     struct NEBULA_API RenderCommand
     {

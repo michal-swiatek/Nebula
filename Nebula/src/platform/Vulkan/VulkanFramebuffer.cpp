@@ -65,9 +65,9 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer!");
     }
 
-    View<FramebufferTemplate> VulkanFramebuffer::viewFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& VulkanFramebuffer::viewFramebufferTemplate() const
     {
-        return m_framebuffer_template.get();
+        return m_framebuffer_template;
     }
 
     void VulkanFramebuffer::createAttachment(const AttachmentDescription& attachment_description, const bool depth_stencil)
@@ -132,6 +132,20 @@ namespace nebula::rendering {
     ////  VulkanSwapchainFramebuffers  ////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
 
+    class SwapchainFramebufferTemplate final : public FramebufferTemplate
+    {
+    public:
+        SwapchainFramebufferTemplate(
+            const uint32_t width,
+            const uint32_t height,
+            const AttachmentDescription& attachment_description
+        ) :
+                FramebufferTemplate(width, height)
+        {
+            addTextureAttachment(attachment_description);
+        }
+    };
+
     VulkanSwapchainFramebuffers::VulkanSwapchainFramebuffers(
         VkSwapchainKHR swapchain,
         VkSurfaceFormatKHR surface_format,
@@ -155,6 +169,10 @@ namespace nebula::rendering {
             const VkResult status = vkCreateImageView(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_image_views[i]);
             NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
         }
+
+        //  TODO: Retrieve format from surface_format
+        AttachmentDescription attachment_description;
+        m_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_width, m_height, attachment_description);
     }
 
     VulkanSwapchainFramebuffers::~VulkanSwapchainFramebuffers()
@@ -204,9 +222,9 @@ namespace nebula::rendering {
         }
     }
 
-    View<FramebufferTemplate> VulkanSwapchainFramebuffers::viewFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffers::viewFramebufferTemplate() const
     {
-        throw std::runtime_error("VulkanSwapchainFramebuffer has no FramebufferTemplate!");
+        return m_framebuffer_template;
     }
 
 }

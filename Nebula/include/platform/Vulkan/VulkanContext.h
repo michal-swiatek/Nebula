@@ -29,6 +29,7 @@ namespace nebula::rendering {
         void setVSync(bool vsync) override;
 
         void swapBuffers() override;
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:
         GLFWwindow* m_window;

@@ -12,7 +12,6 @@
 #include "core/Application.h"
 
 #include "rendering/RenderContext.h"
-#include "rendering/renderer/Renderer.h"
 #include "rendering/renderpass/RenderPassExecutor.h"
 
 namespace nebula::threads {
@@ -24,9 +23,10 @@ namespace nebula::threads {
 
     private:
         Application& m_application;
-
-        Scope<rendering::Renderer> m_renderer;
         Scope<rendering::RenderContext> m_render_context;
+
+        rendering::RenderPassObjects m_renderpass_objects;
+        Scope<rendering::RenderPassExecutor> m_renderpass_executor;
 
         void init() override;
         void shutdown() override;

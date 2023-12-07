@@ -16,7 +16,7 @@ namespace nebula::rendering {
         OpenGlRendererApi();
         ~OpenGlRendererApi() override;
 
-        void compilePipelines(RenderPass* renderpass) override;
+        void compilePipelines(RenderPass& renderpass) override;
     };
 
 }

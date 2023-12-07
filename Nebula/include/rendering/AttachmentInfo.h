@@ -7,7 +7,7 @@
 #define ATTACHMENTINFO_H
 
 #include "core/Core.h"
-#include "TextureFormats.h"
+#include "rendering/TextureFormats.h"
 
 namespace nebula::rendering {
 

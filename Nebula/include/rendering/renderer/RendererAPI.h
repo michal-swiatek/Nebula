@@ -9,7 +9,7 @@
 #include "core/Types.h"
 #include "platform/PlatformAPI.h"
 
-#include "rendering/RenderPass.h"
+#include "rendering/renderpass/RenderPass.h"
 
 namespace nebula {
 
@@ -22,7 +22,7 @@ namespace nebula {
         public:
             virtual ~RendererApi() = default;
 
-            virtual void compilePipelines(RenderPass* renderpass) = 0;
+            virtual void compilePipelines(RenderPass& renderpass) = 0;
 
             static RendererApi& get();
 

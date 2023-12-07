@@ -3,7 +3,7 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "rendering/RenderPass.h"
+#include "rendering/renderpass/RenderPass.h"
 
 #include "core/Assert.h"
 

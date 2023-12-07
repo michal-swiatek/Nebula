@@ -14,9 +14,9 @@
 #include "core/Core.h"
 #include "core/Types.h"
 
-#include "Framebuffer.h"
-#include "AttachmentInfo.h"
-#include "PipelineState.h"
+#include "rendering/Framebuffer.h"
+#include "rendering/AttachmentInfo.h"
+#include "rendering/PipelineState.h"
 
 namespace nebula::rendering {
 

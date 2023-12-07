@@ -21,10 +21,10 @@ namespace nebula::rendering {
         m_pipeline_cache = createScope<VulkanPipelineCache>(pipeline_cache_root.make_preferred().string());
     }
 
-    void VulkanRendererApi::compilePipelines(RenderPass* renderpass)
+    void VulkanRendererApi::compilePipelines(RenderPass& renderpass)
     {
-        const auto& render_stages = renderpass->viewRenderPassTemplate()->viewRenderStages();
-        const auto renderpass_handle = static_cast<VkRenderPass>(renderpass->getRenderPassHandle());
+        const auto& render_stages = renderpass.viewRenderPassTemplate()->viewRenderStages();
+        const auto renderpass_handle = static_cast<VkRenderPass>(renderpass.getRenderPassHandle());
 
         std::vector<VulkanGraphicsPipelineInfo> pipeline_infos{};
         std::vector<VkGraphicsPipelineCreateInfo> pipeline_create_infos{};

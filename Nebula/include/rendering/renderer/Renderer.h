@@ -9,17 +9,17 @@
 #include "core/Core.h"
 #include "core/Assert.h"
 
-#include "rendering/RenderPass.h"
-#include "rendering/commands/RenderCommandBuffer.h"
-
 #include "ForwardRendererBackend.h"
+#include "rendering/RenderObjectVisitor.h"
+#include "rendering/renderpass/RenderPass.h"
+#include "rendering/commands/RenderCommandBuffer.h"
 
 namespace nebula::rendering {
 
-    class NEBULA_API Renderer
+    class NEBULA_API Renderer : public RenderObjectVisitor
     {
     public:
-        virtual ~Renderer() = default;
+        ~Renderer() override = default;
 
         [[nodiscard]] View<RenderPass> viewRenderPass() const;
         [[nodiscard]] Scope<RenderPass> releaseRenderPass();
@@ -32,13 +32,6 @@ namespace nebula::rendering {
 
         [[nodiscard]] Scope<RenderCommandBuffer> getCommandBuffer() const;
 
-        template <typename RenderCommandType, typename... Args>
-        void submitCommand(Args&&... args)
-        {
-            NB_CORE_ASSERT(m_command_buffer, "Command buffer not set! Start RenderPass to set new command buffer.");
-            m_command_buffer->submit<RenderCommandType>(std::forward<Args>(args)...);
-        }
-
         template <typename RendererType, typename RendererBackendType = ForwardRendererBackend>
         static Scope<Renderer> create()
         {
@@ -49,11 +42,18 @@ namespace nebula::rendering {
     protected:
         explicit Renderer(Scope<RendererBackend>&& renderer_backend);
 
+        template <typename RenderCommandType, typename... Args>
+        void submitCommand(Args&&... args)
+        {
+            NB_CORE_ASSERT(m_command_buffer, "Command buffer not set! Start RenderPass to set new command buffer.");
+            m_command_buffer->submit<RenderCommandType>(std::forward<Args>(args)...);
+        }
+
     private:
         Scope<RendererBackend> m_renderer_backend = nullptr;
+        Scope<RenderCommandBuffer> m_command_buffer = nullptr;
 
         Scope<RenderPass> m_renderpass = nullptr;
-        Scope<RenderCommandBuffer> m_command_buffer = nullptr;
 
         enum RenderPassState
         {

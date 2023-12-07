@@ -21,9 +21,9 @@
 #include "memory/Allocators.h"
 #include "memory/MemoryManager.h"
 
-#include "rendering/renderer/Renderer.h"
-#include "rendering/RenderPass.h"
 #include "rendering/Framebuffer.h"
+#include "rendering/renderer/Renderer.h"
+#include "rendering/renderpass/RenderPass.h"
 
 //  Entry point
 #include "core/EntryPoint.h"

@@ -8,7 +8,8 @@
 
 #include "core/Core.h"
 #include "core/Assert.h"
-#include "rendering/Shader.h"
+
+#include "Shader.h"
 #include "rendering/TextureFormats.h"
 
 namespace nebula::rendering {

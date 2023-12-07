@@ -95,7 +95,7 @@ namespace nebula {
                 default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
             }
 
-            RendererApi::get().compilePipelines(renderpass);
+            RendererApi::get().compilePipelines(*renderpass);
 
             return createScopeFromPointer(renderpass);
         }

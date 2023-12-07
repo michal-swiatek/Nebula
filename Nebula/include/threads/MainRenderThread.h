@@ -13,6 +13,7 @@
 
 #include "rendering/RenderContext.h"
 #include "rendering/renderer/Renderer.h"
+#include "rendering/renderpass/RenderPassExecutor.h"
 
 namespace nebula::threads {
 

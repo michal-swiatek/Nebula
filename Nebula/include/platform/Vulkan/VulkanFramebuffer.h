@@ -37,38 +37,6 @@ namespace nebula::rendering {
         void createAttachment(const AttachmentDescription& attachment_description, bool depth_stencil);
     };
 
-    class VulkanSwapchain;
-    class VulkanSwapchainImages;
-
-    class VulkanSwapchainFramebuffer final : public Framebuffer
-    {
-    public:
-        explicit VulkanSwapchainFramebuffer(uint32_t width, uint32_t height, VkImageView image_view);
-        ~VulkanSwapchainFramebuffer() override;
-
-        void bind() override;
-        void unbind() override;
-
-        [[nodiscard]] bool attached() const override;
-        void attachTo(void* renderpass_handle) override;
-
-        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
-
-    private:
-        uint32_t m_width;
-        uint32_t m_height;
-
-        VkImageView m_image_view = VK_NULL_HANDLE;
-        VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
-
-        static Reference<FramebufferTemplate> s_framebuffer_template;
-        static void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template);
-
-        //  For swapchain template access
-        friend class VulkanSwapchain;
-        friend class VulkanSwapchainImages;
-    };
-
     class SwapchainFramebufferTemplate final : public FramebufferTemplate
     {
     public:
@@ -83,6 +51,34 @@ namespace nebula::rendering {
             AttachmentDescription attachment_description;
             addTextureAttachment(attachment_description);
         }
+    };
+
+    class VulkanSwapchain;
+    class VulkanSwapchainImages;
+
+    class VulkanSwapchainFramebuffer final : public Framebuffer
+    {
+    public:
+        explicit VulkanSwapchainFramebuffer(VkImageView image_view, const Reference<FramebufferTemplate>& swapchain_framebuffer_template);
+        ~VulkanSwapchainFramebuffer() override;
+
+        void bind() override;
+        void unbind() override;
+
+        [[nodiscard]] bool attached() const override;
+        void attachTo(void* renderpass_handle) override;
+
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
+
+    private:
+        VkImageView m_image_view = VK_NULL_HANDLE;
+        VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
+
+        Reference<FramebufferTemplate> m_framebuffer_template;
+
+        //  For swapchain template access
+        friend class VulkanSwapchain;
+        friend class VulkanSwapchainImages;
     };
 
 }

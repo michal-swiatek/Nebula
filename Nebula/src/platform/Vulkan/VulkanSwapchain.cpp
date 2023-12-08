@@ -42,9 +42,6 @@ namespace nebula::rendering {
             const VkResult status = vkCreateImageView(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_image_views[i]);
             NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
         }
-
-        auto swapchain_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_width, m_height, m_surface_format.format);
-        VulkanSwapchainFramebuffer::setFramebufferTemplate(swapchain_framebuffer_template);
     }
 
     VulkanSwapchainImages::~VulkanSwapchainImages()
@@ -66,8 +63,8 @@ namespace nebula::rendering {
 
     VulkanSwapchain::~VulkanSwapchain()
     {
-        if (m_swapchain)
-            vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
+        m_framebuffers.clear();
+        vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
     }
 
     void VulkanSwapchain::recreateSwapchain(const uint32_t width, const uint32_t height, bool vsync)
@@ -127,14 +124,16 @@ namespace nebula::rendering {
         }
 
         const VkResult status = vkCreateSwapchainKHR(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain);
-        NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain!");
+        NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create Vulkan swapchain!");
     }
 
     void VulkanSwapchain::createFramebuffers()
     {
         m_swapchain_images = createScope<VulkanSwapchainImages>(m_swapchain, m_surface_format, m_extent.width, m_extent.height);
+        m_swapchain_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_extent.width, m_extent.height, m_surface_format.format);
+
         for (auto image_view : m_swapchain_images->viewImageViews())
-            m_framebuffers.emplace_back(createScope<VulkanSwapchainFramebuffer>(m_extent.width, m_extent.height, image_view));
+            m_framebuffers.emplace_back(createScope<VulkanSwapchainFramebuffer>(image_view, m_swapchain_framebuffer_template));
     }
 
     bool VulkanSwapchain::checkVSync() const
@@ -142,9 +141,9 @@ namespace nebula::rendering {
         return m_present_mode == VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    const Reference<FramebufferTemplate>& VulkanSwapchain::viewFramebufferTemplate()
+    const Reference<FramebufferTemplate>& VulkanSwapchain::viewFramebufferTemplate() const
     {
-        return VulkanSwapchainFramebuffer::s_framebuffer_template;
+        return m_swapchain_framebuffer_template;
     }
 
     //////////////////////////////////////////////////////////////////

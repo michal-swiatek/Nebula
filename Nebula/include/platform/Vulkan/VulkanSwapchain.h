@@ -46,14 +46,15 @@ namespace nebula::rendering {
         void recreateSwapchain(uint32_t width, uint32_t height, bool vsync);
 
         [[nodiscard]] bool checkVSync() const;
-        static const Reference<FramebufferTemplate>& viewFramebufferTemplate();
+        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
 
     private:
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 
-        Scope<VulkanSwapchainImages> m_swapchain_images = nullptr;
+        Scope<VulkanSwapchainImages> m_swapchain_images;
         std::vector<Scope<VulkanSwapchainFramebuffer>> m_framebuffers;
+        Reference<FramebufferTemplate> m_swapchain_framebuffer_template;
 
         VkExtent2D m_extent{};
         VkPresentModeKHR m_present_mode{};

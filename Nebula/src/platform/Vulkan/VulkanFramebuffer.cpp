@@ -130,10 +130,11 @@ namespace nebula::rendering {
     ////  VulkanSwapchainFramebuffer  /////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
 
-    Reference<FramebufferTemplate> VulkanSwapchainFramebuffer::s_framebuffer_template = nullptr;
-
-    VulkanSwapchainFramebuffer::VulkanSwapchainFramebuffer(uint32_t width, uint32_t height, VkImageView image_view) :
-            m_width(width), m_height(height), m_image_view(image_view)
+    VulkanSwapchainFramebuffer::VulkanSwapchainFramebuffer(
+        VkImageView image_view,
+        const Reference<FramebufferTemplate>& swapchain_framebuffer_template
+    ) :
+            m_image_view(image_view), m_framebuffer_template(swapchain_framebuffer_template)
     {}
 
     VulkanSwapchainFramebuffer::~VulkanSwapchainFramebuffer()
@@ -165,8 +166,8 @@ namespace nebula::rendering {
         create_info.renderPass = static_cast<VkRenderPass>(renderpass_handle);
         create_info.attachmentCount = 1;
         create_info.pAttachments = attachments;
-        create_info.width = m_width;
-        create_info.height = m_height;
+        create_info.width = m_framebuffer_template->getWidth();
+        create_info.height = m_framebuffer_template->getHeight();
         create_info.layers = 1;
 
         const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_framebuffer);
@@ -175,13 +176,7 @@ namespace nebula::rendering {
 
     const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffer::viewFramebufferTemplate() const
     {
-        NB_CORE_ASSERT(s_framebuffer_template);
-        return s_framebuffer_template;
-    }
-
-    void VulkanSwapchainFramebuffer::setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template)
-    {
-        s_framebuffer_template = framebuffer_template;
+        return m_framebuffer_template;
     }
 
 }

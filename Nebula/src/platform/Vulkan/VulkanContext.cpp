@@ -18,7 +18,7 @@ namespace nebula::rendering {
 
     VulkanContext::VulkanContext(GLFWwindow* window_handle) : m_window(window_handle)
     {
-        NB_CORE_ASSERT(m_window, "Window handle in null!");
+        NB_CORE_ASSERT(m_window);
 
         m_vulkan_api = VulkanAPI::create(m_window);
         m_surface = m_vulkan_api->getSurface();
@@ -37,7 +37,11 @@ namespace nebula::rendering {
         }
     }
 
-    VulkanContext::~VulkanContext() = default;
+    VulkanContext::~VulkanContext()
+    {
+        m_swapchain.reset();
+        m_vulkan_api.reset();
+    }
 
     void VulkanContext::bind()
     {
@@ -56,7 +60,7 @@ namespace nebula::rendering {
 
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const
     {
-        return VulkanSwapchain::viewFramebufferTemplate();
+        return m_swapchain->viewFramebufferTemplate();
     }
 
     bool VulkanContext::checkVSync()

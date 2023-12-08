@@ -28,7 +28,11 @@ namespace nebula::rendering {
         bool checkVSync() override;
         void setVSync(bool vsync) override;
 
-        void swapBuffers() override;
+        void presentImage() override;
+        Reference<Framebuffer> getNextImage() override;
+
+        void waitForFrameResources(uint32_t frame) override;
+
         [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:

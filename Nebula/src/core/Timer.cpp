@@ -6,7 +6,7 @@
 #include "core/Timer.h"
 
 #include "core/Core.h"
-#include "core/Application.h"
+#include "core/UpdateContext.h"
 
 namespace nebula {
 
@@ -17,7 +17,7 @@ namespace nebula {
 
     void Timer::sleepUntil(double application_time)
     {
-        double sleep_time = std::max(application_time - Application::get().getTime(), 0.0);
+        double sleep_time = std::max(application_time - UpdateContext::get().getTime(), 0.0);
         system_sleep(sleep_time);
     }
 
@@ -33,7 +33,7 @@ namespace nebula {
     void Timer::sleepUntilPrecise(double application_time, double busy_offset)
     {
         static constexpr double epsilon = 0.0;
-        Timer busy_timer(Application::get().getTime());
+        Timer busy_timer(UpdateContext::get().getTime());
 
         sleepUntil(application_time - busy_offset);                       //  Thread sleeping
         while (application_time - busy_timer.elapsedSeconds() > epsilon); //  Spin-lock remaining duration

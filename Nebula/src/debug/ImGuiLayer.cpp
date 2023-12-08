@@ -15,9 +15,13 @@
 #include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_opengl3.h>
 
-#include "core/Application.h"
 #include "core/Timestep.h"
+#include "core/Application.h"
+#include "core/UpdateContext.h"
+#include "rendering/RenderContext.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
+
+using namespace nebula::rendering;
 
 namespace nebula {
 
@@ -142,18 +146,19 @@ namespace nebula {
         static int frame_offset = 0;
 
         //  FPS control variables
-        // static bool vsync = Application::get().getWindow().getProperties().vsync;
         static bool vsync = true;
-        static float update_timestep = Application::get().getUpdateTimestep();
-        static int render_fps = Application::get().getRenderFps();
+        static float update_timestep = UpdateContext::get().getUpdateTimestep();
+        static int render_fps = RenderContext::get().getRenderFps();
 
         //  Update current application settings
         auto& application = Application::get();
+        auto& update_context = UpdateContext::get();
+        auto& render_context = RenderContext::get();
 
         // vsync = application.getWindow().getProperties().vsync;
         vsync = true;
-        update_timestep = application.getUpdateTimestep();
-        render_fps = application.getRenderFps();
+        update_timestep = update_context.getUpdateTimestep();
+        render_fps = render_context.getRenderFps();
 
         //  Update current frame time info
         auto frame_time = Timestep(m_frame_timer.elapsedSeconds(true));
@@ -194,9 +199,8 @@ namespace nebula {
         }
 
         //  Set new fps settings
-        application.setUpdateTimestep(update_timestep);
-        application.setRenderFps(render_fps);
-        // application.getWindow().setVSync(vsync);
+        update_context.setUpdateTimestep(update_timestep);
+        render_context.setRenderFps(render_fps);
     }
 
 }

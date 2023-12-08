@@ -53,7 +53,17 @@ namespace nebula::rendering {
 
     }
 
-    void VulkanContext::swapBuffers()
+    void VulkanContext::presentImage()
+    {
+
+    }
+
+    Reference<Framebuffer> VulkanContext::getNextImage()
+    {
+        return nullptr; //  TODO: implement
+    }
+
+    void VulkanContext::waitForFrameResources(uint32_t frame)
     {
 
     }

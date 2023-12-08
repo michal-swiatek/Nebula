@@ -53,8 +53,8 @@ namespace nebula::rendering {
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 
         Scope<VulkanSwapchainImages> m_swapchain_images;
-        std::vector<Scope<VulkanSwapchainFramebuffer>> m_framebuffers;
         Reference<FramebufferTemplate> m_swapchain_framebuffer_template;
+        std::vector<Reference<VulkanSwapchainFramebuffer>> m_framebuffers;
 
         VkExtent2D m_extent{};
         VkPresentModeKHR m_present_mode{};

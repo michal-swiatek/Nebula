@@ -10,6 +10,7 @@
 
 #include "core/Timer.h"
 #include "core/Application.h"
+#include "core/UpdateContext.h"
 
 namespace nebula::threads {
 
@@ -20,6 +21,7 @@ namespace nebula::threads {
 
     private:
         Application& m_application;
+        Scope<UpdateContext> m_update_context;
 
         Timer m_update_timer;
         double m_update_accumulator = 0.0;

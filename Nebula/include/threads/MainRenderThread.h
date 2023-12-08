@@ -28,10 +28,13 @@ namespace nebula::threads {
         rendering::RenderPassObjects m_renderpass_objects;
         Scope<rendering::RenderPassExecutor> m_renderpass_executor;
 
+        void mainLoopBody() override;
+
+        void executefinalPass() const;
+        void updateApplicationStack() const;
+
         void init() override;
         void shutdown() override;
-
-        void mainLoopBody() override;
     };
 
 }

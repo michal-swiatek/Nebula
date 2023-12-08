@@ -69,6 +69,7 @@ namespace nebula {
 
         auto rendering_section = YAML::Node();
         rendering_section["cache_path"] = "cache/rendering";
+        rendering_section["frames_in_flight"] = 2;
 
         auto resources_section = YAML::Node();
         resources_section["resources_directory"] = NEBULA_RESOURCES_DIRECTORY;

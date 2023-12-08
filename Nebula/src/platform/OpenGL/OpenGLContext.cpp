@@ -10,6 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "../../../3rd-party/spirv-cross/spirv.hpp"
 #include "core/Assert.h"
 #include "platform/EngineConfiguration.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
@@ -64,9 +65,19 @@ namespace nebula::rendering {
         return m_vsync;
     }
 
-    void OpenGLContext::swapBuffers()
+    void OpenGLContext::presentImage()
     {
         glfwSwapBuffers(m_window);
+    }
+
+    Reference<Framebuffer> OpenGLContext::getNextImage()
+    {
+        return nullptr; //  TODO: implement
+    }
+
+    void OpenGLContext::waitForFrameResources(uint32_t frame)
+    {
+
     }
 
     const Reference<FramebufferTemplate>& OpenGLContext::viewFramebufferTemplate() const

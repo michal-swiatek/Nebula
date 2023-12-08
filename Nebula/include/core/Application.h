@@ -48,6 +48,7 @@ namespace nebula {
         std::string logger_name = "APP";
         std::string working_directory;
 
+        //  TODO: Move to config file
         int render_fps = 0;
         double update_timestep = 0.02;
 
@@ -72,12 +73,6 @@ namespace nebula {
         [[nodiscard]] rendering::API getRenderingAPI() const { return m_specification.api; }
         [[nodiscard]] ApplicationVersion getVersion() const { return m_specification.version; }
         [[nodiscard]] std::string getName() const { return m_specification.name; }
-        [[nodiscard]] double getTime() { return m_application_timer.elapsedSeconds(); }
-
-        [[nodiscard]] int getRenderFps() { std::lock_guard lock{m_mutex}; return m_specification.render_fps; }
-        [[nodiscard]] double getUpdateTimestep() { std::lock_guard lock{m_mutex}; return m_specification.update_timestep; }
-        void setRenderFps(const int fps) { std::lock_guard lock{m_mutex}; m_specification.render_fps = fps; }
-        void setUpdateTimestep(const double timestep) { std::lock_guard lock{m_mutex}; m_specification.update_timestep = timestep; }
 
         static Window& getWindow() { return *s_instance->m_window; }
         static Application& get() { return *s_instance; }
@@ -114,7 +109,6 @@ namespace nebula {
 
         bool m_running = true;
         bool m_minimized = false;
-        Timer m_application_timer;
 
         Scope<Input> m_input;
         Scope<Window> m_window;

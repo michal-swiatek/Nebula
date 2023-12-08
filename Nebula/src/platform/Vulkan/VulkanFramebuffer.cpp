@@ -7,8 +7,6 @@
 
 #include "platform/Vulkan/VulkanTextureFormats.h"
 
-VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surface_format);
-
 namespace nebula::rendering {
 
     VulkanFramebuffer::VulkanFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template) :
@@ -129,122 +127,63 @@ namespace nebula::rendering {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
-    ////  VulkanSwapchainFramebuffers  ////////////////////////////////////////////////
+    ////  VulkanSwapchainFramebuffer  /////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
 
-    class SwapchainFramebufferTemplate final : public FramebufferTemplate
+    Reference<FramebufferTemplate> VulkanSwapchainFramebuffer::s_framebuffer_template = nullptr;
+
+    VulkanSwapchainFramebuffer::VulkanSwapchainFramebuffer(uint32_t width, uint32_t height, VkImageView image_view) :
+            m_width(width), m_height(height), m_image_view(image_view)
+    {}
+
+    VulkanSwapchainFramebuffer::~VulkanSwapchainFramebuffer()
     {
-    public:
-        SwapchainFramebufferTemplate(
-            const uint32_t width,
-            const uint32_t height,
-            const AttachmentDescription& attachment_description
-        ) :
-                FramebufferTemplate(width, height)
-        {
-            addTextureAttachment(attachment_description);
-        }
-    };
-
-    VulkanSwapchainFramebuffers::VulkanSwapchainFramebuffers(
-        VkSwapchainKHR swapchain,
-        VkSurfaceFormatKHR surface_format,
-        const uint32_t width,
-        const uint32_t height
-    ):
-            m_width(width),
-            m_height(height),
-            m_surface_format(surface_format)
-    {
-        uint32_t image_count;
-        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, nullptr);
-
-        m_swapchain_images.resize(image_count);
-        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, m_swapchain_images.data());
-
-        m_swapchain_image_views.resize(image_count);
-        for (int i = 0; i < m_swapchain_images.size(); ++i)
-        {
-            auto create_info = createSwapchainImageViewInfo(m_swapchain_images[i], m_surface_format.format);
-            const VkResult status = vkCreateImageView(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_image_views[i]);
-            NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
-        }
-
-        //  TODO: Retrieve format from surface_format
-        AttachmentDescription attachment_description;
-        m_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_width, m_height, attachment_description);
+        if (m_framebuffer)
+            vkDestroyFramebuffer(VulkanAPI::getDevice(), m_framebuffer, nullptr);
     }
 
-    VulkanSwapchainFramebuffers::~VulkanSwapchainFramebuffers()
-    {
-        for (const auto& framebuffer : m_swapchain_framebuffers)
-            vkDestroyFramebuffer(VulkanAPI::getDevice(), framebuffer, nullptr);
-
-        for (const auto& image_view : m_swapchain_image_views)
-            vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
-    }
-
-    void VulkanSwapchainFramebuffers::bind()
+    void VulkanSwapchainFramebuffer::bind()
     {
         NB_CORE_ASSERT(attached(), "Cannot bind framebuffer that is not attached to any renderpass!");
     }
 
-    void VulkanSwapchainFramebuffers::unbind()
-    {
+    void VulkanSwapchainFramebuffer::unbind() {}
 
+    bool VulkanSwapchainFramebuffer::attached() const
+    {
+        return m_framebuffer != VK_NULL_HANDLE;
     }
 
-    bool VulkanSwapchainFramebuffers::attached() const
+    void VulkanSwapchainFramebuffer::attachTo(void* renderpass_handle)
     {
-        return !m_swapchain_framebuffers.empty();
+        NB_ASSERT(renderpass_handle);
+
+        VkFramebufferCreateInfo create_info{};
+        const VkImageView attachments[] = {m_image_view};
+
+        create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        create_info.renderPass = static_cast<VkRenderPass>(renderpass_handle);
+        create_info.attachmentCount = 1;
+        create_info.pAttachments = attachments;
+        create_info.width = m_width;
+        create_info.height = m_height;
+        create_info.layers = 1;
+
+        const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_framebuffer);
+        NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create swapchain framebuffer!");
     }
 
-    void VulkanSwapchainFramebuffers::attachTo(void* renderpass_handle)
+    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffer::viewFramebufferTemplate() const
     {
-        NB_ASSERT(renderpass_handle, "Recieved null renderpass handle!");
-        m_swapchain_framebuffers.resize(m_swapchain_image_views.size());
-
-        for (int i = 0; i < m_swapchain_framebuffers.size(); ++i)
-        {
-            VkFramebufferCreateInfo create_info{};
-            const VkImageView attachments[] = {m_swapchain_image_views[i]};
-
-            create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            create_info.renderPass = static_cast<VkRenderPass>(renderpass_handle);
-            create_info.attachmentCount = 1;
-            create_info.pAttachments = attachments;
-            create_info.width = m_width;
-            create_info.height = m_height;
-            create_info.layers = 1;
-
-            const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_framebuffers[i]);
-            NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create swapchain framebuffer!");
-        }
+        NB_CORE_ASSERT(s_framebuffer_template);
+        return s_framebuffer_template;
     }
 
-    const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffers::viewFramebufferTemplate() const
+    void VulkanSwapchainFramebuffer::setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template)
     {
-        return m_framebuffer_template;
+        s_framebuffer_template = framebuffer_template;
     }
 
 }
 
-VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, const VkFormat surface_format)
-{
-    VkImageViewCreateInfo create_info{};
-    create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    create_info.image = image;
-    create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    create_info.format = surface_format;
-    create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-    create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-    create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-    create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    create_info.subresourceRange.baseMipLevel = 0;
-    create_info.subresourceRange.levelCount = 1;
-    create_info.subresourceRange.baseArrayLayer = 0;
-    create_info.subresourceRange.layerCount = 1;
 
-    return create_info;
-}

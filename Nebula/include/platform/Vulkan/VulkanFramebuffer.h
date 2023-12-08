@@ -8,8 +8,8 @@
 
 #include "rendering/Framebuffer.h"
 
-#include "platform/Vulkan/VulkanAPI.h"
 #include "core/Types.h"
+#include "platform/Vulkan/VulkanAPI.h"
 
 namespace nebula::rendering {
 
@@ -37,11 +37,14 @@ namespace nebula::rendering {
         void createAttachment(const AttachmentDescription& attachment_description, bool depth_stencil);
     };
 
-    class VulkanSwapchainFramebuffers final : public Framebuffer
+    class VulkanSwapchain;
+    class VulkanSwapchainImages;
+
+    class VulkanSwapchainFramebuffer final : public Framebuffer
     {
     public:
-        VulkanSwapchainFramebuffers(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format, uint32_t width, uint32_t height);
-        ~VulkanSwapchainFramebuffers() override;
+        explicit VulkanSwapchainFramebuffer(uint32_t width, uint32_t height, VkImageView image_view);
+        ~VulkanSwapchainFramebuffer() override;
 
         void bind() override;
         void unbind() override;
@@ -54,13 +57,32 @@ namespace nebula::rendering {
     private:
         uint32_t m_width;
         uint32_t m_height;
-        VkSurfaceFormatKHR m_surface_format;
 
-        std::vector<VkImage> m_swapchain_images{};
-        std::vector<VkImageView> m_swapchain_image_views{};
-        std::vector<VkFramebuffer> m_swapchain_framebuffers{};
+        VkImageView m_image_view = VK_NULL_HANDLE;
+        VkFramebuffer m_framebuffer = VK_NULL_HANDLE;
 
-        Reference<FramebufferTemplate> m_framebuffer_template;
+        static Reference<FramebufferTemplate> s_framebuffer_template;
+        static void setFramebufferTemplate(const Reference<FramebufferTemplate>& framebuffer_template);
+
+        //  For swapchain template access
+        friend class VulkanSwapchain;
+        friend class VulkanSwapchainImages;
+    };
+
+    class SwapchainFramebufferTemplate final : public FramebufferTemplate
+    {
+    public:
+        SwapchainFramebufferTemplate(
+            const uint32_t width,
+            const uint32_t height,
+            VkFormat format
+        ) :
+                FramebufferTemplate(width, height)
+        {
+            //  TODO: Convert Vulkan format to Nebula format
+            AttachmentDescription attachment_description;
+            addTextureAttachment(attachment_description);
+        }
     };
 
 }

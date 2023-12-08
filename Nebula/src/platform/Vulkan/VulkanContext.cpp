@@ -24,7 +24,7 @@ namespace nebula::rendering {
         m_surface = m_vulkan_api->getSurface();
 
         m_swapchain = createScope<VulkanSwapchain>(m_surface);
-        setVSync(true);
+        setVSync(true); //  Creates swapchain with proper parameters
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
         {
@@ -56,7 +56,7 @@ namespace nebula::rendering {
 
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const
     {
-        return m_swapchain->viewFramebufferTemplate();
+        return VulkanSwapchain::viewFramebufferTemplate();
     }
 
     bool VulkanContext::checkVSync()

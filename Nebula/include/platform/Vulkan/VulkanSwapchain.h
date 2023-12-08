@@ -20,6 +20,23 @@ namespace nebula::rendering {
 
     SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
 
+    class VulkanSwapchainImages
+    {
+    public:
+        VulkanSwapchainImages(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format, uint32_t width, uint32_t height);
+        ~VulkanSwapchainImages();
+
+        [[nodiscard]] const std::vector<VkImageView>& viewImageViews() const;
+
+    private:
+        uint32_t m_width;
+        uint32_t m_height;
+        VkSurfaceFormatKHR m_surface_format;
+
+        std::vector<VkImage> m_swapchain_images{};
+        std::vector<VkImageView> m_swapchain_image_views{};
+    };
+
     class VulkanSwapchain
     {
     public:
@@ -29,13 +46,14 @@ namespace nebula::rendering {
         void recreateSwapchain(uint32_t width, uint32_t height, bool vsync);
 
         [[nodiscard]] bool checkVSync() const;
-        [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
+        static const Reference<FramebufferTemplate>& viewFramebufferTemplate();
 
     private:
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 
-        Scope<VulkanSwapchainFramebuffers> m_framebuffers = nullptr;
+        Scope<VulkanSwapchainImages> m_swapchain_images = nullptr;
+        std::vector<Scope<VulkanSwapchainFramebuffer>> m_framebuffers;
 
         VkExtent2D m_extent{};
         VkPresentModeKHR m_present_mode{};

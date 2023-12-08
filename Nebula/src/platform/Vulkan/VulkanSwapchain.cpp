@@ -7,11 +7,60 @@
 
 #include "platform/Vulkan/VulkanAPI.h"
 
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, VkFormat surface_format);
+
 namespace nebula::rendering {
 
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes, bool vsync);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, uint32_t width, uint32_t height);
+
+    //////////////////////////////////////////////////////////////////
+    /////  VulkanSwapchainImages  ////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+
+    VulkanSwapchainImages::VulkanSwapchainImages(
+        VkSwapchainKHR swapchain,
+        VkSurfaceFormatKHR surface_format,
+        uint32_t width,
+        uint32_t height
+    ) :
+            m_width(width),
+            m_height(height),
+            m_surface_format(surface_format)
+    {
+        uint32_t image_count;
+        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, nullptr);
+
+        m_swapchain_images.resize(image_count);
+        vkGetSwapchainImagesKHR(VulkanAPI::getDevice(), swapchain, &image_count, m_swapchain_images.data());
+
+        m_swapchain_image_views.resize(image_count);
+        for (int i = 0; i < m_swapchain_images.size(); ++i)
+        {
+            auto create_info = createSwapchainImageViewInfo(m_swapchain_images[i], m_surface_format.format);
+            const VkResult status = vkCreateImageView(VulkanAPI::getDevice(), &create_info, nullptr, &m_swapchain_image_views[i]);
+            NB_CORE_ASSERT(status == VK_SUCCESS, "Failed to create swapchain image view!");
+        }
+
+        auto swapchain_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_width, m_height, m_surface_format.format);
+        VulkanSwapchainFramebuffer::setFramebufferTemplate(swapchain_framebuffer_template);
+    }
+
+    VulkanSwapchainImages::~VulkanSwapchainImages()
+    {
+        for (const auto& image_view : m_swapchain_image_views)
+            vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
+    }
+
+    const std::vector<VkImageView>& VulkanSwapchainImages::viewImageViews() const
+    {
+        return m_swapchain_image_views;
+    }
+
+    //////////////////////////////////////////////////////////////////
+    /////  VulkanSwapchain  //////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     VulkanSwapchain::VulkanSwapchain(VkSurfaceKHR surface) : m_surface(surface) {}
 
@@ -27,7 +76,7 @@ namespace nebula::rendering {
 
         if (m_swapchain)
         {
-            m_framebuffers.reset();
+            m_framebuffers.clear();
             vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
         }
 
@@ -83,7 +132,9 @@ namespace nebula::rendering {
 
     void VulkanSwapchain::createFramebuffers()
     {
-        m_framebuffers = createScope<VulkanSwapchainFramebuffers>(m_swapchain, m_surface_format, m_extent.width, m_extent.height);
+        m_swapchain_images = createScope<VulkanSwapchainImages>(m_swapchain, m_surface_format, m_extent.width, m_extent.height);
+        for (auto image_view : m_swapchain_images->viewImageViews())
+            m_framebuffers.emplace_back(createScope<VulkanSwapchainFramebuffer>(m_extent.width, m_extent.height, image_view));
     }
 
     bool VulkanSwapchain::checkVSync() const
@@ -91,14 +142,14 @@ namespace nebula::rendering {
         return m_present_mode == VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    const Reference<FramebufferTemplate>& VulkanSwapchain::viewFramebufferTemplate() const
+    const Reference<FramebufferTemplate>& VulkanSwapchain::viewFramebufferTemplate()
     {
-        return m_framebuffers->viewFramebufferTemplate();
+        return VulkanSwapchainFramebuffer::s_framebuffer_template;
     }
 
-    //
-    //  Utility functions
-    //
+    //////////////////////////////////////////////////////////////////
+    /////  Utility functions  ////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
 
     SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
     {
@@ -153,4 +204,24 @@ namespace nebula::rendering {
         return extent;
     }
 
+}
+
+VkImageViewCreateInfo createSwapchainImageViewInfo(VkImage image, const VkFormat surface_format)
+{
+    VkImageViewCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    create_info.image = image;
+    create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    create_info.format = surface_format;
+    create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    create_info.subresourceRange.baseMipLevel = 0;
+    create_info.subresourceRange.levelCount = 1;
+    create_info.subresourceRange.baseArrayLayer = 0;
+    create_info.subresourceRange.layerCount = 1;
+
+    return create_info;
 }

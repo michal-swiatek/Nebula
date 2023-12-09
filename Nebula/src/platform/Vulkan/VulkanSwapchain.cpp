@@ -67,6 +67,28 @@ namespace nebula::rendering {
         vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
     }
 
+    void VulkanSwapchain::presentImage(VkSemaphore render_finished) const
+    {
+        VkPresentInfoKHR present_info{};
+        present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+        present_info.waitSemaphoreCount = 1;
+        present_info.pWaitSemaphores = &render_finished;
+        present_info.swapchainCount = 1;
+        present_info.pSwapchains = &m_swapchain;
+        present_info.pImageIndices = &m_current_image_index;
+        present_info.pResults = nullptr;
+
+        const auto queue_info = VulkanAPI::getQueuesInfo();
+        vkQueuePresentKHR(queue_info.presentation_queue, &present_info);
+    }
+
+    Reference<Framebuffer> VulkanSwapchain::getNextImage(VkSemaphore image_available)
+    {
+        vkAcquireNextImageKHR(VulkanAPI::getDevice(), m_swapchain, UINT64_MAX, image_available, VK_NULL_HANDLE, &m_current_image_index);
+        return m_framebuffers[m_current_image_index];
+    }
+
     void VulkanSwapchain::recreateSwapchain(const uint32_t width, const uint32_t height, bool vsync)
     {
         vkDeviceWaitIdle(VulkanAPI::getDevice());
@@ -130,7 +152,7 @@ namespace nebula::rendering {
     void VulkanSwapchain::createFramebuffers()
     {
         m_swapchain_images = createScope<VulkanSwapchainImages>(m_swapchain, m_surface_format, m_extent.width, m_extent.height);
-        m_swapchain_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_extent.width, m_extent.height, m_surface_format.format);
+        m_swapchain_framebuffer_template = createReference<SwapchainFramebufferTemplate>(m_extent.width, m_extent.height);
 
         for (auto image_view : m_swapchain_images->viewImageViews())
             m_framebuffers.emplace_back(createScope<VulkanSwapchainFramebuffer>(image_view, m_swapchain_framebuffer_template));
@@ -180,7 +202,8 @@ namespace nebula::rendering {
         for (const auto& format : available_formats)
             if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
                 return format;
-        return available_formats[0];
+        NB_CORE_ASSERT(false, "Vulkan surface format not supported!");
+        return {};
     }
 
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes, const bool vsync)

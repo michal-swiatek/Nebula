@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "core/Types.h"
+#include "rendering/commands/RenderCommandVisitor.h"
 
 namespace nebula {
 
@@ -53,6 +54,8 @@ namespace nebula {
 
             virtual void presentImage() = 0;
             virtual Reference<Framebuffer> getNextImage() = 0;
+
+            virtual Scope<ExecuteCommandVisitor> getCommandExecutor() = 0; 
 
             [[nodiscard]] virtual const Reference<FramebufferTemplate>& viewFramebufferTemplate() const = 0;
 

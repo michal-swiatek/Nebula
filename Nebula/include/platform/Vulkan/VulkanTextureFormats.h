@@ -75,6 +75,7 @@ namespace nebula::rendering {
             case TextureFormat::cFormat_R64G64B64_SINT:             return VK_FORMAT_R64G64B64_SINT;
             case TextureFormat::cFormat_R64G64B64_FLOAT:            return VK_FORMAT_R64G64B64_SFLOAT;
 
+            case TextureFormat::cFormat_B8G8R8A8_SRB:               return VK_FORMAT_B8G8R8A8_SRGB;
             case TextureFormat::cFormat_R8G8B8A8_UINT:              return VK_FORMAT_R8G8B8A8_UINT;
             case TextureFormat::cFormat_R8G8B8A8_SINT:              return VK_FORMAT_R8G8B8A8_SINT;
             case TextureFormat::cFormat_R8G8B8A8_SRGB:              return VK_FORMAT_R8G8B8A8_SRGB;

@@ -6,16 +6,26 @@
 #ifndef OPENGLCONTEXT_H
 #define OPENGLCONTEXT_H
 
+#include "rendering/Framebuffer.h"
 #include "rendering/RenderContext.h"
 
 struct GLFWwindow;
 
 namespace nebula::rendering {
 
+    class OpenGLFramebufferTemplate final : public FramebufferTemplate
+    {
+    public:
+        //  TODO: implement
+        OpenGLFramebufferTemplate() : FramebufferTemplate(0, 0) {}
+    };
+
     class OpenGLContext final : public RenderContext
     {
     public:
         explicit OpenGLContext(GLFWwindow* window_handle);
+
+        void waitForFrameResources(uint32_t frame) override;
 
         void bind() override;
         void unbind() override;
@@ -26,13 +36,15 @@ namespace nebula::rendering {
         void presentImage() override;
         Reference<Framebuffer> getNextImage() override;
 
-        void waitForFrameResources(uint32_t frame) override;
+        Scope<ExecuteCommandVisitor> getCommandExecutor() override;
 
         [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:
         GLFWwindow* m_window;
         bool m_vsync = true;
+
+        Reference<FramebufferTemplate> m_framebuffer_template;
     };
 
 }

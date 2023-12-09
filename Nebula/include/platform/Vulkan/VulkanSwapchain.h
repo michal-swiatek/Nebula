@@ -43,12 +43,17 @@ namespace nebula::rendering {
         explicit VulkanSwapchain(VkSurfaceKHR surface);
         ~VulkanSwapchain();
 
+        void presentImage(VkSemaphore render_finished) const;
+        Reference<Framebuffer> getNextImage(VkSemaphore image_available);
+
         void recreateSwapchain(uint32_t width, uint32_t height, bool vsync);
 
         [[nodiscard]] bool checkVSync() const;
         [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const;
 
     private:
+        uint32_t m_current_image_index;
+
         VkSurfaceKHR m_surface = VK_NULL_HANDLE;
         VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
 

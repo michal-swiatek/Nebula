@@ -62,7 +62,9 @@ namespace nebula {
 
             if (!m_application.minimized())
             {
-                // executefinalPass();
+                m_render_context->waitForFrameResources(m_render_context->getCurrentRenderFrame());
+
+                executefinalPass();
                 updateApplicationStack();
 
                 m_render_context->presentImage();
@@ -73,11 +75,10 @@ namespace nebula {
 
         void MainRenderThread::executefinalPass() const
         {
-            auto framebuffer = m_render_context->getNextImage();
+            const auto framebuffer = m_render_context->getNextImage();
             m_renderpass_executor->setFramebuffer(framebuffer);
-            m_renderpass_executor->execute(m_renderpass_objects);
 
-            auto commands = m_renderpass_executor->getCommands();
+            auto recorded_command = m_renderpass_executor->execute(m_renderpass_objects);
         }
 
         void MainRenderThread::updateApplicationStack() const
@@ -100,13 +101,14 @@ namespace nebula {
             RendererApi::create(m_application.getRenderingAPI());
 
             //  Init members
-            const auto renderpass_template = createReference<FinalRenderPass>(m_render_context->viewFramebufferTemplate());
+            const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
+            const auto renderpass_template = createReference<FinalRenderPass>(swapchain_framebuffer_template);
             auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
 
             renderer->setRenderPass(renderpass_template);
-            m_renderpass_objects.setStages(renderpass_template->viewRenderStages().size());
-
             m_renderpass_executor = createScope<RenderPassExecutor>(std::move(renderer));
+
+            m_renderpass_objects.setStages(renderpass_template->viewRenderStages().size());
         }
 
         void MainRenderThread::shutdown()
@@ -114,6 +116,8 @@ namespace nebula {
             m_renderpass_executor.reset();
 
             RendererApi::destroy();
+
+            m_render_context->unbind();
             m_render_context.reset();
         }
 

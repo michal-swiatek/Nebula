@@ -40,15 +40,11 @@ namespace nebula::rendering {
     class SwapchainFramebufferTemplate final : public FramebufferTemplate
     {
     public:
-        SwapchainFramebufferTemplate(
-            const uint32_t width,
-            const uint32_t height,
-            VkFormat format
-        ) :
-                FramebufferTemplate(width, height)
+        SwapchainFramebufferTemplate(const uint32_t width, const uint32_t height) : FramebufferTemplate(width, height)
         {
-            //  TODO: Convert Vulkan format to Nebula format
             AttachmentDescription attachment_description;
+            attachment_description.format = TextureFormat::cFormat_B8G8R8A8_SRB;
+            attachment_description.final_layout = AttachmentLayout::cPresentOptimal;
             addTextureAttachment(attachment_description);
         }
     };

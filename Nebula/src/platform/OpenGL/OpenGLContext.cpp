@@ -9,6 +9,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <rendering/Framebuffer.h>
 
 #include "../../../3rd-party/spirv-cross/spirv.hpp"
 #include "core/Assert.h"
@@ -39,6 +40,8 @@ namespace nebula::rendering {
             GLVersion.major > OPENGL_MAJOR_VERSION || (GLVersion.major == OPENGL_MAJOR_VERSION && GLVersion.minor >= OPENGL_MINOR_VERSION),
             std::format("Nebula requires at least OpenGL version {}.{}!", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION)
         );
+
+        m_framebuffer_template = createReference<OpenGLFramebufferTemplate>();
     }
 
     void OpenGLContext::bind()
@@ -75,6 +78,11 @@ namespace nebula::rendering {
         return nullptr; //  TODO: implement
     }
 
+    Scope<ExecuteCommandVisitor> OpenGLContext::getCommandExecutor()
+    {
+        return nullptr; //  TODO: implement
+    }
+
     void OpenGLContext::waitForFrameResources(uint32_t frame)
     {
 
@@ -82,7 +90,7 @@ namespace nebula::rendering {
 
     const Reference<FramebufferTemplate>& OpenGLContext::viewFramebufferTemplate() const
     {
-        return nullptr;
+        return m_framebuffer_template;
     }
 
 }

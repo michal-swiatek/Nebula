@@ -22,7 +22,7 @@ namespace nebula::rendering {
         m_renderpass = std::move(renderpass);
     }
 
-    void RenderPassExecutor::execute(const RenderPassObjects& renderpass_objects)
+    Scope<RecordedCommandBuffer> RenderPassExecutor::execute(const RenderPassObjects& renderpass_objects, const std::optional<uint32_t> frame_in_flight) const
     {
         NB_CORE_ASSERT(m_renderer, "Renderer has to be set to begin execution!");
 
@@ -43,17 +43,12 @@ namespace nebula::rendering {
 
         m_renderer->endRenderPass();
 
-        auto commands = m_renderer->getCommandBuffer();
-        if (m_record_command_visitor)
-            m_recorded_command_buffer = m_record_command_visitor->recordCommands(std::move(commands));
-        else
-            m_recorded_command_buffer = std::move(commands);
+        return recordCommands(m_renderer->getCommandBuffer(), frame_in_flight);
     }
 
-    Scope<RecordedCommandBuffer> RenderPassExecutor::getCommands()
+    Scope<RecordedCommandBuffer> RenderPassExecutor::recordCommands(Scope<RenderCommandBuffer>&& commands, std::optional<uint32_t> frame_in_flight) const
     {
-        NB_CORE_ASSERT(m_recorded_command_buffer, "Finish execution before getting commands!");
-        return std::move(m_recorded_command_buffer);
+        return commands;
     }
 
     void RenderPassExecutor::setRenderer(Scope<Renderer>&& renderer)
@@ -72,12 +67,6 @@ namespace nebula::rendering {
     {
         NB_CORE_ASSERT(framebuffer);
         m_renderer->setFramebuffer(framebuffer);
-    }
-
-    void RenderPassExecutor::setRecordCommandVisitor(Scope<RecordCommandVisitor>&& render_command_visitor)
-    {
-        NB_CORE_ASSERT(render_command_visitor);
-        m_record_command_visitor = std::move(render_command_visitor);
     }
 
 }

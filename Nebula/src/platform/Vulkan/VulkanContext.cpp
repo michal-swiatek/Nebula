@@ -16,6 +16,31 @@
 
 namespace nebula::rendering {
 
+    VulkanFrameSynchronization::VulkanFrameSynchronization()
+    {
+        VkSemaphoreCreateInfo semaphore_info = {};
+        semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+        VkFenceCreateInfo fence_info = {};
+        fence_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fence_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+        const auto fence_result = vkCreateFence(VulkanAPI::getDevice(), &fence_info, nullptr, &frame_resources_free);
+        const auto image_available_semaphore = vkCreateSemaphore(VulkanAPI::getDevice(), &semaphore_info, nullptr, &image_available);
+        const auto render_finished_semaphore = vkCreateSemaphore(VulkanAPI::getDevice(), &semaphore_info, nullptr, &render_finished);
+
+        NB_CORE_ASSERT(fence_result == VK_SUCCESS);
+        NB_CORE_ASSERT(image_available_semaphore == VK_SUCCESS);
+        NB_CORE_ASSERT(render_finished_semaphore == VK_SUCCESS);
+    }
+
+    VulkanFrameSynchronization::~VulkanFrameSynchronization()
+    {
+        vkDestroySemaphore(VulkanAPI::getDevice(), image_available, nullptr);
+        vkDestroySemaphore(VulkanAPI::getDevice(), render_finished, nullptr);
+        vkDestroyFence(VulkanAPI::getDevice(), frame_resources_free, nullptr);
+    }
+
     VulkanContext::VulkanContext(GLFWwindow* window_handle) : m_window(window_handle)
     {
         NB_CORE_ASSERT(m_window);
@@ -25,6 +50,8 @@ namespace nebula::rendering {
 
         m_swapchain = createScope<VulkanSwapchain>(m_surface);
         setVSync(true); //  Creates swapchain with proper parameters
+
+        m_frame_synchronizations = std::vector<VulkanFrameSynchronization>(getFramesInFlightNumber());
 
         if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
         {
@@ -39,6 +66,7 @@ namespace nebula::rendering {
 
     VulkanContext::~VulkanContext()
     {
+        m_frame_synchronizations.clear();
         m_swapchain.reset();
         m_vulkan_api.reset();
     }
@@ -55,17 +83,25 @@ namespace nebula::rendering {
 
     void VulkanContext::presentImage()
     {
-
+        m_swapchain->presentImage(m_frame_synchronizations[getCurrentRenderFrame()].render_finished);
     }
 
     Reference<Framebuffer> VulkanContext::getNextImage()
     {
+        return m_swapchain->getNextImage(m_frame_synchronizations[getCurrentRenderFrame()].image_available);
+    }
+
+    Scope<ExecuteCommandVisitor> VulkanContext::getCommandExecutor()
+    {
         return nullptr; //  TODO: implement
     }
 
-    void VulkanContext::waitForFrameResources(uint32_t frame)
+    void VulkanContext::waitForFrameResources(const uint32_t frame)
     {
-
+        auto& frame_synchronization = m_frame_synchronizations[frame];
+        std::lock_guard lock{frame_synchronization.mutex};  //  TODO: Check for deadlocks
+        vkWaitForFences(VulkanAPI::getDevice(), 1, &frame_synchronization.frame_resources_free, VK_TRUE, UINT64_MAX);
+        vkResetFences(VulkanAPI::getDevice(), 1, &frame_synchronization.frame_resources_free);
     }
 
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const

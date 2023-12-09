@@ -64,7 +64,7 @@ namespace nebula {
             {
                 m_render_context->waitForFrameResources(m_render_context->getCurrentRenderFrame());
 
-                executefinalPass();
+                executeFinalPass();
                 updateApplicationStack();
 
                 m_render_context->presentImage();
@@ -73,12 +73,15 @@ namespace nebula {
             Timer::sleepUntilPrecise(next_frame_time);
         }
 
-        void MainRenderThread::executefinalPass() const
+        void MainRenderThread::executeFinalPass() const
         {
+            const uint32_t frame_in_flight = m_render_context->getCurrentRenderFrame();
+
             const auto framebuffer = m_render_context->getNextImage();
+            m_renderpass_executor->resetResources(frame_in_flight);
             m_renderpass_executor->setFramebuffer(framebuffer);
 
-            auto recorded_command = m_renderpass_executor->execute(m_renderpass_objects);
+            auto recorded_command = m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);
         }
 
         void MainRenderThread::updateApplicationStack() const
@@ -106,7 +109,7 @@ namespace nebula {
             auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
 
             renderer->setRenderPass(renderpass_template);
-            m_renderpass_executor = createScope<RenderPassExecutor>(std::move(renderer));
+            m_renderpass_executor = RenderPassExecutor::create(std::move(renderer));
 
             m_renderpass_objects.setStages(renderpass_template->viewRenderStages().size());
         }

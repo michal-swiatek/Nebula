@@ -9,9 +9,14 @@
 
 namespace nebula::rendering {
 
+    VulkanRecordCommandsVisitor::VulkanRecordCommandsVisitor(VkCommandBuffer command_buffer) : m_command_buffer(command_buffer) {}
+
     Scope<RecordedCommandBuffer> VulkanRecordCommandsVisitor::recordCommands(Scope<RenderCommandBuffer>&& commands)
     {
-        return createScope<VulkanRecordedBuffer>(nullptr);
+        for (const auto command : commands->viewCommands())
+            command->accept(*this);
+
+        return createScope<VulkanRecordedBuffer>(m_command_buffer);
     }
 
     void VulkanExecuteCommandsVisitor::executeCommands(Scope<RecordedCommandBuffer>&& commands)

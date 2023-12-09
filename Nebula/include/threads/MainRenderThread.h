@@ -30,7 +30,7 @@ namespace nebula::threads {
 
         void mainLoopBody() override;
 
-        void executefinalPass() const;
+        void executeFinalPass() const;
         void updateApplicationStack() const;
 
         void init() override;

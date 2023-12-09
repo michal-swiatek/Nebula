@@ -52,6 +52,8 @@ set(NEBULA_SOURCE_FILES
         src/platform/Vulkan/VulkanRenderPass.cpp
         src/platform/Vulkan/VulkanSwapchain.cpp
         src/platform/Vulkan/VulkanCommandsVisitor.cpp
+        src/platform/Vulkan/VulkanRecordedBuffer.cpp
+        src/platform/Vulkan/VulkanRenderPassExecutor.cpp
         src/memory/MemoryChunk.cpp
         src/memory/MemoryManager.cpp
         src/memory/Allocators.cpp

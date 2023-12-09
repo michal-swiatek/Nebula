@@ -6,11 +6,32 @@
 #ifndef VULKANRECORDEDBUFFER_H
 #define VULKANRECORDEDBUFFER_H
 
+#include <vector>
+
 #include "rendering/commands/RenderCommandBuffer.h"
 
 #include "VulkanAPI.h"
 
 namespace nebula::rendering {
+
+    class VulkanCommandPool
+    {
+    public:
+        VulkanCommandPool();
+        ~VulkanCommandPool();
+
+        void reset(uint32_t frame_in_flight);
+        VkCommandBuffer getCommandBuffer(uint32_t frame_in_flight);
+
+    private:
+        using CachedBuffers = std::vector<VkCommandBuffer>;
+
+        std::vector<uint32_t> m_cache_indices;
+        std::vector<VkCommandPool> m_command_pools;
+        std::vector<CachedBuffers> m_cached_buffers;
+
+        void createPools();
+    };
 
     class VulkanRecordedBuffer final : public RecordedCommandBuffer
     {

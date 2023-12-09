@@ -22,6 +22,11 @@ namespace nebula::rendering {
         m_renderpass = std::move(renderpass);
     }
 
+    void RenderPassExecutor::resetResources(uint32_t frame_in_flight)
+    {
+
+    }
+
     Scope<RecordedCommandBuffer> RenderPassExecutor::execute(const RenderPassObjects& renderpass_objects, const std::optional<uint32_t> frame_in_flight) const
     {
         NB_CORE_ASSERT(m_renderer, "Renderer has to be set to begin execution!");

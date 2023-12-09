@@ -14,11 +14,13 @@
 #include "core/Types.h"
 
 #include "rendering/renderer/RendererAPI.h"
+#include "rendering/renderpass/RenderPassExecutor.h"
 
 #include "platform/Vulkan/VulkanShader.h"
 #include "platform/Vulkan/VulkanContext.h"
 #include "platform/Vulkan/VulkanRenderPass.h"
 #include "platform/Vulkan/VulkanFramebuffer.h"
+#include "platform/Vulkan/VulkanRenderPassExecutor.h"
 
 #include "platform/OpenGL/OpenGLShader.h"
 #include "platform/OpenGL/OpenGLContext.h"
@@ -98,6 +100,32 @@ namespace nebula {
             RendererApi::get().compilePipelines(*renderpass);
 
             return createScopeFromPointer(renderpass);
+        }
+
+        Scope<RenderPassExecutor> RenderPassExecutor::create(Scope<Renderer>&& renderer)
+        {
+            RenderPassExecutor* renderpass_executor = nullptr;
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cOpenGL:    renderpass_executor = new RenderPassExecutor(std::move(renderer)); break;
+                case API::cVulkan:    renderpass_executor = new VulkanRenderPassExecutor(std::move(renderer));  break;
+                default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+
+            return createScopeFromPointer(renderpass_executor);
+        }
+
+        Scope<RenderPassExecutor> RenderPassExecutor::create(Scope<RenderPass>&& renderpass)
+        {
+            RenderPassExecutor* renderpass_executor = nullptr;
+            switch (Application::get().getRenderingAPI())
+            {
+                case API::cOpenGL:    renderpass_executor = new RenderPassExecutor(std::move(renderpass)); break;
+                case API::cVulkan:    renderpass_executor = new VulkanRenderPassExecutor(std::move(renderpass));    break;
+                default:    NB_CORE_ASSERT(false, "Undefined Rendering API!");  return nullptr;
+            }
+
+            return createScopeFromPointer(renderpass_executor);
         }
 
         Reference<Framebuffer> Framebuffer::create(const Reference<FramebufferTemplate>& framebuffer_template)

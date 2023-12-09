@@ -20,6 +20,7 @@ namespace nebula::rendering {
     {
     public:
         void executeCommands(Scope<RecordedCommandBuffer>&& commands) override;
+        void submitCommands() override;
     };
 
 }

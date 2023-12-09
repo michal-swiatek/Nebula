@@ -6,6 +6,7 @@
 #include "platform/Vulkan/VulkanContext.h"
 
 #include <GLFW/glfw3.h>
+#include <platform/Vulkan/VulkanCommandsVisitor.h>
 
 #include "core/Assert.h"
 #include "core/Logging.h"
@@ -93,7 +94,7 @@ namespace nebula::rendering {
 
     Scope<ExecuteCommandVisitor> VulkanContext::getCommandExecutor()
     {
-        return nullptr; //  TODO: implement
+        return createScope<VulkanExecuteCommandsVisitor>(m_frame_synchronizations[getCurrentRenderFrame()]);
     }
 
     void VulkanContext::waitForFrameResources(const uint32_t frame)

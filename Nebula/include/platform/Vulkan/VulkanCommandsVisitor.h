@@ -6,8 +6,9 @@
 #ifndef VULKANCOMMANDSVISITOR_H
 #define VULKANCOMMANDSVISITOR_H
 
-#include "rendering/commands/RenderCommandVisitor.h"
 #include "platform/Vulkan/VulkanAPI.h"
+#include "platform/Vulkan/VulkanContext.h"
+#include "rendering/commands/RenderCommandVisitor.h"
 
 namespace nebula::rendering {
 
@@ -31,7 +32,14 @@ namespace nebula::rendering {
     class VulkanExecuteCommandsVisitor final : public ExecuteCommandVisitor
     {
     public:
+        explicit VulkanExecuteCommandsVisitor(VulkanFrameSynchronization& frame_synchronization);
+
         void executeCommands(Scope<RecordedCommandBuffer>&& commands) override;
+        void submitCommands() override;
+
+    private:
+        VulkanFrameSynchronization& m_frame_synchronization;
+        std::vector<VkCommandBuffer> m_vulkan_commands;
     };
 
 }

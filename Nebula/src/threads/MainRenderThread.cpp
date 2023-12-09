@@ -43,7 +43,7 @@ namespace nebula {
         {
         public:
             explicit FinalRenderPass(const Reference<FramebufferTemplate>& final_framebuffer_template) :
-                RenderPassTemplate(ClearColor(0.0f, 0.0f, 0.2f, 1.0f), final_framebuffer_template)
+                RenderPassTemplate(ClearColor(0.0f, 0.0f, 0.1f, 1.0f), final_framebuffer_template)
             {
                 AttachmentReference attachment_reference = {0};
                 const auto shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
@@ -65,11 +65,16 @@ namespace nebula {
             if (!m_application.minimized())
             {
                 m_render_context->waitForFrameResources(m_render_context->getCurrentRenderFrame());
-
                 m_renderpass_executor->resetResources(frame_in_flight);
 
-                executeFinalPass();
+                auto commands_executor = m_render_context->getCommandExecutor();
+                auto final_commands = runFinalPass();
+
                 updateApplicationStack();
+
+                //  Submit commands
+                commands_executor->executeCommands(std::move(final_commands));
+                commands_executor->submitCommands();
 
                 m_render_context->presentImage();
             }
@@ -77,14 +82,14 @@ namespace nebula {
             Timer::sleepUntilPrecise(next_frame_time);
         }
 
-        void MainRenderThread::executeFinalPass() const
+        Scope<RecordedCommandBuffer> MainRenderThread::runFinalPass() const
         {
             const uint32_t frame_in_flight = m_render_context->getCurrentRenderFrame();
 
             const auto framebuffer = m_render_context->getNextImage();
             m_renderpass_executor->setFramebuffer(framebuffer);
 
-            auto recorded_command = m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);
+            return m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);
         }
 
         void MainRenderThread::updateApplicationStack() const
@@ -119,6 +124,9 @@ namespace nebula {
 
         void MainRenderThread::shutdown()
         {
+            for (uint32_t frame_in_flight = 0; frame_in_flight < m_render_context->getFramesInFlightNumber(); ++frame_in_flight)
+                m_render_context->waitForFrameResources(frame_in_flight);
+
             m_renderpass_executor.reset();
 
             RendererApi::destroy();

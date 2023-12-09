@@ -35,6 +35,7 @@ namespace nebula::rendering {
     {
     public:
         virtual void executeCommands(Scope<RecordedCommandBuffer>&& commands) = 0;
+        virtual void submitCommands() = 0;
     };
 
 }

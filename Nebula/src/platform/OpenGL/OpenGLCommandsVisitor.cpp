@@ -19,4 +19,9 @@ namespace nebula::rendering {
 
     }
 
+    void OpenGlExecuteCommandsVisitor::submitCommands()
+    {
+
+    }
+
 }

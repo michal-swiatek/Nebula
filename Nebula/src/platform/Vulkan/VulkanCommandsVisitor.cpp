@@ -90,9 +90,33 @@ namespace nebula::rendering {
     //////  VulkanExecuteCommandsVisitor  //////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
+    VulkanExecuteCommandsVisitor::VulkanExecuteCommandsVisitor(VulkanFrameSynchronization& frame_synchronization) :
+            m_frame_synchronization(frame_synchronization)
+    {}
+
     void VulkanExecuteCommandsVisitor::executeCommands(Scope<RecordedCommandBuffer>&& commands)
     {
+        m_vulkan_commands.push_back(static_cast<VkCommandBuffer>(commands->getBufferHandle()));
+    }
 
+    void VulkanExecuteCommandsVisitor::submitCommands()
+    {
+        VkSubmitInfo submit_info = {};
+        constexpr VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+        submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submit_info.pNext = nullptr;
+        submit_info.pWaitDstStageMask = &wait_stage;
+        submit_info.waitSemaphoreCount = 1;
+        submit_info.pWaitSemaphores = &m_frame_synchronization.image_available;
+        submit_info.signalSemaphoreCount = 1;
+        submit_info.pSignalSemaphores = &m_frame_synchronization.render_finished;
+        submit_info.commandBufferCount = m_vulkan_commands.size();
+        submit_info.pCommandBuffers = m_vulkan_commands.data();
+
+        const auto queues_info = VulkanAPI::getQueuesInfo();
+        const auto result = vkQueueSubmit(queues_info.graphics_queue, 1, &submit_info, m_frame_synchronization.frame_resources_free);
+        NB_CORE_ASSERT(result == VK_SUCCESS, "Failed submitting render commands!");
     }
 
 }

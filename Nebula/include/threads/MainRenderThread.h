@@ -30,8 +30,8 @@ namespace nebula::threads {
 
         void mainLoopBody() override;
 
-        void executeFinalPass() const;
         void updateApplicationStack() const;
+        [[nodiscard]] Scope<rendering::RecordedCommandBuffer> runFinalPass() const;
 
         void init() override;
         void shutdown() override;

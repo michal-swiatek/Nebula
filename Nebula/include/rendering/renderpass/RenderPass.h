@@ -23,9 +23,9 @@ namespace nebula::rendering {
     struct ClearColor
     {
         glm::vec4 color = {};
-        std::optional<glm::vec4> depth_stencil = std::nullopt;
+        glm::vec2 depth_stencil = {1.0f, 255.0f};
 
-        ClearColor() : color(), depth_stencil(std::nullopt) {}
+        ClearColor() : color(0.0f, 0.0f, 0.2f, 1.0f), depth_stencil(1.0f, 255.0f) {}
         ClearColor(float r, float g, float b, float a) : color(r, g, b, a) {}
     };
 
@@ -49,6 +49,7 @@ namespace nebula::rendering {
         void attachFramebuffer(const Reference<Framebuffer>& framebuffer = nullptr);
         [[nodiscard]] const GraphicsPipelineState& nextStage();
 
+        [[nodiscard]] void* getFramebufferHandle() const;
         [[nodiscard]] uint32_t getNumberOfStages() const;
 
         [[nodiscard]] const Reference<RenderPassTemplate>& viewRenderPassTemplate() const;

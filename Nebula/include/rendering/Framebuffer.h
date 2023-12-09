@@ -29,6 +29,8 @@ namespace nebula::rendering {
         [[nodiscard]] virtual bool attached() const = 0;
         virtual void attachTo(void* renderpass_handle) = 0;
 
+        virtual void* getFramebufferHandle() = 0;
+
         [[nodiscard]] virtual const Reference<FramebufferTemplate>& viewFramebufferTemplate() const = 0;
         [[nodiscard]] static Reference<Framebuffer> create(const Reference<FramebufferTemplate>& framebuffer_template);
 
@@ -44,6 +46,7 @@ namespace nebula::rendering {
 
         bool operator == (const FramebufferTemplate&) const = default;
 
+        [[nodiscard]] bool hasDepthStencilAttachment() const;
         [[nodiscard]] const std::vector<AttachmentDescription>& viewTextureAttachmentsDescriptions() const;
         [[nodiscard]] const std::optional<AttachmentDescription>& viewDepthStencilAttachmentDescription() const;
 

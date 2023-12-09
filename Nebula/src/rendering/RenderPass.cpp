@@ -47,6 +47,12 @@ namespace nebula::rendering {
         return render_stages[++m_current_render_stage].graphics_pipeline_state;
     }
 
+    void* RenderPass::getFramebufferHandle() const
+    {
+        NB_CORE_ASSERT(m_framebuffer);
+        return m_framebuffer->getFramebufferHandle();
+    }
+
     uint32_t RenderPass::getNumberOfStages() const
     {
         return m_renderpass_template->viewRenderStages().size();

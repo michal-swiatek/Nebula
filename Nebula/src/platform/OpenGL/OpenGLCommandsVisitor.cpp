@@ -5,6 +5,8 @@
 
 #include "platform/OpenGL/OpenGLCommandsVisitor.h"
 
+#include "rendering/commands/RenderCommandBuffer.h"
+
 namespace nebula::rendering {
 
     Scope<RecordedCommandBuffer> OpenGlRecordCommandsVisitor::recordCommands(Scope<RenderCommandBuffer>&& commands)

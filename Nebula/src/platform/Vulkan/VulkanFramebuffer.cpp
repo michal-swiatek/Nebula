@@ -63,6 +63,11 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create framebuffer!");
     }
 
+    void* VulkanFramebuffer::getFramebufferHandle()
+    {
+        return m_framebuffer;
+    }
+
     const Reference<FramebufferTemplate>& VulkanFramebuffer::viewFramebufferTemplate() const
     {
         return m_framebuffer_template;
@@ -172,6 +177,11 @@ namespace nebula::rendering {
 
         const auto result = vkCreateFramebuffer(VulkanAPI::getDevice(), &create_info, nullptr, &m_framebuffer);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Unable to create swapchain framebuffer!");
+    }
+
+    void* VulkanSwapchainFramebuffer::getFramebufferHandle()
+    {
+        return m_framebuffer;
     }
 
     const Reference<FramebufferTemplate>& VulkanSwapchainFramebuffer::viewFramebufferTemplate() const

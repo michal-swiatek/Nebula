@@ -60,9 +60,13 @@ namespace nebula {
             const double render_timestep = render_fps > 0 ? 1.0 / render_fps : 0.0;
             const double next_frame_time = UpdateContext::get().getTime() + render_timestep;
 
+            const uint32_t frame_in_flight = m_render_context->getCurrentRenderFrame();
+
             if (!m_application.minimized())
             {
                 m_render_context->waitForFrameResources(m_render_context->getCurrentRenderFrame());
+
+                m_renderpass_executor->resetResources(frame_in_flight);
 
                 executeFinalPass();
                 updateApplicationStack();
@@ -78,7 +82,6 @@ namespace nebula {
             const uint32_t frame_in_flight = m_render_context->getCurrentRenderFrame();
 
             const auto framebuffer = m_render_context->getNextImage();
-            m_renderpass_executor->resetResources(frame_in_flight);
             m_renderpass_executor->setFramebuffer(framebuffer);
 
             auto recorded_command = m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);

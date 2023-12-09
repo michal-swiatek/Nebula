@@ -6,12 +6,15 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <optional>
+
 #include "core/Core.h"
 #include "core/Assert.h"
 
 #include "ForwardRendererBackend.h"
 #include "rendering/RenderObjectVisitor.h"
 #include "rendering/renderpass/RenderPass.h"
+#include "rendering/commands/RenderPassCommands.h"
 #include "rendering/commands/RenderCommandBuffer.h"
 
 namespace nebula::rendering {
@@ -24,6 +27,8 @@ namespace nebula::rendering {
         void setRenderPass(Scope<RenderPass>&& renderpass);
         void setRenderPass(const Reference<RenderPassTemplate>& renderpass_template, bool create_framebuffer = false);
         void setFramebuffer(const Reference<Framebuffer>& framebuffer) const;
+
+        void setRenderArea(const std::optional<RenderArea>& render_area = {});
 
         [[nodiscard]] View<RenderPass> viewRenderPass() const;
         [[nodiscard]] Scope<RenderPass> releaseRenderPass();
@@ -55,6 +60,7 @@ namespace nebula::rendering {
         Scope<RendererBackend> m_renderer_backend = nullptr;
         Scope<RenderCommandBuffer> m_command_buffer = nullptr;
 
+        RenderArea m_render_area{};
         Scope<RenderPass> m_renderpass = nullptr;
 
         enum RenderPassState

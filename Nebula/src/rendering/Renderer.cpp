@@ -19,11 +19,15 @@ namespace nebula::rendering {
 
         m_renderpass->startPass();
         nextRenderStage();
+
+        submitCommand<BeginRenderPassCommand>(*m_renderpass.get(), m_render_area);
     }
 
     void Renderer::endRenderPass()
     {
         NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start renderpass first!");
+
+        submitCommand<EndRenderPassCommand>(*m_renderpass.get());
 
         m_renderpass->finishPass();
         m_renderer_backend->processRenderCommands(std::move(m_command_buffer));
@@ -49,17 +53,28 @@ namespace nebula::rendering {
     void Renderer::setRenderPass(Scope<RenderPass>&& renderpass)
     {
         m_renderpass = std::move(renderpass);
+        setRenderArea();
     }
 
     void Renderer::setRenderPass(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer)
     {
         m_renderpass = RenderPass::create(renderpass_template, create_framebuffer);
+        setRenderArea();
     }
 
     void Renderer::setFramebuffer(const Reference<Framebuffer>& framebuffer) const
     {
         NB_CORE_ASSERT(m_renderpass);
         m_renderpass->attachFramebuffer(framebuffer);
+    }
+
+    void Renderer::setRenderArea(const std::optional<RenderArea>& render_area)
+    {
+        const auto& framebuffer_template = m_renderpass->viewFramebufferTemplate();
+        if (render_area)
+            m_render_area = *render_area;
+        else
+            m_render_area = RenderArea(0, 0, framebuffer_template->getWidth(), framebuffer_template->getHeight());
     }
 
     Scope<RenderPass> Renderer::releaseRenderPass()

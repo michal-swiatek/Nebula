@@ -35,8 +35,14 @@ namespace nebula::rendering {
 
     void OpenGlFramebuffer::attachTo(void* renderpass_handle)
     {
-        NB_ASSERT(renderpass_handle, "Recieved null renderpass handle!");
+        NB_ASSERT(renderpass_handle);
         m_attached = true;
+    }
+
+    void* OpenGlFramebuffer::getFramebufferHandle()
+    {
+        NB_ASSERT(nullptr, "OpenGLFramebuffer doesn't support handles!");
+        return nullptr;
     }
 
     const Reference<FramebufferTemplate>& OpenGlFramebuffer::viewFramebufferTemplate() const

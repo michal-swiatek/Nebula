@@ -22,6 +22,11 @@ namespace nebula::rendering {
         m_depth_stencil_attachment = depth_stencil_attachment;
     }
 
+    bool FramebufferTemplate::hasDepthStencilAttachment() const
+    {
+        return m_depth_stencil_attachment.has_value();
+    }
+
     const std::vector<AttachmentDescription>& FramebufferTemplate::viewTextureAttachmentsDescriptions() const
     {
         return m_texture_attachments;

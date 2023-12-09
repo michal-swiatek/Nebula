@@ -8,17 +8,22 @@
 
 #include "core/Core.h"
 
-#include "RenderCommandBuffer.h"
-
 namespace nebula::rendering {
+
+    struct BeginRenderPassCommand;
+    struct EndRenderPassCommand;
 
     class NEBULA_API RenderCommandVisitor
     {
     public:
         virtual ~RenderCommandVisitor() = default;
 
-    protected:
+        virtual void visit(BeginRenderPassCommand& command) {}
+        virtual void visit(EndRenderPassCommand& command) {}
     };
+
+    class RenderCommandBuffer;
+    class RecordedCommandBuffer;
 
     class RecordCommandVisitor : public RenderCommandVisitor
     {

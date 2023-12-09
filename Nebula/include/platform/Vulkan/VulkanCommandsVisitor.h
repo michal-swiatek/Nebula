@@ -18,8 +18,14 @@ namespace nebula::rendering {
 
         Scope<RecordedCommandBuffer> recordCommands(Scope<RenderCommandBuffer>&& commands) override;
 
+        void visit(BeginRenderPassCommand& command) override;
+        void visit(EndRenderPassCommand& command) override;
+
     private:
         VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;
+
+        void startRecording() const;
+        void endRecording() const;
     };
 
     class VulkanExecuteCommandsVisitor final : public ExecuteCommandVisitor

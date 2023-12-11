@@ -204,12 +204,12 @@ namespace nebula::rendering {
         return pipeline_create_info;
     }
 
-    void VulkanGraphicsPipelineInfo::loadVertexShader(const Reference<Shader>& shader, const VertexShader& shader_template)
+    void VulkanGraphicsPipelineInfo::loadVertexShader(View<Shader> shader, const VertexShader& shader_template)
     {
         VkPipelineShaderStageCreateInfo vertex_stage_info = {};
         vertex_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         vertex_stage_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
-        vertex_stage_info.module = static_cast<VkShaderModule>(shader->getStageHandle(ShaderStage::cVertex));
+        vertex_stage_info.module = static_cast<VkShaderModule>(shader.get()->getStageHandle(ShaderStage::cVertex));
         vertex_stage_info.pName = "main";
         vertex_stage_info.pSpecializationInfo = nullptr;
 
@@ -218,7 +218,7 @@ namespace nebula::rendering {
         VkPipelineShaderStageCreateInfo fragment_stage_info = {};
         fragment_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         fragment_stage_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragment_stage_info.module = static_cast<VkShaderModule>(shader->getStageHandle(ShaderStage::cFragment));
+        fragment_stage_info.module = static_cast<VkShaderModule>(shader.get()->getStageHandle(ShaderStage::cFragment));
         fragment_stage_info.pName = "main";
         fragment_stage_info.pSpecializationInfo = nullptr;
 
@@ -257,6 +257,11 @@ namespace nebula::rendering {
             filesystem::saveBinaryFile(m_cache_path, data);
 
         vkDestroyPipelineCache(VulkanAPI::getDevice(), m_pipeline_cache, nullptr);
+    }
+
+    VkPipeline VulkanPipelineCache::getPipeline(VkRenderPass renderpass, uint32_t subpass) const
+    {
+        return m_handle_map.at(std::make_pair(renderpass, subpass));
     }
 
     void VulkanPipelineCache::addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines)

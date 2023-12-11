@@ -45,12 +45,10 @@ namespace nebula {
         class FinalRenderPass final : public RenderPassTemplate
         {
         public:
-            explicit FinalRenderPass(const Reference<FramebufferTemplate>& final_framebuffer_template) :
+            explicit FinalRenderPass(const View<Shader> shader, const Reference<FramebufferTemplate>& final_framebuffer_template) :
                 RenderPassTemplate(ClearColor(0.0f, 0.0f, 0.2f, 1.0f), final_framebuffer_template)
             {
                 AttachmentReference attachment_reference = {0};
-                const auto shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
-
                 addStage(GraphicsPipelineState(shader), {attachment_reference});
             }
         };
@@ -106,10 +104,14 @@ namespace nebula {
             RendererApi::create(m_application.getRenderingAPI());
             ImGuiBackend::init();
 
+            m_shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
             initFinalRenderpass(true);
 
             m_imgui_object = createScope<ImGuiRenderObject>();
+            m_vertices_object = createScope<DummyVerticesRenderObject>(3);
+
             m_renderpass_objects.setStages(1);
+            m_renderpass_objects.addObject(0, m_vertices_object.get());
             m_renderpass_objects.addObject(0, m_imgui_object.get());
         }
 
@@ -120,6 +122,7 @@ namespace nebula {
 
             m_application.popOverlay(m_im_gui_layer->getID());
             m_renderpass_executor.reset();
+            m_shader.reset();
 
             ImGuiBackend::shutdown();
             RendererApi::destroy();
@@ -140,7 +143,7 @@ namespace nebula {
             m_render_context->setVSync(m_vsync);
 
             const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
-            const auto renderpass_template = createReference<FinalRenderPass>(swapchain_framebuffer_template);
+            const auto renderpass_template = createReference<FinalRenderPass>(m_shader.get(), swapchain_framebuffer_template);
             auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
             auto renderpass = RenderPass::create(renderpass_template);
 

@@ -13,6 +13,7 @@
 #include "core/Types.h"
 #include "core/Application.h"
 
+#include "rendering/Shader.h"
 #include "rendering/RenderObject.h"
 #include "rendering/RenderContext.h"
 #include "rendering/renderpass/RenderPassExecutor.h"
@@ -31,9 +32,12 @@ namespace nebula::threads {
         bool m_vsync = true;
         ImGuiLayer* m_im_gui_layer = nullptr;
 
-        Scope<rendering::ImGuiRenderObject> m_imgui_object;
-        rendering::RenderPassObjects m_renderpass_objects;
         Scope<rendering::RenderPassExecutor> m_renderpass_executor;
+
+        rendering::RenderPassObjects m_renderpass_objects;
+        Scope<rendering::ImGuiRenderObject> m_imgui_object;
+        Scope<rendering::DummyVerticesRenderObject> m_vertices_object;
+        Reference<rendering::Shader> m_shader;
 
         void mainLoopBody() override;
 

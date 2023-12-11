@@ -47,6 +47,8 @@ namespace nebula::rendering {
         void startPass();
         void finishPass() const;
         void attachFramebuffer(const Reference<Framebuffer>& framebuffer = nullptr);
+
+        [[nodiscard]] uint32_t getCurrentStage() const;
         [[nodiscard]] const GraphicsPipelineState& nextStage();
 
         [[nodiscard]] void* getFramebufferHandle() const;

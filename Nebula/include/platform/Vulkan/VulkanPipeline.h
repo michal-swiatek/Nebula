@@ -39,7 +39,7 @@ namespace nebula::rendering {
         std::vector<VkDynamicState> m_dynamic_states = {};
         std::vector<VkPipelineShaderStageCreateInfo> m_shader_stages = {};
 
-        void loadVertexShader(const Reference<Shader>& shader, const VertexShader& shader_template);
+        void loadVertexShader(View<Shader> shader, const VertexShader& shader_template);
     };
 
     struct hash_pair
@@ -64,6 +64,8 @@ namespace nebula::rendering {
     public:
         explicit VulkanPipelineCache(const std::string& cache_root);
         ~VulkanPipelineCache();
+
+        VkPipeline getPipeline(VkRenderPass renderpass, uint32_t subpass) const;
 
         void addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines);
         [[nodiscard]] VkPipelineCache getCache() const { return m_pipeline_cache; }

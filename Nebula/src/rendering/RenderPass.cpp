@@ -40,6 +40,11 @@ namespace nebula::rendering {
         NB_CORE_ASSERT(m_current_render_stage == m_renderpass_template->viewRenderStages().size() - 1, "Iterate over all Render stages before finishing RenderPass!");
     }
 
+    uint32_t RenderPass::getCurrentStage() const
+    {
+        return m_current_render_stage;
+    }
+
     const GraphicsPipelineState& RenderPass::nextStage()
     {
         NB_CORE_ASSERT(m_current_render_stage < static_cast<int>(m_renderpass_template->viewRenderStages().size() - 1), "RenderStage index out of range!");

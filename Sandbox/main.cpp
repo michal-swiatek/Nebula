@@ -15,30 +15,30 @@ using namespace std::chrono_literals;
 auto application_specification = ApplicationSpecification("Sandbox", "APP", "", 60, 0.02, API::cVulkan);
 auto window_properties = WindowProperties("Sandbox", 1600, 900);
 
-class TestFramebuffer final : public FramebufferTemplate
-{
-public:
-    TestFramebuffer() : FramebufferTemplate(100, 100)
-    {
-        AttachmentDescription attachment;
-        attachment.format = TextureFormat::cFormat_R8G8B8A8_SRGB;
+// class TestFramebuffer final : public FramebufferTemplate
+// {
+// public:
+//     TestFramebuffer() : FramebufferTemplate(100, 100)
+//     {
+//         AttachmentDescription attachment;
+//         attachment.format = TextureFormat::cFormat_R8G8B8A8_SRGB;
+//
+//         addTextureAttachment(attachment);
+//     }
+// };
 
-        addTextureAttachment(attachment);
-    }
-};
-
-class TestRenderPass final : public RenderPassTemplate
-{
-public:
-    TestRenderPass() : RenderPassTemplate(ClearColor(0, 0, 0, 0), createReference<TestFramebuffer>())
-    {
-        AttachmentReference attachment_reference = {0};
-        auto shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
-
-        addStage(GraphicsPipelineState(shader), {attachment_reference});
-        addStage(GraphicsPipelineState(shader), {attachment_reference});
-    }
-};
+// class TestRenderPass final : public RenderPassTemplate
+// {
+// public:
+//     TestRenderPass() : RenderPassTemplate(ClearColor(0, 0, 0, 0), createReference<TestFramebuffer>())
+//     {
+//         AttachmentReference attachment_reference = {0};
+//         auto shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
+//
+//         addStage(GraphicsPipelineState(shader.get()), {attachment_reference});
+//         addStage(GraphicsPipelineState(shader.get()), {attachment_reference});
+//     }
+// };
 
 class ExampleLayer : public Layer
 {
@@ -50,7 +50,7 @@ public:
 
     void setup()
     {
-        m_renderer->setRenderPass(createReference<TestRenderPass>(), true);
+        // m_renderer->setRenderPass(createReference<TestRenderPass>(), true);
     }
 
     void onUpdate(Timestep delta_time) override
@@ -58,11 +58,11 @@ public:
         if (Input::isKeyPressed(Keycode::Space))
             NB_INFO("Space is being pressed!");
 
-        m_renderer->beginRenderPass();
-        m_renderer->nextRenderStage();
-        m_renderer->endRenderPass();
+        // m_renderer->beginRenderPass();
+        // m_renderer->nextRenderStage();
+        // m_renderer->endRenderPass();
 
-        const auto render_commands = m_renderer->getCommandBuffer()->viewCommands();
+        // const auto render_commands = m_renderer->getCommandBuffer()->viewCommands();
         // NB_TRACE("Number of rendering commands in RenderCommandBuffer: {}", render_commands.size());
     }
 

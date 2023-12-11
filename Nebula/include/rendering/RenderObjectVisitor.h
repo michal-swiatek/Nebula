@@ -10,8 +10,8 @@
 
 namespace nebula::rendering {
 
-    class RenderObject;
     class ImGuiRenderObject;
+    class DummyVerticesRenderObject;
 
     class NEBULA_API RenderObjectVisitor
     {
@@ -19,6 +19,7 @@ namespace nebula::rendering {
         virtual ~RenderObjectVisitor() = default;
 
         virtual void draw(const ImGuiRenderObject& imgui_layer) {}
+        virtual void draw(const DummyVerticesRenderObject& imgui_layer) {}
     };
 
 }

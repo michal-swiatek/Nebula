@@ -49,6 +49,7 @@ namespace nebula {
 
         const T* operator -> () const { return m_object; }
         const T& operator * () const { return *m_object; }
+        T* get() const { return m_object; }
 
         operator bool() const { return m_object != nullptr; }
         bool operator ! () const { return !static_cast<bool>(*this); }

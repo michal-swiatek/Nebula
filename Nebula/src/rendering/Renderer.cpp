@@ -5,7 +5,10 @@
 
 #include "rendering/renderer/Renderer.h"
 
+#include <rendering/renderer/RendererAPI.h>
+
 #include "rendering/RenderObject.h"
+#include "rendering/commands/DrawRenderCommands.h"
 
 namespace nebula::rendering {
 
@@ -37,11 +40,15 @@ namespace nebula::rendering {
         m_renderpass_state = cFinished;
     }
 
-    void Renderer::nextRenderStage() const
+    void Renderer::nextRenderStage()
     {
         NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start renderpass before moving to next RenderStage!");
 
         auto graphics_pipeline_state = m_renderpass->nextStage();
+        const uint32_t stage = m_renderpass->getCurrentStage();
+        void* graphics_pipeline_handle = RendererApi::get().getPipelineHandle(*m_renderpass.get(), stage);
+
+        submitCommand<BindGraphicsPipelineCommand>(m_scissor, m_viewport, graphics_pipeline_state, graphics_pipeline_handle);
     }
 
     Scope<RenderCommandBuffer> Renderer::getCommandBuffer() const
@@ -55,13 +62,13 @@ namespace nebula::rendering {
     void Renderer::setRenderPass(Scope<RenderPass>&& renderpass)
     {
         m_renderpass = std::move(renderpass);
-        setRenderArea();
+        setRenderAreas();
     }
 
     void Renderer::setRenderPass(const Reference<RenderPassTemplate>& renderpass_template, const bool create_framebuffer)
     {
         m_renderpass = RenderPass::create(renderpass_template, create_framebuffer);
-        setRenderArea();
+        setRenderAreas();
     }
 
     void Renderer::setFramebuffer(const Reference<Framebuffer>& framebuffer) const
@@ -79,6 +86,31 @@ namespace nebula::rendering {
             m_render_area = RenderArea(0, 0, framebuffer_template->getWidth(), framebuffer_template->getHeight());
     }
 
+    void Renderer::setViewport(const std::optional<RenderArea>& render_area)
+    {
+        const auto& framebuffer_template = m_renderpass->viewFramebufferTemplate();
+        if (render_area)
+            m_viewport = *render_area;
+        else
+            m_viewport = RenderArea(0, 0, framebuffer_template->getWidth(), framebuffer_template->getHeight());
+    }
+
+    void Renderer::setScissor(const std::optional<RenderArea>& render_area)
+    {
+        const auto& framebuffer_template = m_renderpass->viewFramebufferTemplate();
+        if (render_area)
+            m_scissor = *render_area;
+        else
+            m_scissor = RenderArea(0, 0, framebuffer_template->getWidth(), framebuffer_template->getHeight());
+    }
+
+    void Renderer::setRenderAreas()
+    {
+        setRenderArea();
+        setViewport();
+        setScissor();
+    }
+
     Scope<RenderPass> Renderer::releaseRenderPass()
     {
         return createScopeFromPointer(m_renderpass.release());
@@ -93,6 +125,12 @@ namespace nebula::rendering {
     {
         NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start RenderPass to draw RenderObjects!");
         submitCommand<DrawImGuiCommand>();
+    }
+
+    void Renderer::draw(const DummyVerticesRenderObject& render_object)
+    {
+        NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start RenderPass to draw RenderObjects!");
+        submitCommand<DrawDummyIndicesCommand>(render_object.getNumIndices());
     }
 
 }

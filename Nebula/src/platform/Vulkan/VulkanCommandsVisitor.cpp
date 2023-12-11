@@ -5,6 +5,7 @@
 
 #include "platform/Vulkan/VulkanCommandsVisitor.h"
 
+#include <rendering/commands/DrawRenderCommands.h>
 #include <rendering/commands/RenderPassCommands.h>
 
 #include "core/Application.h"
@@ -88,6 +89,28 @@ namespace nebula::rendering {
         vkCmdEndRenderPass(m_command_buffer);
     }
 
+    void VulkanRecordCommandsVisitor::visit(BindGraphicsPipelineCommand& command)
+    {
+        VkPipeline graphics_pipeline = static_cast<VkPipeline>(command.graphics_pipeline_handle);
+        vkCmdBindPipeline(m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline);
+
+        VkViewport viewport = {};
+        viewport.x = static_cast<float>(command.viewport.x_offset);
+        viewport.y = static_cast<float>(command.viewport.y_offset);
+        viewport.width = static_cast<float>(command.viewport.width);
+        viewport.height = static_cast<float>(command.viewport.height);
+        viewport.minDepth = command.viewport.min_depth;
+        viewport.maxDepth = command.viewport.max_depth;
+        vkCmdSetViewport(m_command_buffer, 0, 1, &viewport);
+
+        VkRect2D scissor = {};
+        scissor.offset.x = command.scissor.x_offset;
+        scissor.offset.y = command.scissor.x_offset;
+        scissor.extent.width = command.scissor.width;
+        scissor.extent.height = command.scissor.height;
+        vkCmdSetScissor(m_command_buffer, 0, 1, &scissor);
+    }
+
     void VulkanRecordCommandsVisitor::visit(DrawImGuiCommand& command)
     {
         if (Application::get().closed())
@@ -99,6 +122,15 @@ namespace nebula::rendering {
             layer->onImGuiRender();
 
         ImGuiLayer::end(m_command_buffer);
+    }
+
+    //
+    //  Draw Commands
+    //
+
+    void VulkanRecordCommandsVisitor::visit(DrawDummyIndicesCommand& command)
+    {
+        vkCmdDraw(m_command_buffer, command.num_indices, 1, 0, 0);
     }
 
     ////////////////////////////////////////////////////////////////////

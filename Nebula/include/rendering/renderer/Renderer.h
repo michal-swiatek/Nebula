@@ -29,13 +29,15 @@ namespace nebula::rendering {
         void setFramebuffer(const Reference<Framebuffer>& framebuffer) const;
 
         void setRenderArea(const std::optional<RenderArea>& render_area = {});
+        void setViewport(const std::optional<RenderArea>& render_area = {});
+        void setScissor(const std::optional<RenderArea>& render_area = {});
 
         [[nodiscard]] View<RenderPass> viewRenderPass() const;
         [[nodiscard]] Scope<RenderPass> releaseRenderPass();
 
         void beginRenderPass();
         void endRenderPass();
-        void nextRenderStage() const;
+        void nextRenderStage();
 
         [[nodiscard]] Scope<RenderCommandBuffer> getCommandBuffer() const;
 
@@ -57,13 +59,18 @@ namespace nebula::rendering {
         }
 
         void draw(const ImGuiRenderObject& imgui_layer) override;
+        void draw(const DummyVerticesRenderObject& render_object) override;
 
     private:
         Scope<RendererBackend> m_renderer_backend = nullptr;
         Scope<RenderCommandBuffer> m_command_buffer = nullptr;
+        Scope<RenderPass> m_renderpass = nullptr;
 
         RenderArea m_render_area{};
-        Scope<RenderPass> m_renderpass = nullptr;
+        RenderArea m_viewport{};
+        RenderArea m_scissor{};
+
+        void setRenderAreas();
 
         enum RenderPassState
         {

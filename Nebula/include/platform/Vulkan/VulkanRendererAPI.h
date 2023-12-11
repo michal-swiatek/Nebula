@@ -15,7 +15,9 @@ namespace nebula::rendering {
     {
     public:
         VulkanRendererApi();
+
         void compilePipelines(RenderPass& renderpass) override;
+        void* getPipelineHandle(RenderPass& renderpass, uint32_t stage) override;
 
     private:
         Scope<VulkanPipelineCache> m_pipeline_cache = nullptr;

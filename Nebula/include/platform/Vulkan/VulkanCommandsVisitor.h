@@ -23,7 +23,9 @@ namespace nebula::rendering {
 
         void visit(BeginRenderPassCommand& command) override;
         void visit(EndRenderPassCommand& command) override;
+        void visit(BindGraphicsPipelineCommand& command) override;
         void visit(DrawImGuiCommand& command) override;
+        void visit(DrawDummyIndicesCommand& command) override;
 
     protected:
         VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;

@@ -114,7 +114,7 @@ namespace nebula::rendering {
 
     struct NEBULA_API GraphicsPipelineState
     {
-        Reference<Shader> shader = nullptr;
+        View<Shader> shader = nullptr;
         VertexLayout vertex_layout{};
         PipelineLayout pipeline_layout{};
 
@@ -127,7 +127,7 @@ namespace nebula::rendering {
 
         DynamicState dynamic_state_flags = static_cast<DynamicState>(cViewport | cScissor | cLineWidth);
 
-        explicit GraphicsPipelineState(const Reference<Shader>& shader) : shader(shader)
+        explicit GraphicsPipelineState(const View<Shader> shader) : shader(shader)
         {
             NB_CORE_ASSERT(this->shader, "GraphicsPipelineState requires shader!");
         }

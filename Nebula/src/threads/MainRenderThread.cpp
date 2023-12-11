@@ -9,10 +9,11 @@
 #include "core/Config.h"
 #include "core/Application.h"
 #include "core/UpdateContext.h"
-#include "debug/ImGuiLayer.h"
 #include "debug/ImGuiBackend.h"
 
 #include "rendering/renderer/RendererAPI.h"
+#include "platform/OpenGL/OpenGLImGuiLayer.h"
+#include "platform/Vulkan/VulkanImGuiLayer.h"
 
 using namespace nebula::rendering;
 
@@ -145,7 +146,14 @@ namespace nebula {
 
             if (setup_imgui_layer)
             {
-                const auto id = m_application.pushOverlay<ImGuiLayer>(*renderpass);
+                uint32_t id;
+                switch (m_application.getRenderingAPI())
+                {
+                    case API::cVulkan:  id = m_application.pushOverlay<VulkanImGuiLayer>(*renderpass);    break;
+                    case API::cOpenGL:  id = m_application.pushOverlay<OpenGLImGuiLayer>(*renderpass);    break;
+                    default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
+                }
+
                 m_im_gui_layer = dynamic_cast<ImGuiLayer*>(m_application.m_layer_stack.getOverlay(id));
             }
             else

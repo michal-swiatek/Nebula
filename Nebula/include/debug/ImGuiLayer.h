@@ -32,6 +32,9 @@ namespace nebula {
 
         void setBlockEvents(const bool block) { m_block_events = block; }
 
+    protected:
+        virtual void apiSection() = 0;
+
     private:
         bool m_block_events = true;
         Scope<ImGuiBackend> m_backend = nullptr;

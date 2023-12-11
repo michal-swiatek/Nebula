@@ -144,6 +144,7 @@ namespace nebula {
     {
         ImGui::Begin("Performance");
 
+        apiSection();
         fpsSection();
 
         ImGui::End();

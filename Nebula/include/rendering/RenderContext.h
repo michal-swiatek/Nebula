@@ -17,6 +17,15 @@ namespace nebula {
 
     namespace rendering {
 
+        struct ApiInfo
+        {
+            std::string api_name;
+            std::string vendor_name;
+            std::string renderer_name;
+            std::string api_version;
+            std::string driver_version;
+        };
+
         class Framebuffer;
         class FramebufferTemplate;
 
@@ -32,6 +41,8 @@ namespace nebula {
             [[nodiscard]] std::atomic_uint32_t getRenderFps() const { return m_current_render_fps.load(); }
             [[nodiscard]] std::atomic_uint32_t getCurrentRenderFrame() const { return m_current_render_frame.load(); }
             [[nodiscard]] uint32_t getFramesInFlightNumber() const { return m_frames_in_flight_number; }
+
+            [[nodiscard]] virtual ApiInfo getApiInfo() const = 0;
 
             static RenderContext& get() { return *s_instance; }
 

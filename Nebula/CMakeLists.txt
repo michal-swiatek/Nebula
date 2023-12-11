@@ -42,6 +42,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLShader.cpp
         src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
+        src/platform/OpenGL/OpenGLImGuiLayer.cpp
         src/platform/OpenGL/OpenGLImGuiBackend.cpp
         src/platform/OpenGL/OpenGLCommandsVisitor.cpp
         src/platform/Vulkan/VulkanAPI.cpp
@@ -52,6 +53,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/Vulkan/VulkanRendererAPI.cpp
         src/platform/Vulkan/VulkanRenderPass.cpp
         src/platform/Vulkan/VulkanSwapchain.cpp
+        src/platform/Vulkan/VulkanImGuiLayer.cpp
         src/platform/Vulkan/VulkanImGuiBackend.cpp
         src/platform/Vulkan/VulkanCommandsVisitor.cpp
         src/platform/Vulkan/VulkanRecordedBuffer.cpp

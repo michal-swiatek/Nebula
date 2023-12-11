@@ -41,6 +41,7 @@ namespace nebula::rendering {
 
         Scope<ExecuteCommandVisitor> getCommandExecutor() override;
 
+        [[nodiscard]] ApiInfo getApiInfo() const override;
         [[nodiscard]] const Reference<FramebufferTemplate>& viewFramebufferTemplate() const override;
 
     private:

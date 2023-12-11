@@ -83,6 +83,23 @@ namespace nebula::rendering {
 
     }
 
+    ApiInfo OpenGLContext::getApiInfo() const
+    {
+        NB_CORE_INFO("OpenGL Info:");
+        NB_CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
+        NB_CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
+        NB_CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
+
+        ApiInfo api_info;
+        api_info.api_name = "OpenGL";
+        api_info.vendor_name = (const char*)glGetString(GL_VENDOR);
+        api_info.renderer_name = (const char*)glGetString(GL_RENDERER);
+        api_info.api_version = std::format("{}.{}.{}", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION, OPENGL_PATCH_VERSION);
+        api_info.driver_version = (const char*)glGetString(GL_VERSION);
+
+        return api_info;
+    }
+
     const Reference<FramebufferTemplate>& OpenGLContext::viewFramebufferTemplate() const
     {
         return m_framebuffer_template;

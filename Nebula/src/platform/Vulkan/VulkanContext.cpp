@@ -113,6 +113,20 @@ namespace nebula::rendering {
         vkWaitForFences(VulkanAPI::getDevice(), 1, &frame_synchronization.frame_resources_free, VK_TRUE, UINT64_MAX);
     }
 
+    ApiInfo VulkanContext::getApiInfo() const
+    {
+        const auto device_properties = VulkanAPI::getPhysicalDeviceInfo();
+
+        ApiInfo api_info;
+        api_info.api_name = "Vulkan";
+        api_info.vendor_name = device_properties.vendor;
+        api_info.renderer_name = device_properties.renderer;
+        api_info.api_version = device_properties.api_version;
+        api_info.driver_version = device_properties.driver_version;
+
+        return api_info;
+    }
+
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const
     {
         return m_swapchain->viewFramebufferTemplate();

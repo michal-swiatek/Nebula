@@ -10,17 +10,16 @@
 
 namespace nebula::rendering {
 
-    class OpenGlRecordCommandsVisitor final : public RecordCommandVisitor
-    {
-    public:
-        Scope<RecordedCommandBuffer> recordCommands(Scope<RenderCommandBuffer>&& commands) override;
-    };
-
     class OpenGlExecuteCommandsVisitor final : public ExecuteCommandVisitor
     {
     public:
         void executeCommands(Scope<RecordedCommandBuffer>&& commands) override;
         void submitCommands() override;
+
+    private:
+        void visit(BeginRenderPassCommand& command) override;
+        void visit(EndRenderPassCommand& command) override;
+        void visit(DrawImGuiCommand& command) override;
     };
 
 }

@@ -23,6 +23,7 @@ namespace nebula::rendering {
         virtual ~RecordedCommandBuffer() = default;
 
         virtual void* getBufferHandle() = 0;
+        [[nodiscard]] virtual const std::vector<RenderCommand*>& viewCommands() const = 0;
 
     protected:
         RecordedCommandBuffer() = default;
@@ -39,7 +40,7 @@ namespace nebula::rendering {
         void* getBufferHandle() override;
 
         void reset();
-        [[nodiscard]] const std::vector<RenderCommand*>& viewCommands() const;
+        [[nodiscard]] const std::vector<RenderCommand*>& viewCommands() const override;
 
         template <typename RenderCommand, typename... Args>
         void submit(Args&&... args)

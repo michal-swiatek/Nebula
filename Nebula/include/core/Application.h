@@ -35,7 +35,12 @@ namespace nebula {
 
     }
 
-    namespace rendering { class VulkanRecordCommandsVisitor; }
+    namespace rendering {
+
+        class VulkanRecordCommandsVisitor;
+        class OpenGlExecuteCommandsVisitor;
+
+    }
 
     struct ApplicationVersion
     {
@@ -131,6 +136,7 @@ namespace nebula {
         friend class nebula::threads::MainUpdateThread;
         friend class nebula::threads::MainRenderThread;
         friend class nebula::rendering::VulkanRecordCommandsVisitor;
+        friend class nebula::rendering::OpenGlExecuteCommandsVisitor;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

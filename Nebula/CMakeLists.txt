@@ -42,6 +42,7 @@ set(NEBULA_SOURCE_FILES
         src/platform/OpenGL/OpenGLShader.cpp
         src/platform/OpenGL/OpenGLFramebuffer.cpp
         src/platform/OpenGL/OpenGLRendererAPI.cpp
+        src/platform/OpenGL/OpenGLImGuiBackend.cpp
         src/platform/OpenGL/OpenGLCommandsVisitor.cpp
         src/platform/Vulkan/VulkanAPI.cpp
         src/platform/Vulkan/VulkanShader.cpp

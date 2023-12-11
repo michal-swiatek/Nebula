@@ -19,6 +19,7 @@
 #include "rendering/RenderContext.h"
 
 #include "platform/Vulkan/VulkanImGuiBackend.h"
+#include "platform/OpenGL/OpenGLImGuiBackend.h"
 
 using namespace nebula::rendering;
 
@@ -32,6 +33,7 @@ namespace nebula {
         switch (Application::get().getRenderingAPI())
         {
             case API::cVulkan:  VulkanImGuiBackend::init();     break;
+            case API::cOpenGL:  OpenGlImGuiBackend::init();     break;
             default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
         }
     }
@@ -41,6 +43,7 @@ namespace nebula {
         switch (Application::get().getRenderingAPI())
         {
             case API::cVulkan:  VulkanImGuiBackend::shutdown();     break;
+            case API::cOpenGL:  OpenGlImGuiBackend::shutdown();     break;
             default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
         }
     }

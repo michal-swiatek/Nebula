@@ -20,12 +20,12 @@ namespace nebula::rendering {
 
     void OpenGlFramebuffer::bind()
     {
-
+        glBindFramebuffer(GL_FRAMEBUFFER, m_id);
     }
 
     void OpenGlFramebuffer::unbind()
     {
-
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     bool OpenGlFramebuffer::attached() const
@@ -41,13 +41,18 @@ namespace nebula::rendering {
 
     void* OpenGlFramebuffer::getFramebufferHandle()
     {
-        NB_ASSERT(nullptr, "OpenGLFramebuffer doesn't support handles!");
-        return nullptr;
+        return this;
     }
 
     const Reference<FramebufferTemplate>& OpenGlFramebuffer::viewFramebufferTemplate() const
     {
         return m_framebuffer_template;
+    }
+
+    OpenGlDefaultFramebuffer::OpenGlDefaultFramebuffer(const Reference<FramebufferTemplate>& framebuffer_template) :
+            OpenGlFramebuffer(framebuffer_template)
+    {
+
     }
 
 }

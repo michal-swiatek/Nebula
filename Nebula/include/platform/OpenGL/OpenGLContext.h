@@ -16,8 +16,13 @@ namespace nebula::rendering {
     class OpenGLFramebufferTemplate final : public FramebufferTemplate
     {
     public:
-        //  TODO: implement
-        OpenGLFramebufferTemplate() : FramebufferTemplate(0, 0) {}
+        OpenGLFramebufferTemplate() : FramebufferTemplate(0, 0)
+        {
+            AttachmentDescription attachment_description;
+            attachment_description.format = TextureFormat::cFormat_R8G8B8A8_FLOAT_NORM;
+            attachment_description.final_layout = AttachmentLayout::cPresentOptimal;
+            addTextureAttachment(attachment_description);
+        }
     };
 
     class OpenGLContext final : public RenderContext
@@ -42,6 +47,7 @@ namespace nebula::rendering {
         GLFWwindow* m_window;
         bool m_vsync = true;
 
+        Reference<Framebuffer> m_framebuffer;
         Reference<FramebufferTemplate> m_framebuffer_template;
     };
 

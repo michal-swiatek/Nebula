@@ -90,7 +90,8 @@ namespace nebula {
                 }
             }
 
-            Timer::sleepUntilPrecise(next_frame_time);
+            if (render_fps > 0)
+                Timer::sleepUntilPrecise(next_frame_time);
         }
 
         void MainRenderThread::init()

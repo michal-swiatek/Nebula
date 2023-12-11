@@ -26,6 +26,7 @@
 #include "platform/OpenGL/OpenGLShader.h"
 #include "platform/OpenGL/OpenGLContext.h"
 #include "platform/OpenGL/OpenGLFramebuffer.h"
+#include "platform/OpenGL/OpenGLImGuiBackend.h"
 
 #ifdef NB_PLATFORM_WINDOWS
     #include <Windows.h>
@@ -65,6 +66,7 @@ namespace nebula {
         switch (Application::get().getRenderingAPI())
         {
             case API::cVulkan:  backend = new VulkanImGuiBackend(renderpass);  break;
+            case API::cOpenGL:  backend = new OpenGlImGuiBackend(renderpass);  break;
             default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
         }
 

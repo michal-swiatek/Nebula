@@ -39,6 +39,7 @@ namespace nebula::rendering {
         explicit VulkanRecordedBuffer(VkCommandBuffer command_buffer) : m_command_buffer(command_buffer) {}
 
         void* getBufferHandle() override { return m_command_buffer; }
+        [[nodiscard]] const std::vector<RenderCommand*>& viewCommands() const override { throw std::runtime_error("No implementation for Vulkan"); }
 
     private:
         VkCommandBuffer m_command_buffer;

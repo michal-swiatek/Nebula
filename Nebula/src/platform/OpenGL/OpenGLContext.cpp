@@ -11,10 +11,10 @@
 #include <GLFW/glfw3.h>
 #include <rendering/Framebuffer.h>
 
-#include "../../../3rd-party/spirv-cross/spirv.hpp"
 #include "core/Assert.h"
 #include "platform/EngineConfiguration.h"
 #include "platform/OpenGL/OpenGLConfiguration.h"
+#include "platform/OpenGL/OpenGLCommandsVisitor.h"
 
 namespace nebula::rendering {
 
@@ -28,7 +28,7 @@ namespace nebula::rendering {
 
         setVSync(true);
 
-        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= 1)
+        if constexpr (NEBULA_INITIALIZATION_VERBOSITY >= NEBULA_INITIALIZATION_VERBOSITY_LOW)
         {
             NB_CORE_INFO("OpenGL Info:");
             NB_CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
@@ -42,6 +42,7 @@ namespace nebula::rendering {
         );
 
         m_framebuffer_template = createReference<OpenGLFramebufferTemplate>();
+        m_framebuffer = Framebuffer::create(m_framebuffer_template);
     }
 
     void OpenGLContext::bind()
@@ -56,7 +57,10 @@ namespace nebula::rendering {
 
     void OpenGLContext::reload()
     {
-
+        if (checkVSync())
+            glfwSwapInterval(1);
+        else
+            glfwSwapInterval(0);
     }
 
     void OpenGLContext::presentImage()
@@ -66,12 +70,12 @@ namespace nebula::rendering {
 
     Reference<Framebuffer> OpenGLContext::getNextImage()
     {
-        return nullptr; //  TODO: implement
+        return m_framebuffer;
     }
 
     Scope<ExecuteCommandVisitor> OpenGLContext::getCommandExecutor()
     {
-        return nullptr; //  TODO: implement
+        return createScope<OpenGlExecuteCommandsVisitor>();
     }
 
     void OpenGLContext::waitForFrameResources(uint32_t frame)

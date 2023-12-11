@@ -38,7 +38,7 @@ namespace nebula {
         protected:
             RenderContext();    //  Defined in MainRenderThread
 
-            bool m_vsync;
+            bool m_vsync = true;
             uint32_t m_frames_in_flight_number;
             std::atomic_uint32_t m_current_render_frame;
             std::atomic_uint32_t m_current_render_fps = 60;

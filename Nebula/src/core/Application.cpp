@@ -75,10 +75,10 @@ namespace nebula {
 
     void Application::cleanupThreads()
     {
-        for (auto it = m_threads.rbegin(); it != m_threads.rend(); ++it)
+        for (const auto& m_thread : std::ranges::reverse_view(m_threads))
         {
-            (*it)->cleanup();
-            (*it)->waitShutdownReady();
+            m_thread->cleanup();
+            m_thread->waitShutdownReady();
         }
 
         m_threads.clear();

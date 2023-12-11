@@ -125,7 +125,7 @@ namespace nebula::rendering {
         createSwapchain(swapchain_details.capabilities);
         createFramebuffers();
 
-        NB_CORE_INFO("Recreated swapchain: {} images ({}, {}), VSync: {}", m_swapchain_images->getImageCount(), width, height, vsync ? "on" : "off");
+        NB_CORE_INFO("Recreated swapchain: {} images ({}, {}), VSync: {}", m_swapchain_images->getImageCount(), width, height, checkVSync() ? "on" : "off");
     }
 
     void VulkanSwapchain::createSwapchain(const VkSurfaceCapabilitiesKHR& capabilities)

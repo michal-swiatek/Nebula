@@ -8,7 +8,6 @@
 
 #include <core/LayerStack.h>
 
-#include "core/Layer.h"
 #include "platform/Vulkan/VulkanAPI.h"
 #include "platform/Vulkan/VulkanContext.h"
 #include "rendering/commands/RenderCommandVisitor.h"

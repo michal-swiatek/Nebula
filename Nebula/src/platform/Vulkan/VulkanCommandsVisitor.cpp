@@ -90,6 +90,9 @@ namespace nebula::rendering {
 
     void VulkanRecordCommandsVisitor::visit(DrawImGuiCommand& command)
     {
+        if (Application::get().closed())
+            return;
+
         ImGuiLayer::begin();
 
         for (const auto& layer : Application::get().m_layer_stack)

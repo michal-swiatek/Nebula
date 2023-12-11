@@ -65,7 +65,8 @@ namespace nebula {
         virtual ~Application();
 
         void close();
-        bool minimized() { std::lock_guard lock{m_mutex}; return m_minimized; }
+        bool closed() const { return !m_running; }
+        bool minimized() const { return m_minimized; }
         void minimize(const bool minimized) { std::lock_guard lock{m_mutex}; m_minimized = minimized; }
 
         ///////////////////////////////////////////////////////////////////////////////////

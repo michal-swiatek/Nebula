@@ -3,10 +3,6 @@
 // Github: https://github.com/michal-swiatek
 //
 
-#include "core/Application.h"
-
-#include <ranges>
-
 #include "core/Config.h"
 #include "core/Logging.h"
 
@@ -67,19 +63,19 @@ namespace nebula {
         m_threads.emplace_back(createScope<threads::MainUpdateThread>());
 
         for (const auto& thread : m_threads)
-        {
             thread->spawn();
+
+        for (const auto& thread : m_threads)
             thread->waitInitReady();
-        }
     }
 
     void Application::cleanupThreads()
     {
-        for (const auto& m_thread : std::ranges::reverse_view(m_threads))
-        {
-            m_thread->cleanup();
-            m_thread->waitShutdownReady();
-        }
+        for (const auto& thread : m_threads)
+            thread->cleanup();
+
+        for (const auto& thread : m_threads)
+            thread->waitShutdownReady();
 
         m_threads.clear();
     }
@@ -92,6 +88,7 @@ namespace nebula {
 
     void Application::close()
     {
+        std::lock_guard lock{m_mutex};
         m_running = false;
         closeThreads();
     }

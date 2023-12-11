@@ -34,18 +34,18 @@ namespace nebula::threads {
 
     void SecondaryThread::run()
     {
-        m_running.test_and_set(std::memory_order_acquire);
+        m_running.test_and_set();
         m_running.notify_all();
     }
 
     void SecondaryThread::close()
     {
-        m_running.clear(std::memory_order_release);
+        m_running.clear();
     }
 
     void SecondaryThread::cleanup()
     {
-        m_cleanup.test_and_set(std::memory_order_acquire);
+        m_cleanup.test_and_set();
         m_cleanup.notify_all();
     }
 
@@ -58,11 +58,11 @@ namespace nebula::threads {
 
         init();
 
-        m_init_ready.test_and_set(std::memory_order_acquire);
+        m_init_ready.test_and_set();
         m_init_ready.notify_all();
 
         m_running.wait(false);
-        while (m_running.test(std::memory_order_relaxed))
+        while (m_running.test())
             mainLoopBody();
 
         m_cleanup.wait(false);
@@ -72,7 +72,7 @@ namespace nebula::threads {
 
         shutdown();
 
-        m_shutdown_ready.test_and_set(std::memory_order_acquire);
+        m_shutdown_ready.test_and_set();
         m_shutdown_ready.notify_all();
     }
 

@@ -67,13 +67,13 @@ namespace nebula {
             if (!m_application.minimized())
             {
                 m_render_context->waitForFrameResources(frame_in_flight);
+                if (m_vsync != m_render_context->checkVSync())
+                    reloadSwapchain();
+
                 const auto framebuffer = m_render_context->getNextImage();
 
                 if (!framebuffer)
-                {
-                    m_render_context->reload();
-                    initFinalRenderpass();
-                }
+                    reloadSwapchain();
                 else
                 {
                     m_renderpass_executor->resetResources(frame_in_flight);
@@ -126,8 +126,17 @@ namespace nebula {
             m_render_context.reset();
         }
 
+        void MainRenderThread::reloadSwapchain()
+        {
+            m_vsync = m_render_context->checkVSync();
+            m_render_context->reload();
+            initFinalRenderpass();
+        }
+
         void MainRenderThread::initFinalRenderpass(const bool setup_imgui_layer)
         {
+            m_render_context->setVSync(m_vsync);
+
             const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
             const auto renderpass_template = createReference<FinalRenderPass>(swapchain_framebuffer_template);
             auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();

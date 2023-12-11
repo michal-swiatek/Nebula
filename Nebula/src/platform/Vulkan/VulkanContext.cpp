@@ -50,7 +50,7 @@ namespace nebula::rendering {
         m_surface = m_vulkan_api->getSurface();
 
         m_swapchain = createScope<VulkanSwapchain>(m_surface);
-        setVSync(true); //  Creates swapchain with proper parameters
+        reload();
 
         m_frame_synchronizations = std::vector<VulkanFrameSynchronization>(getFramesInFlightNumber());
 
@@ -87,7 +87,7 @@ namespace nebula::rendering {
         int width, height;
         glfwGetFramebufferSize(m_window, &width, &height);
 
-        m_swapchain->recreateSwapchain(width, height, m_swapchain->checkVSync());
+        m_swapchain->recreateSwapchain(width, height, checkVSync());
     }
 
     void VulkanContext::presentImage()
@@ -116,19 +116,6 @@ namespace nebula::rendering {
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const
     {
         return m_swapchain->viewFramebufferTemplate();
-    }
-
-    bool VulkanContext::checkVSync()
-    {
-        return m_swapchain->checkVSync();
-    }
-
-    void VulkanContext::setVSync(const bool vsync)
-    {
-        int width, height;
-        glfwGetFramebufferSize(m_window, &width, &height);
-
-        m_swapchain->recreateSwapchain(width, height, vsync);
     }
 
 }

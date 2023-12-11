@@ -59,20 +59,6 @@ namespace nebula::rendering {
 
     }
 
-    void OpenGLContext::setVSync(const bool vsync)
-    {
-        if (vsync)
-            glfwSwapInterval(1);
-        else
-            glfwSwapInterval(0);
-        m_vsync = vsync;
-    }
-
-    bool OpenGLContext::checkVSync()
-    {
-        return m_vsync;
-    }
-
     void OpenGLContext::presentImage()
     {
         glfwSwapBuffers(m_window);

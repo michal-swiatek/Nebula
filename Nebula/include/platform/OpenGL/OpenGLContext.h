@@ -31,9 +31,6 @@ namespace nebula::rendering {
         void unbind() override;
         void reload() override;
 
-        bool checkVSync() override;
-        void setVSync(bool vsync) override;
-
         void presentImage() override;
         Reference<Framebuffer> getNextImage() override;
 

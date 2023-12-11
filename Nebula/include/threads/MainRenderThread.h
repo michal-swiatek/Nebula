@@ -28,6 +28,7 @@ namespace nebula::threads {
         Application& m_application;
         Scope<rendering::RenderContext> m_render_context;
 
+        bool m_vsync = true;
         ImGuiLayer* m_im_gui_layer = nullptr;
 
         Scope<rendering::ImGuiRenderObject> m_imgui_object;
@@ -39,6 +40,7 @@ namespace nebula::threads {
         void init() override;
         void shutdown() override;
 
+        void reloadSwapchain();
         void initFinalRenderpass(bool setup_imgui_layer = false);
     };
 

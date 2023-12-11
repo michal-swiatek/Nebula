@@ -25,6 +25,9 @@ namespace nebula {
         public:
             virtual ~RenderContext();
 
+            void setVSync(const bool vsync) { m_vsync = vsync; }
+            [[nodiscard]] bool checkVSync() const { return m_vsync; }
+
             void setRenderFps(const uint32_t fps) { m_current_render_fps.store(fps); }
             [[nodiscard]] std::atomic_uint32_t getRenderFps() const { return m_current_render_fps.load(); }
             [[nodiscard]] std::atomic_uint32_t getCurrentRenderFrame() const { return m_current_render_frame.load(); }
@@ -35,9 +38,7 @@ namespace nebula {
         protected:
             RenderContext();    //  Defined in MainRenderThread
 
-            virtual bool checkVSync() = 0;
-            virtual void setVSync(bool vsync) = 0;
-
+            bool m_vsync;
             uint32_t m_frames_in_flight_number;
             std::atomic_uint32_t m_current_render_frame;
             std::atomic_uint32_t m_current_render_fps = 60;

@@ -49,7 +49,10 @@ namespace nebula {
                 RenderPassTemplate(ClearColor(0.0f, 0.0f, 0.2f, 1.0f), final_framebuffer_template)
             {
                 AttachmentReference attachment_reference = {0};
-                addStage(GraphicsPipelineState(shader), {attachment_reference});
+                auto pipeline_state = GraphicsPipelineState(shader);
+                pipeline_state.input_assembly.topology = GeometryTopology::cTriangleStrip;
+
+                addStage(pipeline_state, {attachment_reference});
             }
         };
 
@@ -104,11 +107,11 @@ namespace nebula {
             RendererApi::create(m_application.getRenderingAPI());
             ImGuiBackend::init();
 
-            m_shader = Shader::create("triangle", VertexShader("vulkan/triangle_shader.vert.spv", "vulkan/triangle_shader.frag.spv"));
+            m_shader = Shader::create("final_pass", VertexShader("vulkan/final_pass.vert.spv", "vulkan/final_pass.frag.spv"));
             initFinalRenderpass(true);
 
             m_imgui_object = createScope<ImGuiRenderObject>();
-            m_vertices_object = createScope<DummyVerticesRenderObject>(3);
+            m_vertices_object = createScope<DummyVerticesRenderObject>(4);
 
             m_renderpass_objects.setStages(1);
             m_renderpass_objects.addObject(0, m_vertices_object.get());

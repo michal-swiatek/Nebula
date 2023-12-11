@@ -71,11 +71,6 @@ public:
 
     }
 
-    void onRender() override
-    {
-
-    }
-
     void onAttach() override
     {
         NB_INFO("{} created!", getName());

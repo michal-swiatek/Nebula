@@ -24,7 +24,6 @@ namespace nebula {
         virtual void onDetach() {}
         virtual void onUpdate(Timestep delta_time) {}
         virtual void onFixedUpdate(Timestep delta_time) {}
-        virtual void onRender() {}
         virtual void onImGuiRender() {}
         virtual void onEvent(Event& event) {}
 

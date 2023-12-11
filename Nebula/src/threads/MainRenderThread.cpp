@@ -64,32 +64,33 @@ namespace nebula {
 
             if (!m_application.minimized())
             {
-                m_render_context->waitForFrameResources(m_render_context->getCurrentRenderFrame());
-                m_renderpass_executor->resetResources(frame_in_flight);
+                m_render_context->waitForFrameResources(frame_in_flight);
+                const auto framebuffer = m_render_context->getNextImage();
 
-                auto commands_executor = m_render_context->getCommandExecutor();
-                auto final_commands = runFinalPass();
+                if (!framebuffer)
+                {
+                    m_render_context->reload();
+                    initFinalRenderpass();
+                }
+                else
+                {
+                    m_renderpass_executor->resetResources(frame_in_flight);
+                    m_renderpass_executor->setFramebuffer(framebuffer);
 
-                updateApplicationStack();
+                    auto final_commands = m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);
+                    auto commands_executor = m_render_context->getCommandExecutor();
 
-                //  Submit commands
-                commands_executor->executeCommands(std::move(final_commands));
-                commands_executor->submitCommands();
+                    updateApplicationStack();
 
-                m_render_context->presentImage();
+                    //  Submit commands
+                    commands_executor->executeCommands(std::move(final_commands));
+                    commands_executor->submitCommands();
+
+                    m_render_context->presentImage();
+                }
             }
 
             Timer::sleepUntilPrecise(next_frame_time);
-        }
-
-        Scope<RecordedCommandBuffer> MainRenderThread::runFinalPass() const
-        {
-            const uint32_t frame_in_flight = m_render_context->getCurrentRenderFrame();
-
-            const auto framebuffer = m_render_context->getNextImage();
-            m_renderpass_executor->setFramebuffer(framebuffer);
-
-            return m_renderpass_executor->execute(m_renderpass_objects, frame_in_flight);
         }
 
         void MainRenderThread::updateApplicationStack() const
@@ -111,15 +112,8 @@ namespace nebula {
 
             RendererApi::create(m_application.getRenderingAPI());
 
-            //  Init members
-            const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
-            const auto renderpass_template = createReference<FinalRenderPass>(swapchain_framebuffer_template);
-            auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
-
-            renderer->setRenderPass(renderpass_template);
-            m_renderpass_executor = RenderPassExecutor::create(std::move(renderer));
-
-            m_renderpass_objects.setStages(renderpass_template->viewRenderStages().size());
+            initFinalRenderpass();
+            m_renderpass_objects.setStages(1);
         }
 
         void MainRenderThread::shutdown()
@@ -133,6 +127,16 @@ namespace nebula {
 
             m_render_context->unbind();
             m_render_context.reset();
+        }
+
+        void MainRenderThread::initFinalRenderpass()
+        {
+            const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
+            const auto renderpass_template = createReference<FinalRenderPass>(swapchain_framebuffer_template);
+            auto renderer = Renderer::create<Renderer, ForwardRendererBackend>();
+
+            renderer->setRenderPass(renderpass_template);
+            m_renderpass_executor = RenderPassExecutor::create(std::move(renderer));
         }
 
     }

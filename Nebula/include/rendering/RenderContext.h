@@ -38,11 +38,11 @@ namespace nebula {
             virtual bool checkVSync() = 0;
             virtual void setVSync(bool vsync) = 0;
 
-        private:
             uint32_t m_frames_in_flight_number;
             std::atomic_uint32_t m_current_render_frame;
             std::atomic_uint32_t m_current_render_fps = 60;
 
+        private:
             static RenderContext* s_instance;
 
             //  Called by RenderGraphThread
@@ -51,6 +51,7 @@ namespace nebula {
             //  Called by MainRenderThread
             virtual void bind() = 0;
             virtual void unbind() = 0;
+            virtual void reload() = 0;  //  Update swapchain
 
             virtual void presentImage() = 0;
             virtual Reference<Framebuffer> getNextImage() = 0;

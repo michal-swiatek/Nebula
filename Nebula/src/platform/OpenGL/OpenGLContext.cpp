@@ -54,6 +54,11 @@ namespace nebula::rendering {
         glfwMakeContextCurrent(nullptr);
     }
 
+    void OpenGLContext::reload()
+    {
+
+    }
+
     void OpenGLContext::setVSync(const bool vsync)
     {
         if (vsync)

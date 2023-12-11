@@ -114,6 +114,8 @@ namespace nebula::rendering {
         submit_info.commandBufferCount = m_vulkan_commands.size();
         submit_info.pCommandBuffers = m_vulkan_commands.data();
 
+        vkResetFences(VulkanAPI::getDevice(), 1, &m_frame_synchronization.frame_resources_free);
+
         const auto queues_info = VulkanAPI::getQueuesInfo();
         const auto result = vkQueueSubmit(queues_info.graphics_queue, 1, &submit_info, m_frame_synchronization.frame_resources_free);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Failed submitting render commands!");

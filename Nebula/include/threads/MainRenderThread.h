@@ -29,12 +29,12 @@ namespace nebula::threads {
         Scope<rendering::RenderPassExecutor> m_renderpass_executor;
 
         void mainLoopBody() override;
-
         void updateApplicationStack() const;
-        [[nodiscard]] Scope<rendering::RecordedCommandBuffer> runFinalPass() const;
 
         void init() override;
         void shutdown() override;
+
+        void initFinalRenderpass();
     };
 
 }

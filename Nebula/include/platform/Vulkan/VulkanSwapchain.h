@@ -26,6 +26,7 @@ namespace nebula::rendering {
         VulkanSwapchainImages(VkSwapchainKHR swapchain, VkSurfaceFormatKHR surface_format, uint32_t width, uint32_t height);
         ~VulkanSwapchainImages();
 
+        [[nodiscard]] uint32_t getImageCount() const;
         [[nodiscard]] const std::vector<VkImageView>& viewImageViews() const;
 
     private:

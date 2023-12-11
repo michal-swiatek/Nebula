@@ -43,6 +43,7 @@ namespace nebula::rendering {
 
         void bind() override;
         void unbind() override;
+        void reload() override;
 
         bool checkVSync() override;
         void setVSync(bool vsync) override;

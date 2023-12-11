@@ -50,6 +50,11 @@ namespace nebula::rendering {
             vkDestroyImageView(VulkanAPI::getDevice(), image_view, nullptr);
     }
 
+    uint32_t VulkanSwapchainImages::getImageCount() const
+    {
+        return m_swapchain_images.size();
+    }
+
     const std::vector<VkImageView>& VulkanSwapchainImages::viewImageViews() const
     {
         return m_swapchain_image_views;
@@ -64,6 +69,7 @@ namespace nebula::rendering {
     VulkanSwapchain::~VulkanSwapchain()
     {
         m_framebuffers.clear();
+        m_swapchain_images.reset();
         vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
     }
 
@@ -80,22 +86,33 @@ namespace nebula::rendering {
         present_info.pResults = nullptr;
 
         const auto queue_info = VulkanAPI::getQueuesInfo();
-        vkQueuePresentKHR(queue_info.presentation_queue, &present_info);
+        const auto result = vkQueuePresentKHR(queue_info.presentation_queue, &present_info);
+
+        NB_CORE_ASSERT(result == VK_SUCCESS || result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR);
     }
 
     Reference<Framebuffer> VulkanSwapchain::getNextImage(VkSemaphore image_available)
     {
-        vkAcquireNextImageKHR(VulkanAPI::getDevice(), m_swapchain, UINT64_MAX, image_available, VK_NULL_HANDLE, &m_current_image_index);
+        const auto result = vkAcquireNextImageKHR(VulkanAPI::getDevice(), m_swapchain, UINT64_MAX, image_available, VK_NULL_HANDLE, &m_current_image_index);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+            return nullptr;
+        if (result != VK_SUCCESS)
+            throw std::runtime_error("Failed to acquire Vulkan swapchain image!");
+
         return m_framebuffers[m_current_image_index];
     }
 
-    void VulkanSwapchain::recreateSwapchain(const uint32_t width, const uint32_t height, bool vsync)
+    void VulkanSwapchain::recreateSwapchain(const uint32_t width, const uint32_t height, const bool vsync)
     {
+        if (width == 0 || height == 0)
+            return;
+
         vkDeviceWaitIdle(VulkanAPI::getDevice());
 
         if (m_swapchain)
         {
             m_framebuffers.clear();
+            m_swapchain_images.reset();
             vkDestroySwapchainKHR(VulkanAPI::getDevice(), m_swapchain, nullptr);
         }
 
@@ -107,6 +124,8 @@ namespace nebula::rendering {
 
         createSwapchain(swapchain_details.capabilities);
         createFramebuffers();
+
+        NB_CORE_INFO("Recreated swapchain: {} images ({}, {}), VSync: {}", m_swapchain_images->getImageCount(), width, height, vsync ? "on" : "off");
     }
 
     void VulkanSwapchain::createSwapchain(const VkSurfaceCapabilitiesKHR& capabilities)
@@ -128,7 +147,7 @@ namespace nebula::rendering {
         create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
         create_info.presentMode = m_present_mode;
         create_info.clipped = VK_TRUE;
-        create_info.oldSwapchain = m_swapchain;
+        create_info.oldSwapchain = VK_NULL_HANDLE;
 
         const auto [_1, _2, graphics_family_index, presentation_family_index] = VulkanAPI::getQueuesInfo();
         const uint32_t queue_family_indices[] = {graphics_family_index, presentation_family_index};

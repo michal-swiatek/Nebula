@@ -82,9 +82,18 @@ namespace nebula::rendering {
 
     }
 
+    void VulkanContext::reload()
+    {
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+
+        m_swapchain->recreateSwapchain(width, height, m_swapchain->checkVSync());
+    }
+
     void VulkanContext::presentImage()
     {
         m_swapchain->presentImage(m_frame_synchronizations[getCurrentRenderFrame()].render_finished);
+        m_current_render_frame = (m_current_render_frame + 1) % m_frames_in_flight_number;
     }
 
     Reference<Framebuffer> VulkanContext::getNextImage()
@@ -102,7 +111,6 @@ namespace nebula::rendering {
         auto& frame_synchronization = m_frame_synchronizations[frame];
         std::lock_guard lock{frame_synchronization.mutex};  //  TODO: Check for deadlocks
         vkWaitForFences(VulkanAPI::getDevice(), 1, &frame_synchronization.frame_resources_free, VK_TRUE, UINT64_MAX);
-        vkResetFences(VulkanAPI::getDevice(), 1, &frame_synchronization.frame_resources_free);
     }
 
     const Reference<FramebufferTemplate>& VulkanContext::viewFramebufferTemplate() const

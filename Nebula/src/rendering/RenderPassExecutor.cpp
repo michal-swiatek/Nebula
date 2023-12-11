@@ -74,4 +74,14 @@ namespace nebula::rendering {
         m_renderer->setFramebuffer(framebuffer);
     }
 
+    View<Renderer> RenderPassExecutor::viewRenderer() const
+    {
+        return m_renderer.get();
+    }
+
+    View<RenderPass> RenderPassExecutor::viewRenderPass() const
+    {
+        return m_renderer->viewRenderPass();
+    }
+
 }

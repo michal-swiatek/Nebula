@@ -65,6 +65,7 @@ namespace nebula::rendering {
         explicit VulkanPipelineCache(const std::string& cache_root);
         ~VulkanPipelineCache();
 
+        void destroyPipeline(VkRenderPass renderpass, uint32_t subpass);
         VkPipeline getPipeline(VkRenderPass renderpass, uint32_t subpass) const;
 
         void addPipelines(VkRenderPass renderpass, std::vector<VkPipeline>&& pipelines);

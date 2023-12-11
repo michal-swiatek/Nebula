@@ -22,10 +22,10 @@ namespace nebula::rendering {
         m_renderpass_state = cStarted;
         m_command_buffer = RenderCommandBuffer::create();
 
+        submitCommand<BeginRenderPassCommand>(*m_renderpass.get(), m_render_area);
+
         m_renderpass->startPass();
         nextRenderStage();
-
-        submitCommand<BeginRenderPassCommand>(*m_renderpass.get(), m_render_area);
     }
 
     void Renderer::endRenderPass()

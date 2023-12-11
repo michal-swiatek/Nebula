@@ -109,6 +109,8 @@ namespace nebula::rendering {
         scissor.extent.width = command.scissor.width;
         scissor.extent.height = command.scissor.height;
         vkCmdSetScissor(m_command_buffer, 0, 1, &scissor);
+
+        vkCmdSetLineWidth(m_command_buffer, command.graphics_pipeline_state.rasterization.line_width);
     }
 
     void VulkanRecordCommandsVisitor::visit(DrawImGuiCommand& command)

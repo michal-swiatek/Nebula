@@ -81,8 +81,7 @@ namespace nebula::rendering {
     {
         if (clockwise)
             return VK_FRONT_FACE_CLOCKWISE;
-        else
-            return VK_FRONT_FACE_COUNTER_CLOCKWISE;
+        return VK_FRONT_FACE_COUNTER_CLOCKWISE;
     }
 
     VulkanGraphicsPipelineInfo::VulkanGraphicsPipelineInfo(const GraphicsPipelineState& graphics_pipeline_state)
@@ -116,6 +115,7 @@ namespace nebula::rendering {
         m_rasterization_create_info.polygonMode = getVulkanPolygonMode(graphics_pipeline_state.rasterization.polygon_mode);
         m_rasterization_create_info.cullMode = getVulkanCullMode(graphics_pipeline_state.rasterization.cull_mode);
         m_rasterization_create_info.frontFace = getVulkanFrontFace(graphics_pipeline_state.rasterization.face_clockwise);
+        m_rasterization_create_info.lineWidth = graphics_pipeline_state.rasterization.line_width;
         m_rasterization_create_info.depthClampEnable = graphics_pipeline_state.depth_stencil.depth_clamp;
         m_rasterization_create_info.depthBiasEnable = graphics_pipeline_state.depth_stencil.depth_bias_enabled;
         m_rasterization_create_info.depthBiasConstantFactor = graphics_pipeline_state.depth_stencil.depth_bias_constant;
@@ -128,7 +128,7 @@ namespace nebula::rendering {
         m_multisampling_create_info.sampleShadingEnable = graphics_pipeline_state.multisampling.enabled;
         m_multisampling_create_info.rasterizationSamples = getVulkanTextureSampling(graphics_pipeline_state.multisampling.samples);
         m_multisampling_create_info.minSampleShading = graphics_pipeline_state.multisampling.min_sample_shading;
-        m_multisampling_create_info.pSampleMask = &m_multisampling_mask;
+        m_multisampling_create_info.pSampleMask = nullptr;
         m_multisampling_create_info.alphaToOneEnable = graphics_pipeline_state.multisampling.alpha_to_one_enable;
         m_multisampling_create_info.alphaToCoverageEnable = graphics_pipeline_state.multisampling.alpha_to_coverage_enable;
 
@@ -257,6 +257,14 @@ namespace nebula::rendering {
             filesystem::saveBinaryFile(m_cache_path, data);
 
         vkDestroyPipelineCache(VulkanAPI::getDevice(), m_pipeline_cache, nullptr);
+    }
+
+    void VulkanPipelineCache::destroyPipeline(VkRenderPass renderpass, uint32_t subpass)
+    {
+        const auto key = std::make_pair(renderpass, subpass);
+        const auto pipeline = m_handle_map.at(key);
+        vkDestroyPipeline(VulkanAPI::getDevice(), pipeline, nullptr);
+        m_handle_map.erase(key);
     }
 
     VkPipeline VulkanPipelineCache::getPipeline(VkRenderPass renderpass, uint32_t subpass) const

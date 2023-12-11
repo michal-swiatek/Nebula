@@ -55,7 +55,12 @@ namespace nebula::rendering {
         m_pipeline_cache->addPipelines(renderpass_handle, std::move(graphic_pipelines));
     }
 
-    void* VulkanRendererApi::getPipelineHandle(RenderPass& renderpass, uint32_t stage)
+    void VulkanRendererApi::destroyPipeline(RenderPass& renderpass, uint32_t stage)
+    {
+        m_pipeline_cache->destroyPipeline(static_cast<VkRenderPass>(renderpass.getRenderPassHandle()), stage);
+    }
+
+    void* VulkanRendererApi::getPipelineHandle(RenderPass& renderpass, const uint32_t stage)
     {
         return m_pipeline_cache->getPipeline(static_cast<VkRenderPass>(renderpass.getRenderPassHandle()), stage);
     }

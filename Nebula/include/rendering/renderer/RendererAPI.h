@@ -23,6 +23,7 @@ namespace nebula {
             virtual ~RendererApi() = default;
 
             virtual void compilePipelines(RenderPass& renderpass) = 0;
+            virtual void destroyPipeline(RenderPass& renderpass, uint32_t stage) = 0;
             virtual void* getPipelineHandle(RenderPass& renderpass, uint32_t stage) = 0;
 
             static RendererApi& get();

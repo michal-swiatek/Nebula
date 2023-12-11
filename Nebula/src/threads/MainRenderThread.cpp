@@ -141,6 +141,8 @@ namespace nebula {
         void MainRenderThread::initFinalRenderpass(const bool setup_imgui_layer)
         {
             m_render_context->setVSync(m_vsync);
+            if (m_renderpass_executor)
+                RendererApi::get().destroyPipeline(*m_renderpass_executor->viewRenderPass(), 0);
 
             const auto& swapchain_framebuffer_template = m_render_context->viewFramebufferTemplate();
             const auto renderpass_template = createReference<FinalRenderPass>(m_shader.get(), swapchain_framebuffer_template);

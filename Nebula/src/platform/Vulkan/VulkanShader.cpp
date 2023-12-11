@@ -53,7 +53,7 @@ namespace nebula::rendering {
     void* VulkanShader::getStageHandle(const ShaderStage stage)
     {
         if (!m_shader_stages.contains(stage))
-            throw std::runtime_error(std::format("Vulkan shader {} does not contain {} stage!", getName(), shaderStageToString(stage)));
+            throw std::runtime_error(std::format("Vulkan shader \'{}\' does not contain {} stage!", getName(), shaderStageToString(stage)));
 
         return m_shader_stages[stage];
     }
@@ -65,6 +65,8 @@ namespace nebula::rendering {
 
     VkShaderModule VulkanShader::createShaderModule(const std::vector<char>& code)
     {
+        NB_CORE_ASSERT(!code.empty());
+
         VkShaderModuleCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         create_info.codeSize = code.size();

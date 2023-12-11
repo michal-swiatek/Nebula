@@ -53,6 +53,11 @@ namespace nebula::rendering {
 
     }
 
+    void OpenGlRendererApi::destroyPipeline(RenderPass& renderpass, uint32_t stage)
+    {
+
+    }
+
     void* OpenGlRendererApi::getPipelineHandle(RenderPass& renderpass, uint32_t stage)
     {
         return nullptr;

@@ -27,6 +27,9 @@ namespace nebula::rendering {
         void setRenderer(Scope<Renderer>&& renderer);
         void setFramebuffer(const Reference<Framebuffer>& framebuffer) const;
 
+        [[nodiscard]] View<Renderer> viewRenderer() const;
+        [[nodiscard]] View<RenderPass> viewRenderPass() const;
+
         //  Defined in DetectPlatform.cpp
         static Scope<RenderPassExecutor> create(Scope<Renderer>&& renderer);
         static Scope<RenderPassExecutor> create(Scope<RenderPass>&& renderpass);

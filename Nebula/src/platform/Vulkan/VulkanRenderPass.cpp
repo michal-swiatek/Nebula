@@ -117,13 +117,23 @@ namespace nebula::rendering {
         if (framebuffer_template->viewDepthStencilAttachmentDescription().has_value())
             attachment_descriptions.emplace_back(createAttachmentDescription(*framebuffer_template->viewDepthStencilAttachmentDescription()));
 
-        VkRenderPassCreateInfo create_info{};
+        VkRenderPassCreateInfo create_info = {};
+        VkSubpassDependency subpass_dependency = {};   //  TODO: Implement dependency system
+
+        subpass_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        subpass_dependency.dstSubpass = 0;
+        subpass_dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        subpass_dependency.srcAccessMask = 0;
+        subpass_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        subpass_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
         create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
         create_info.attachmentCount = attachment_descriptions.size();
         create_info.pAttachments = attachment_descriptions.data();
         create_info.subpassCount = subpass_descriptions.size();
         create_info.pSubpasses = subpass_descriptions.data();
+        create_info.dependencyCount = 1;
+        create_info.pDependencies = &subpass_dependency;
 
         const auto result = vkCreateRenderPass(VulkanAPI::getDevice(), &create_info, nullptr, &m_renderpass);
         NB_CORE_ASSERT(result == VK_SUCCESS, "Failed to create Vulkan RenderPass!");

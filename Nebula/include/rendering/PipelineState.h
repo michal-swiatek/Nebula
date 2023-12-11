@@ -72,15 +72,17 @@ namespace nebula::rendering {
         bool enabled = true;
         bool face_clockwise = true;
 
-        CullMode cull_mode = CullMode::cBack;
+        CullMode cull_mode = CullMode::cNone;
         PolygonMode polygon_mode = PolygonMode::cFill;
+
+        float line_width = 1.0f;
 
         friend bool operator == (const RasterizationState&, const RasterizationState&) = default;
     };
 
     struct NEBULA_API DepthStencilState
     {
-        bool enabled = true;
+        bool enabled = false;
         bool depth_clamp = false;
 
         bool depth_bias_enabled = false;

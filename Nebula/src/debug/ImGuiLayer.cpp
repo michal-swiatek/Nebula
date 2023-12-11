@@ -12,23 +12,51 @@
 #include <numeric>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_vulkan.h>
-#include <backends/imgui_impl_opengl3.h>
 
 #include "core/Timestep.h"
 #include "core/Application.h"
 #include "core/UpdateContext.h"
 #include "rendering/RenderContext.h"
-#include "platform/OpenGL/OpenGLConfiguration.h"
+
+#include "platform/Vulkan/VulkanImGuiBackend.h"
 
 using namespace nebula::rendering;
 
 namespace nebula {
 
-    std::mutex mutex;
     int ImGuiLayer::s_counter = 0;
+    ImGuiBackend* ImGuiLayer::s_backend = nullptr;
 
-    ImGuiLayer::ImGuiLayer() : Layer(std::format("ImGuiLayer{}", s_counter++)) {}
+    void ImGuiBackend::init()
+    {
+        switch (Application::get().getRenderingAPI())
+        {
+            case API::cVulkan:  VulkanImGuiBackend::init();     break;
+            default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
+        }
+    }
+
+    void ImGuiBackend::shutdown()
+    {
+        switch (Application::get().getRenderingAPI())
+        {
+            case API::cVulkan:  VulkanImGuiBackend::shutdown();     break;
+            default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
+        }
+    }
+
+    ImGuiLayer::ImGuiLayer(RenderPass& renderpass) : Layer(std::format("ImGuiLayer{}", s_counter++))
+    {
+        NB_CORE_ASSERT(!s_backend);
+        m_backend = ImGuiBackend::create(renderpass);
+        s_backend = m_backend.get();
+    }
+
+    ImGuiLayer::~ImGuiLayer()
+    {
+        NB_CORE_ASSERT(s_backend);
+        s_backend = nullptr;
+    }
 
     void ImGuiLayer::onAttach()
     {
@@ -49,31 +77,12 @@ namespace nebula {
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        auto* window = static_cast<GLFWwindow*>(Application::getWindow().getWindowHandle());
-
-        switch (Application::get().getRenderingAPI())
-        {
-            case rendering::API::cOpenGL:
-            {
-                ImGui_ImplGlfw_InitForOpenGL(window, true);
-                ImGui_ImplOpenGL3_Init(GLSL_VERSION_STRING.c_str());
-
-                break;
-            }
-            case rendering::API::cVulkan:
-            {
-                ImGui_ImplGlfw_InitForVulkan(window, true);
-                // ImGui_ImplVulkan_Init();
-                break;
-            }
-            default: break;
-        }
+        s_backend->onAttach();
     }
 
     void ImGuiLayer::onDetach()
     {
-        if (Application::get().getRenderingAPI() == rendering::API::cOpenGL)
-            ImGui_ImplOpenGL3_Shutdown();
+        s_backend->onDetach();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
@@ -90,25 +99,19 @@ namespace nebula {
 
     void ImGuiLayer::begin()
     {
-        switch (Application::get().getRenderingAPI())
-        {
-            case rendering::API::cOpenGL:   ImGui_ImplOpenGL3_NewFrame();   break;
-            case rendering::API::cVulkan:   ImGui_ImplVulkan_NewFrame();    break;
-            default: break;
-        }
+        s_backend->begin();
 
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    void ImGuiLayer::end()
+    void ImGuiLayer::end(void* command_buffer_handle)
     {
         ImGuiIO& io = ImGui::GetIO();
         const Window& window = Application::getWindow();
         io.DisplaySize = ImVec2(static_cast<float>(window.getWidth()), static_cast<float>(window.getHeight()));
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        s_backend->end(command_buffer_handle);
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
@@ -117,6 +120,13 @@ namespace nebula {
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
+    }
+
+    void ImGuiLayer::reloadBackend(RenderPass& renderpass)
+    {
+        NB_CORE_ASSERT(s_backend);
+        m_backend = ImGuiBackend::create(renderpass);
+        s_backend = m_backend.get();
     }
 
     void ImGuiLayer::onImGuiRender()

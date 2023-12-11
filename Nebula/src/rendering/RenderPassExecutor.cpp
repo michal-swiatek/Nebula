@@ -38,8 +38,8 @@ namespace nebula::rendering {
         for (uint32_t stage = 0; stage < renderpass->getNumberOfStages(); stage++)
         {
             const auto& stage_objects = renderpass_objects.viewStageObjects(stage);
-            for (auto object : stage_objects)
-                m_renderer->draw(*object);
+            for (const auto object : stage_objects)
+                object->accept(*m_renderer);
 
             //  Don't move to next stage if this was the last stage
             if (stage < renderpass->getNumberOfStages() - 1)

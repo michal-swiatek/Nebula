@@ -7,6 +7,8 @@
 
 #include <rendering/commands/RenderPassCommands.h>
 
+#include "core/Application.h"
+#include "debug/ImGuiLayer.h"
 #include "rendering/renderpass/RenderPass.h"
 #include "platform/Vulkan/VulkanRecordedBuffer.h"
 
@@ -84,6 +86,16 @@ namespace nebula::rendering {
     void VulkanRecordCommandsVisitor::visit(EndRenderPassCommand& command)
     {
         vkCmdEndRenderPass(m_command_buffer);
+    }
+
+    void VulkanRecordCommandsVisitor::visit(DrawImGuiCommand& command)
+    {
+        ImGuiLayer::begin();
+
+        for (const auto& layer : Application::get().m_layer_stack)
+            layer->onImGuiRender();
+
+        ImGuiLayer::end(m_command_buffer);
     }
 
     ////////////////////////////////////////////////////////////////////

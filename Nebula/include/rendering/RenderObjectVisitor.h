@@ -7,16 +7,18 @@
 #define RENDEROBJECTVISITOR_H
 
 #include "core/Core.h"
-#include "RenderObject.h"
 
 namespace nebula::rendering {
+
+    class RenderObject;
+    class ImGuiRenderObject;
 
     class NEBULA_API RenderObjectVisitor
     {
     public:
         virtual ~RenderObjectVisitor() = default;
 
-        void draw(const RenderObject& render_object) { render_object.accept(*this); }
+        virtual void draw(const ImGuiRenderObject& imgui_layer) {}
     };
 
 }

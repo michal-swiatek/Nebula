@@ -45,7 +45,7 @@ namespace nebula::rendering {
         SwapchainFramebufferTemplate(const uint32_t width, const uint32_t height) : FramebufferTemplate(width, height)
         {
             AttachmentDescription attachment_description;
-            attachment_description.format = TextureFormat::cFormat_B8G8R8A8_SRB;
+            attachment_description.format = TextureFormat::cFormat_B8G8R8A8_UNORM;
             attachment_description.final_layout = AttachmentLayout::cPresentOptimal;
             addTextureAttachment(attachment_description);
         }

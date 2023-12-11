@@ -6,13 +6,16 @@
 #ifndef VULKANCOMMANDSVISITOR_H
 #define VULKANCOMMANDSVISITOR_H
 
+#include <core/LayerStack.h>
+
+#include "core/Layer.h"
 #include "platform/Vulkan/VulkanAPI.h"
 #include "platform/Vulkan/VulkanContext.h"
 #include "rendering/commands/RenderCommandVisitor.h"
 
 namespace nebula::rendering {
 
-    class VulkanRecordCommandsVisitor final : public RecordCommandVisitor
+    class VulkanRecordCommandsVisitor : public RecordCommandVisitor
     {
     public:
         explicit VulkanRecordCommandsVisitor(VkCommandBuffer command_buffer);
@@ -21,8 +24,9 @@ namespace nebula::rendering {
 
         void visit(BeginRenderPassCommand& command) override;
         void visit(EndRenderPassCommand& command) override;
+        void visit(DrawImGuiCommand& command) override;
 
-    private:
+    protected:
         VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;
 
         void startRecording() const;

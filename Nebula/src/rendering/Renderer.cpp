@@ -5,6 +5,8 @@
 
 #include "rendering/renderer/Renderer.h"
 
+#include "rendering/RenderObject.h"
+
 namespace nebula::rendering {
 
     Renderer::Renderer(Scope<RendererBackend>&& renderer_backend) : m_renderer_backend(std::move(renderer_backend)) {}
@@ -85,6 +87,12 @@ namespace nebula::rendering {
     View<RenderPass> Renderer::viewRenderPass() const
     {
         return m_renderpass.get();
+    }
+
+    void Renderer::draw(const ImGuiRenderObject& imgui_layer)
+    {
+        NB_CORE_ASSERT(m_renderpass_state == cStarted, "Start RenderPass to draw RenderObjects!");
+        submitCommand<DrawImGuiCommand>();
     }
 
 }

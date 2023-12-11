@@ -12,6 +12,7 @@ namespace nebula::rendering {
 
     struct BeginRenderPassCommand;
     struct EndRenderPassCommand;
+    struct DrawImGuiCommand;
 
     class NEBULA_API RenderCommandVisitor
     {
@@ -20,6 +21,7 @@ namespace nebula::rendering {
 
         virtual void visit(BeginRenderPassCommand& command) {}
         virtual void visit(EndRenderPassCommand& command) {}
+        virtual void visit(DrawImGuiCommand& command) {}
     };
 
     class RenderCommandBuffer;

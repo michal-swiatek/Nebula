@@ -6,9 +6,9 @@
 #ifndef RENDEROBJECT_H
 #define RENDEROBJECT_H
 
-namespace nebula::rendering {
+#include "RenderObjectVisitor.h"
 
-    class RenderObjectVisitor;
+namespace nebula::rendering {
 
     class RenderObject
     {
@@ -16,6 +16,12 @@ namespace nebula::rendering {
         virtual ~RenderObject() = default;
 
         virtual void accept(RenderObjectVisitor& visitor) const = 0;
+    };
+
+    class ImGuiRenderObject final : public RenderObject
+    {
+    public:
+        void accept(RenderObjectVisitor& visitor) const override { visitor.draw(*this); }
     };
 
 }

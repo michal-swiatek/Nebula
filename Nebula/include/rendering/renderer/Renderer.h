@@ -56,6 +56,8 @@ namespace nebula::rendering {
             m_command_buffer->submit<RenderCommandType>(std::forward<Args>(args)...);
         }
 
+        void draw(const ImGuiRenderObject& imgui_layer) override;
+
     private:
         Scope<RendererBackend> m_renderer_backend = nullptr;
         Scope<RenderCommandBuffer> m_command_buffer = nullptr;

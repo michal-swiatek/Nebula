@@ -6,38 +6,40 @@
 #ifndef NEBULAENGINE_IMGUILAYER_H
 #define NEBULAENGINE_IMGUILAYER_H
 
-#include <mutex>
-
 #include "core/Layer.h"
 #include "core/Timer.h"
+
+#include "ImGuiBackend.h"
+#include "rendering/renderpass/RenderPass.h"
 
 namespace nebula {
 
     class ImGuiLayer : public Layer
     {
     public:
-        ImGuiLayer();
-        ~ImGuiLayer() override = default;
+        explicit ImGuiLayer(rendering::RenderPass& renderpass);
+        ~ImGuiLayer() override;
 
         void onAttach() override;
         void onDetach() override;
         void onEvent(Event &event) override;
 
         void onImGuiRender() override;
+        void reloadBackend(rendering::RenderPass& renderpass);
 
         static void begin();
-        static void end();
+        static void end(void* command_buffer_handle);
 
-        void setBlockEvents(bool block) { m_block_events = block; }
+        void setBlockEvents(const bool block) { m_block_events = block; }
 
     private:
         bool m_block_events = true;
+        Scope<ImGuiBackend> m_backend = nullptr;
 
         static int s_counter;
-        static std::mutex s_mutex;
+        static ImGuiBackend* s_backend;
 
-    //  Debug ImGui windows
-    private:
+        //  Debug ImGui windows
         void performanceOverlay();
         void fpsSection();
 

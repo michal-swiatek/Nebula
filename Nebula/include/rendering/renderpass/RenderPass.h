@@ -25,7 +25,7 @@ namespace nebula::rendering {
         glm::vec4 color = {};
         glm::vec2 depth_stencil = {1.0f, 255.0f};
 
-        ClearColor() : color(0.0f, 0.0f, 0.1f, 1.0f), depth_stencil(1.0f, 255.0f) {}
+        ClearColor() : color(0.0f, 0.0f, 0.2f, 1.0f), depth_stencil(1.0f, 255.0f) {}
         ClearColor(float r, float g, float b, float a) : color(r, g, b, a) {}
     };
 

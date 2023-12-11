@@ -74,6 +74,7 @@ namespace nebula::rendering {
 
         //  4 channel formats
         cFormat_B8G8R8A8_SRB,         //  Used in swapchain
+        cFormat_B8G8R8A8_UNORM,       //  Used in swapchain
 
         cFormat_R8G8B8A8_UINT,        //  uint8
         cFormat_R8G8B8A8_SINT,        //  int8

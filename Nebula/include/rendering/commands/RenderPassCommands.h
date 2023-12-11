@@ -37,6 +37,11 @@ namespace nebula::rendering {
         void accept(RenderCommandVisitor& command_visitor) override { command_visitor.visit(*this); }
     };
 
+    struct NEBULA_API DrawImGuiCommand final : RenderCommand
+    {
+        void accept(RenderCommandVisitor& command_visitor) override { command_visitor.visit(*this); }
+    };
+
 }
 
 #endif //RENDERPASSCOMMANDS_H

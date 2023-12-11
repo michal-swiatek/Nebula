@@ -20,6 +20,7 @@
 #include "platform/Vulkan/VulkanContext.h"
 #include "platform/Vulkan/VulkanRenderPass.h"
 #include "platform/Vulkan/VulkanFramebuffer.h"
+#include "platform/Vulkan/VulkanImGuiBackend.h"
 #include "platform/Vulkan/VulkanRenderPassExecutor.h"
 
 #include "platform/OpenGL/OpenGLShader.h"
@@ -31,6 +32,8 @@
     #include "platform/Windows/WindowsWindow.h"
     #include "platform/Windows/WindowsInput.h"
 #endif
+
+using namespace nebula::rendering;
 
 namespace nebula {
 
@@ -54,6 +57,18 @@ namespace nebula {
         NB_CORE_ASSERT(false, "Unknown platform!");
         return nullptr;
         #endif
+    }
+
+    Scope<ImGuiBackend> ImGuiBackend::create(RenderPass& renderpass)
+    {
+        ImGuiBackend* backend = nullptr;
+        switch (Application::get().getRenderingAPI())
+        {
+            case API::cVulkan:  backend = new VulkanImGuiBackend(renderpass);  break;
+            default:    NB_CORE_ASSERT(false, "Unsupported rendering API!");
+        }
+
+        return createScopeFromPointer(backend);
     }
 
     namespace rendering {
@@ -140,6 +155,7 @@ namespace nebula {
 
             return createReferenceFromPointer(framebuffer);
         }
+
     }
 
     void system_sleep(double seconds)

@@ -74,7 +74,7 @@ namespace nebula {
         return nullptr;
     }
 
-    View<Layer> LayerStack::getLayer(nebula::LayerStack::LayerID layer_id)
+    Layer* LayerStack::getLayer(nebula::LayerStack::LayerID layer_id)
     {
         auto it = std::find_if(
                 m_layers.begin(),
@@ -84,10 +84,12 @@ namespace nebula {
 
         if (it != m_layers.begin() + m_layer_insert_index)
             return it->get();
+
+        NB_CORE_ASSERT(false, "Invalid layer ID!");
         return nullptr;
     }
 
-    View<Layer> LayerStack::getOverlay(nebula::LayerStack::LayerID layer_id)
+    Layer* LayerStack::getOverlay(nebula::LayerStack::LayerID layer_id)
     {
         auto it = std::find_if(
                 m_layers.begin() + m_layer_insert_index,
@@ -97,6 +99,8 @@ namespace nebula {
 
         if (it != m_layers.end())
             return it->get();
+
+        NB_CORE_ASSERT(false, "Invalid overlay ID!");
         return nullptr;
     }
 

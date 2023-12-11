@@ -22,6 +22,7 @@ namespace nebula::rendering {
         explicit RenderPassObjects(uint32_t stages);
 
         void setStages(uint32_t stages);
+        void addObject(uint32_t stage, View<RenderObject> object);
 
         [[nodiscard]] const StageObjects& viewStageObjects(uint32_t stage) const;
 

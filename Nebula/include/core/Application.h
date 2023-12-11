@@ -35,6 +35,8 @@ namespace nebula {
 
     }
 
+    namespace rendering { class VulkanRecordCommandsVisitor; }
+
     struct ApplicationVersion
     {
         uint16_t major;
@@ -127,6 +129,7 @@ namespace nebula {
 
         friend class nebula::threads::MainUpdateThread;
         friend class nebula::threads::MainRenderThread;
+        friend class nebula::rendering::VulkanRecordCommandsVisitor;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);
